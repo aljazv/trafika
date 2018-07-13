@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
+
+    <ul class="list-group">
+        {% for skupina in skupine %}
+        <li class="list-group-item"><a href="/{{skupina.id}}/">{{ skupina.ime }}</a></li>
+        {% endfor %}
+    </ul>
+
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if izdelki.has_previous %}
+                <a href="?page=1">&laquo; Prva</a>
+                <a href="?page={{ izdelki.previous_page_number }}">Prejšna</a>
+            {% endif %}
+
+            <span class="current">
+                Stran {{ izdelki.number }} od {{ izdelki.paginator.num_pages }}.
+            </span>
+
+            {% if izdelki.has_next %}
+                <a href="?page={{ izdelki.next_page_number }}">Naslednja</a>
+                <a href="?page={{ izdelki.paginator.num_pages }}">Zadnja &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+
+    <ul class="list-group">
+        {% for izdelek in izdelki %}
+        <li class="list-group-item"><a href="/{{izdelek.skupina_izdelkov.id}}/{{izdelek.id}}/">{{ izdelek.ime }}</a></li>
+        
+        <li></li>
+        
+        <li>
+        
+        </li>
+        
+        
+        {% endfor %}
+    </ul>
+
+    <table class="table">
+        <tr>
+            <td>#</td>
+            <td>#</td>
+            <td>#</td>
+            <td>#</td>
+            <td>#</td>
+            <td>#</td>
+            <td>#</td>
+            
+        </tr>
+        {% for izdelek in izdelki  %}
+        <tr>
+            <td>{{izdelek.ime}}</td>
+            <td>{{izdelek.opis}}</td>
+            <td><img src="{{ izdelek.slika.url }}"></td>
+            <td>{{izdelek.zaloga}}</td>
+            <td>{{izdelek.aktiven}}</td>
+            
+            <form action="/" method="post">
+            <td>
+                
+                {% csrf_token %}
+                {{ kolicina_form.as_p }}
+                <input type="hidden" izdelek_id="{{izdelek.id}}" skupina_id="{{izdelek.skupina_izdelkov.id}}">      
+                
+            </td>
+            <td><input type="submit" value="Dodaj v košarico" /></td>
+            
+            </form>
+
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    </body>
+
+
+</html>
+
+
+
