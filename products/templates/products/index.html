@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    {% csrf_token %}
+
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script type="text/javascript">
 //http://coreymaynard.com/blog/performing-ajax-post-requests-in-django/
-// koda iz te strani, ne vem se tocno kako deluje
-// stvar deluje, poslje tudi ok csrf kodo 
+// stvar deluje, poslje tudi ok csrf kodo, tako da se uporabnika avtenticira lahko
 
 $(document).ready(function() {
     $("#post").click(function(e) {
         e.preventDefault();
         var data = {
-            'foo': 'bar'
+            'id_izdelka': 1,
+            'kolicina' : 25
         }
-
+        
         $.ajax({
             "type": "POST",
             "dataType": "json",
-            "url": "/",
+            "url": "/1/",
             "data": data,
             "success": function(result) {
                 console.log(result);
@@ -26,6 +29,7 @@ $(document).ready(function() {
     });
 });
 
+//dobi csrf kodo
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -41,7 +45,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
+//pripravi za avtomatsko posiljanje csfr
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
@@ -55,6 +59,9 @@ $.ajaxSetup({
 </script>
 </head>
 <body>
+
+
+
     <h1>PostExample</h1>
     <p><a href="" id="post">Post Request</a></p>
 
@@ -88,28 +95,12 @@ $.ajaxSetup({
     <ul class="list-group">
         {% for izdelek in izdelki %}
         <li class="list-group-item"><a href="/{{izdelek.skupina_izdelkov.id}}/{{izdelek.id}}/">{{ izdelek.ime }}</a></li>
-        
-        <li></li>
-        
-        <li>
-        
-        </li>
-        
-        
+
         {% endfor %}
     </ul>
 
     <table class="table">
-        <tr>
-            <td>#</td>
-            <td>#</td>
-            <td>#</td>
-            <td>#</td>
-            <td>#</td>
-            <td>#</td>
-            <td>#</td>
-            
-        </tr>
+
         {% for izdelek in izdelki  %}
         <tr>
             <td>{{izdelek.ime}}</td>
@@ -118,17 +109,15 @@ $.ajaxSetup({
             <td>{{izdelek.zaloga}}</td>
             <td>{{izdelek.aktiven}}</td>
             
-            <form action="/" method="post">
+            
             <td>
                 
-                {% csrf_token %}
-                {{ kolicina_form.as_p }}
-                <input type="hidden" izdelek_id="{{izdelek.id}}" skupina_id="{{izdelek.skupina_izdelkov.id}}">      
+                <input name="kolicina" required="" id="id_kolicina" type="number">
                 
             </td>
             <td><input type="submit" value="Dodaj v košarico" /></td>
             
-            </form>
+            
 
         </tr>
         {% endfor %}
