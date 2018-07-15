@@ -61,5 +61,5 @@ class Narocilo(models.Model):
 
 #se mi zdi da je vseeno potrebno lociti kosarico od narocil, da ne bo uporabnika kej zmedlo
 class Kosarica(models.Model):
-    narocila_izdelka = models.ManyToManyField(NarociloIzdelka)
+    narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
