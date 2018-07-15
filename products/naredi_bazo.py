@@ -1,9 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.models import User
 
 from .models import *
 from .forms import *
 from django.core.files import File
 import os.path
+import os
 
 
 def naredi_bazo(request):
@@ -20,6 +22,9 @@ def naredi_bazo(request):
     user_aljaz.save()
 
     uporabnik1 = Uporabnik(user = user_aljaz, podjetje = "siddarta", lastnik = "Janez Skok")
+    uporabnik1.save()
+
+    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = "siddadrta", lastnik = "Jaasdnez Skok")
     uporabnik1.save()
 
     #naredi admina
@@ -42,14 +47,14 @@ def naredi_bazo(request):
 
     tag_bled = Tag(ime = "Bled")
     tag_bled.save()
-
+    
     izdelek_bled = Izdelek(ime = "Magnet Bled", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "AZU456B")
-    izdelek_bled.slika.save('Bled.jpg', File(open(r'C:/Users/aljaz/Desktop/Aljaz/Trafika main/trafika/media/gallery/Bled.jpg','rb')))
+    izdelek_bled.slika.save('Bled.jpg', File(open(r'media/gallery/Bled.jpg','rb')))
     narocilo_bled = NarociloIzdelka(izdelek = izdelek_bled,kolicina = 25)
     narocilo_bled.save()
 
     izdelek_triglav = Izdelek(ime = "Magnet Triglav", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "GHLO99S")
-    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'C:/Users/aljaz/Desktop/Aljaz/Trafika main/trafika/media/gallery/Triglav.jpg','rb')))
+    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'media/gallery/Triglav.jpg','rb')))
     narocilo_triglav = NarociloIzdelka(izdelek = izdelek_triglav,kolicina = 100)
     narocilo_triglav.save()
 
