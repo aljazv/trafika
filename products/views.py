@@ -25,9 +25,9 @@ def index_skupina(request, index, search_string = None):
 
     #dodajanje izdelkov v koscarico
     if request.method == 'POST':
-        #print(request.user)
-        #print(request.POST)
-        #print(request.POST['kolicina'])
+        print(request.user)
+        print(request.POST)
+        print(request.POST['kolicina'])
 
         if request.user.is_authenticated:
             
@@ -97,6 +97,7 @@ def index_skupina(request, index, search_string = None):
 
 # vrne izdelke ki se ujemajo v tagu s search_stringom
 def search(request, index , search_string):
-     
+    
+    
     return index_skupina(request,index,search_string=search_string)
 
