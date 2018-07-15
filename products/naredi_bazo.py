@@ -34,23 +34,26 @@ def naredi_bazo(request):
     
     user_admin.save()
    
+    uporabnik_admin = Uporabnik(user = user_admin, podjetje = "Alpin", lastnik = "Uroš")
+    uporabnik_admin.save()
+
     skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti")
     skupina_izdelkov1.save()
 
     tag_bled = Tag(ime = "Bled")
     tag_bled.save()
 
-    izdelek_bled = Izdelek(ime = "Magnet Bled", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1)
+    izdelek_bled = Izdelek(ime = "Magnet Bled", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "AZU456B")
     izdelek_bled.slika.save('Bled.jpg', File(open(r'C:/Users/aljaz/Desktop/Aljaz/Trafika main/trafika/media/gallery/Bled.jpg','rb')))
     narocilo_bled = NarociloIzdelka(izdelek = izdelek_bled,kolicina = 25)
     narocilo_bled.save()
 
-    izdelek_triglav = Izdelek(ime = "Magnet Triglav", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1)
+    izdelek_triglav = Izdelek(ime = "Magnet Triglav", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "GHLO99S")
     izdelek_triglav.slika.save("Triglav.jpg", File(open(r'C:/Users/aljaz/Desktop/Aljaz/Trafika main/trafika/media/gallery/Triglav.jpg','rb')))
     narocilo_triglav = NarociloIzdelka(izdelek = izdelek_triglav,kolicina = 100)
     narocilo_triglav.save()
 
-    kosarica = Kosarica(uporabnik = uporabnik1)
+    kosarica = Kosarica(uporabnik = uporabnik_admin)
     kosarica.save()
     kosarica.narocila_izdelka.add(narocilo_bled,narocilo_triglav)
     kosarica.save()
