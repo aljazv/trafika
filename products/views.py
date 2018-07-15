@@ -15,9 +15,12 @@ from .forms import *
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
-    prva_skupina = SkupinaIzdelkov.objects.first().id
+    if request.user.is_authenticated:
+        prva_skupina = SkupinaIzdelkov.objects.first().id
+        return HttpResponseRedirect(str(prva_skupina)+ "/")
+    else:
+        return HttpResponseRedirect("/prijava/login/")
 
-    return HttpResponseRedirect(str(prva_skupina)+ "/")
 
 #index_skupina je 
 # na njej je skupina izdelkov izdelki
