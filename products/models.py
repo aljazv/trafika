@@ -21,6 +21,7 @@ class Izdelek(models.Model):
     sifra = models.CharField(max_length=100)
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
     tag = models.ManyToManyField(Tag)
+    koda = models.CharField(max_length=100)
 
     zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi")
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
@@ -46,7 +47,7 @@ class Narocilo(models.Model):
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
     opomba = models.CharField(blank=True, max_length=200)
     # ce ne specificiras datuma se bo shranil trenutni datum
-    datum = models.DateField(auto_now=True, verbose_name="Datum naročila")
+    datum = models.DateTimeField(auto_now=True, verbose_name="Datum naročila")
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka)
     
 
