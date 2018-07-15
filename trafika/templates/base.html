@@ -26,11 +26,23 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav flex-column">
       <a class="nav-item nav-link mb-3" href="#">Navodila</a>
-      <a class="nav-item nav-link active" href="#">Magneti</a>
-      <a class="nav-item nav-link" href="#">Zemljevidi</a>
-      <a class="nav-item nav-link " href="#">Razglednice</a>
 
-      <a class="nav-item nav-link mt-3" href="#">Košarica</a>
+      {% for skupina in skupine %}
+        
+        {% if skupina.id == index_skupina %} 
+        
+        <a class="nav-item nav-link active" href="/{{skupina.id}}/">{{skupina.ime}}</a>
+        {% else %}
+        <a class="nav-item nav-link" href="/{{skupina.id}}/">{{ skupina.ime }}</a>
+        {% endif %}
+      
+      {% endfor %}
+
+
+      <a class="nav-item nav-link mt-3 {{ active_kosarica}}" href="/kosarica/">Košarica</a>
+      <a class="nav-item nav-link {{ active_narocila }}" href="/pregled_narocil/">Pregled naročil</a>
+
+
     </div>
   </div>
 </nav>

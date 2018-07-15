@@ -22,6 +22,8 @@ from time import gmtime, strftime
 
 #context: opozorilo je za display informacij
 
+def getAllGroups():
+    return SkupinaIzdelkov.objects.all()
 
 #index je glavna stran ki si prikaze ko se uporabnik prijavi
 #ce gres na main page te preusmeri na prvo skupino izdelkov
@@ -94,14 +96,13 @@ def index_skupina(request, index, search_string = None):
 
 
 
-
+        #logika za iskanje po tagih
         if search_string != None:
-            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string)
+            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
             
         else:
-            vsi_izdelki = Izdelek.objects.filter(aktiven=True).order_by('ime')
+            vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
         
-        vse_skupine = SkupinaIzdelkov.objects.all()
 
 
         #paginacija
@@ -114,9 +115,10 @@ def index_skupina(request, index, search_string = None):
 
         context = {
             'opozorilo' : 'nic',
-            'skupine': vse_skupine,
+            'skupine': getAllGroups(),
             'kolicina_form' : kolicina_form,
             'izdelki' : paginirani_izdelki,
+            'index_skupina' : index,
             
         }
 
@@ -151,7 +153,8 @@ def kosarica(request):
     narocila_izdelkov = kosarica_uporabnika.narocila_izdelka.all()
     
     context = {
-        'arr': narocila_izdelkov
+        'arr': narocila_izdelkov,
+        'skupine': getAllGroups(),
         }
 
     return render(request,'products/kosarica.html',context)
@@ -293,7 +296,8 @@ def pregled_narocil(request):
     context = {
         'arr': narocila_uporabnika,
         'msg_type': 'alert-success',
-        'message': 'Naročilo uspešno oddano.'
+        'message': 'Naročilo uspešno oddano.',
+        'skupine': getAllGroups(),
         }
 
     return render(request,'products/pregled_narocil.html',context)

@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
+from imagekit.models import ImageSpecField 
+from imagekit.processors import ResizeToFill 
+
 
 
 class SkupinaIzdelkov(models.Model):
@@ -18,7 +21,10 @@ class Izdelek(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime izdelka")
     opis = models.TextField(max_length=300, verbose_name="Opis izdelka")
     slika = models.ImageField(upload_to="gallery", verbose_name= "Slika izdelka")
-    sifra = models.CharField(max_length=100)
+    image_thumbnail = ImageSpecField(source='slika',
+                                 processors=[ResizeToFill(500, 500)],
+                                 format='JPEG',
+                                 options={'quality': 60})
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
     tag = models.ManyToManyField(Tag)
     koda = models.CharField(max_length=100)
