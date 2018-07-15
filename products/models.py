@@ -22,7 +22,7 @@ class Izdelek(models.Model):
     opis = models.TextField(max_length=300, verbose_name="Opis izdelka")
     slika = models.ImageField(upload_to="gallery", verbose_name= "Slika izdelka")
     image_thumbnail = ImageSpecField(source='slika',
-                                 processors=[ResizeToFill(500, 500)],
+                                 processors=[ResizeToFill(300, 300)],
                                  format='JPEG',
                                  options={'quality': 60})
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
