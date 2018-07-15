@@ -47,4 +47,31 @@ def index(request):
         return render(request,'products/index.html',context)
 
 
-        
+def kosarica(request):
+	#tle bo se za spremenit ko bo LOGIN delal-------------------------------------------------
+	#dela ker je sam ena kosrica ustvarjena!
+	#Za popraviti sumnike
+	#plus se dimenzije slik
+	if request.method == 'POST' and 'odstrani_izdelek' in request.POST:
+		narocilo_izdelka_id = request.POST['narocilo']
+		narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)
+		narocilo_izdelka.delete()
+	if request.method == 'POST' and 'spremeni_kolicino' in request.POST:
+		kolicina = request.POST['kolicina']
+		narocilo_izdelka_id = request.POST['narocilo']
+		narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)[0]
+		narocilo_izdelka.kolicina = kolicina
+		narocilo_izdelka.save()
+
+	kosarica_uporabnika = Kosarica.objects.all()[0]
+	narocila_izdelkov = kosarica_uporabnika.narocila_izdelka.all()
+
+	context = {
+		'arr': narocila_izdelkov
+		}
+
+	return render(request,'products/kosarica.html',context)
+
+def pregled_narocil(request):
+
+	return HttpResponse(status=201)
