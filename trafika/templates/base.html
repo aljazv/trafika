@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/myscript.js' %}"></script>
+    <title>{% block title %}Naročilo{% endblock %}</title>
+
+	{% block head %}
+
+    {% endblock %}
+</head>
+<body>
+ 
+
+<nav id="sidenav" class="navbar navbar-expand-lg navbar-dark bg-primary sidenav">
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav flex-column">
+      <a class="nav-item nav-link mb-3" href="#">Navodila</a>
+      <a class="nav-item nav-link active" href="#">Magneti</a>
+      <a class="nav-item nav-link" href="#">Zemljevidi</a>
+      <a class="nav-item nav-link " href="#">Razglednice</a>
+
+      <a class="nav-item nav-link mt-3" href="#">Košarica</a>
+    </div>
+  </div>
+</nav>
+
+
+   {% block content %}
+   {% endblock %}
+
+
+
+<div id="users-device-size">
+  <div id="xs" class="d-block d-sm-none"></div>
+  <div id="sm" class="d-none d-sm-block d-md-none"></div>
+  <div id="md" class="d-none d-md-block d-lg-none"></div>
+  <div id="lg" class="d-none d-lg-block d-xl-none"></div>
+  <div id="xl" class="d-none d-xl-block"></div>
+</div>
+
+
+</body>
+</html>
