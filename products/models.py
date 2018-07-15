@@ -9,7 +9,7 @@ class SkupinaIzdelkov(models.Model):
         return self.ime 
 
 class Tag(models.Model):
-    ime = models.CharField(max_length = 100, verbose_name="Ime taga")
+    ime = models.CharField(max_length = 100, verbose_name="Ime taga(piši z malo)")
 
     def __str__(self):
         return self.ime 
