@@ -7,6 +7,7 @@ from imagekit.processors import ResizeToFill
 
 class SkupinaIzdelkov(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime skupine izdelkov")
+    koda = models.CharField(max_length=100, verbose_name="EAN koda skupine izdelkov")
 
     def __str__(self):
         return self.ime 
@@ -27,7 +28,7 @@ class Izdelek(models.Model):
                                  options={'quality': 60})
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
     tag = models.ManyToManyField(Tag)
-    koda = models.CharField(max_length=100)
+    koda = models.CharField(max_length=100, verbose_name="Koda izdelka")
 
     zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi")
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
@@ -42,11 +43,25 @@ class NarociloIzdelka(models.Model):
     kolicina = models.IntegerField()
 
 
+class ProdajnoMesto(models.Model):
+   ime = models.CharField(max_length = 100, verbose_name="Ime prodajnega mesta")
+   naslov = models.CharField(max_length = 100, verbose_name="Naslov prodajnega mesta")
+   postna_stevilka = models.CharField(max_length = 100, verbose_name="Postna številka prodajnega mesta")
+   kraj = models.CharField(max_length = 100, verbose_name="Kraj prodajnega mesta")
+   kontaktna_oseba = models.CharField(max_length = 100, verbose_name="Kontaktna oseba")
+   telefon = models.IntegerField(max_length = 100, verbose_name="Telefonska številka")
+
+class Podjetje(models.Model):
+    podjetje = models.CharField(max_length = 100, verbose_name="Ime podjetja")
+    naslov_podjetja = models.CharField(max_length = 100, verbose_name="Naslov podjetja")
+    postna_stevilka = models.CharField(max_length = 100, verbose_name="Poštna številka")
+    kraj = models.CharField(max_length = 100, verbose_name="Kraj")
+    davcna_stevilka = models.CharField(max_length = 100, verbose_name="Davčna številka")
 
 class Uporabnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    podjetje = models.CharField(max_length = 100)
-    lastnik = models.CharField(max_length = 100)
+    podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
+    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")
 
 class Narocilo(models.Model):
 

@@ -21,10 +21,10 @@ def naredi_bazo(request):
     
     user_aljaz.save()
 
-    uporabnik1 = Uporabnik(user = user_aljaz, podjetje = "siddarta", lastnik = "Janez Skok")
+    uporabnik1 = Uporabnik(user = user_aljaz)
     uporabnik1.save()
 
-    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = "siddadrta", lastnik = "Jaasdnez Skok")
+    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'))
     uporabnik1.save()
 
     #naredi admina
@@ -39,10 +39,10 @@ def naredi_bazo(request):
     
     user_admin.save()
    
-    uporabnik_admin = Uporabnik(user = user_admin, podjetje = "Alpin", lastnik = "Uroš")
+    uporabnik_admin = Uporabnik(user = user_admin)
     uporabnik_admin.save()
 
-    skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti")
+    skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti", koda = "238947298347")
     skupina_izdelkov1.save()
 
     tag_bled = Tag(ime = "Bled")
