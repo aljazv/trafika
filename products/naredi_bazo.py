@@ -9,22 +9,14 @@ import os
 
 
 def naredi_bazo(request):
-    #naredi uporabnika
-    user_aljaz, created = User.objects.get_or_create(username="aljazrupar", email="aljazrupar@gmail.com")
-    user_aljaz.first_name = "Aljaz"
-    user_aljaz.last_name = "Rupar"
 
-    if created:
-        user_aljaz.set_password("adminadmin")
-        user_aljaz.is_staff=False
-        user_aljaz.is_superuser=False
-    
-    user_aljaz.save()
+    prodajno_mesto = ProdajnoMesto(ime = "Trafika Škofja Loka", naslov = "Škofja Loka 88", postna_stevilka = "4220", obcina = "Škofja Loka", kontaktna_oseba = "Anja Novak", telefon = "041500677")
+    prodajno_mesto.save()
 
-    uporabnik1 = Uporabnik(user = user_aljaz)
-    uporabnik1.save()
+    podjetje = Podjetje(podjetje = "trafika d.o.o.", naslov_podjetja = "Škofja Loka 12", postna_stevilka = "4220", obcina = "Škofja Loka", davcna_stevilka = "67294308")
+    podjetje.save()
 
-    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'))
+    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     uporabnik1.save()
 
     #naredi admina
@@ -39,7 +31,7 @@ def naredi_bazo(request):
     
     user_admin.save()
    
-    uporabnik_admin = Uporabnik(user = user_admin)
+    uporabnik_admin = Uporabnik(user = user_admin, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     uporabnik_admin.save()
 
     skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti", koda = "238947298347")

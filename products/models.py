@@ -47,15 +47,15 @@ class ProdajnoMesto(models.Model):
    ime = models.CharField(max_length = 100, verbose_name="Ime prodajnega mesta")
    naslov = models.CharField(max_length = 100, verbose_name="Naslov prodajnega mesta")
    postna_stevilka = models.CharField(max_length = 100, verbose_name="Postna številka prodajnega mesta")
-   kraj = models.CharField(max_length = 100, verbose_name="Kraj prodajnega mesta")
+   obcina = models.CharField(max_length = 100, verbose_name="Občina prodajnega mesta")
    kontaktna_oseba = models.CharField(max_length = 100, verbose_name="Kontaktna oseba")
-   telefon = models.IntegerField(max_length = 100, verbose_name="Telefonska številka")
+   telefon = models.IntegerField(verbose_name="Telefonska številka")
 
 class Podjetje(models.Model):
     podjetje = models.CharField(max_length = 100, verbose_name="Ime podjetja")
     naslov_podjetja = models.CharField(max_length = 100, verbose_name="Naslov podjetja")
     postna_stevilka = models.CharField(max_length = 100, verbose_name="Poštna številka")
-    kraj = models.CharField(max_length = 100, verbose_name="Kraj")
+    obcina = models.CharField(max_length = 100, verbose_name="Občina")
     davcna_stevilka = models.CharField(max_length = 100, verbose_name="Davčna številka")
 
 class Uporabnik(models.Model):
