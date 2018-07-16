@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'narocila.apps.NarocilaConfig',
     'products.apps.ProductsConfig',
     'imagekit',
     'django.contrib.admin',

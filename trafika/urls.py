@@ -24,6 +24,7 @@ from . import settings
 urlpatterns = [
     
     path('', include('products.urls')),
+    path('narocila/', include('narocila.urls')),
     path('prijava/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     

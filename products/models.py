@@ -73,6 +73,8 @@ class Narocilo(models.Model):
     
 
     je_obdelan = models.BooleanField(default=False, verbose_name="Ali je naročilo že obdelano")
+    nacin_prodaje = models.CharField(max_length = 100, verbose_name="Način prodaje")
+    nacin_dostave = models.CharField(max_length = 100, verbose_name="Način dostave")
 
     def __str__(self):
         if self.je_obdelan:
