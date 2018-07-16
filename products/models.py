@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
+from imagekit.models import ImageSpecField 
+from imagekit.processors import ResizeToFill 
+
 
 
 class SkupinaIzdelkov(models.Model):
@@ -9,7 +12,7 @@ class SkupinaIzdelkov(models.Model):
         return self.ime 
 
 class Tag(models.Model):
-    ime = models.CharField(max_length = 100, verbose_name="Ime taga(piši z malo)")
+    ime = models.CharField(max_length = 100, verbose_name="Ime taga")
 
     def __str__(self):
         return self.ime 
@@ -18,6 +21,10 @@ class Izdelek(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime izdelka")
     opis = models.TextField(max_length=300, verbose_name="Opis izdelka")
     slika = models.ImageField(upload_to="gallery", verbose_name= "Slika izdelka")
+    image_thumbnail = ImageSpecField(source='slika',
+                                 processors=[ResizeToFill(300, 300)],
+                                 format='JPEG',
+                                 options={'quality': 60})
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
     tag = models.ManyToManyField(Tag)
     koda = models.CharField(max_length=100)
@@ -60,5 +67,5 @@ class Narocilo(models.Model):
 
 #se mi zdi da je vseeno potrebno lociti kosarico od narocil, da ne bo uporabnika kej zmedlo
 class Kosarica(models.Model):
-    narocila_izdelka = models.ManyToManyField(NarociloIzdelka)
+    narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)

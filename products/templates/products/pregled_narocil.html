@@ -1,4 +1,4 @@
-{% include "base.html" %}
+{% include "base.html" with active_narocila="active" skupine=skupine%}
 <div id="main" class="main">
 	{% block content %}
 	{% if message %}<h5 class="alert {{ msg_type }}"> {{ message }} </h5> {% endif %}

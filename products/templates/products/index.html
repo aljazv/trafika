@@ -1,4 +1,4 @@
-{% include "base.html" %}
+{% include "base.html" with skupine=skupine index_skupina=index_skupina %}
 
 
 {% block head %}
@@ -6,10 +6,7 @@
 
 <script type="text/javascript">
 
-
-
 </script>
-
 
 {% endblock %}
 
@@ -17,22 +14,17 @@
 {% block content %}
 
 
-    <h1>Post Example</h1>
+    <a href="/prijava/logout/">Odjava</a>
 
-    <p><a href="" id="post">Post Request</a></p>
+    <button onclick="myFunction()">Iskanje po tagih</button> 
+    <input id="search" >
+
+    
 
     <div id="info-text"  class="alert alert-dismissible alert-info">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <strong>Opa!</strong> 
     </div>
-
-    <ul class="list-group">
-        {% for skupina in skupine %}
-        <li class="list-group-item">
-            <a href="/{{skupina.id}}/">{{ skupina.ime }}</a>
-        </li>
-        {% endfor %}
-    </ul>
 
 
     <div class="pagination">
@@ -54,30 +46,23 @@
     </div>
 
 
-    <ul class="list-group">
-        {% for izdelek in izdelki %}
-        <li class="list-group-item"><a href="/{{izdelek.skupina_izdelkov.id}}/{{izdelek.id}}/">{{ izdelek.ime }}</a></li>
-
-        {% endfor %}
-    </ul>
-
     <table class="table">
 
         {% for izdelek in izdelki  %}
         <tr>
             <td>{{izdelek.ime}}</td>
             <td>{{izdelek.opis}}</td>
-            <td><img src="{{ izdelek.slika.url }}"></td>
+            <td><img src="{{ izdelek.image_thumbnail.url }}"></td>
             <td>{{izdelek.zaloga}}</td>
             <td>{{izdelek.aktiven}}</td>
             
             
             <td>
                 
-                <input name="kolicina" required="" id="id_kolicina" type="number">
+                <input name="kolicina" required="" id="{{ izdelek.id }}" type="number">
                 
             </td>
-            <td><input type="submit" value="Dodaj v košarico" /></td>
+            <td><input class="test" type="submit" value="Dodaj v košarico" /></td>
             
             
 

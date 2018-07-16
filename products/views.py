@@ -22,37 +22,23 @@ from time import gmtime, strftime
 
 #context: opozorilo je za display informacij
 
+def getAllGroups():
+    return SkupinaIzdelkov.objects.all()
 
 #index je glavna stran ki si prikaze ko se uporabnik prijavi
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
-    prva_skupina = SkupinaIzdelkov.objects.first().id
+    if request.user.is_authenticated:
 
-    return HttpResponseRedirect(str(prva_skupina)+ "/")
-
-#index_skupina je 
-# na njej je skupina izdelkov izdelki
-def index_skupina(request, index, search_string = None):
-
-    #dodajanje izdelkov v koscarico
-    if request.method == 'POST':
-        print(request.user)
-        print(request.POST)
-        print(request.POST['kolicina'])
-
-        if request.user.is_authenticated:
-            
+            #dodajanje izdelkov v koscarico preko AJAX
+        if request.method == 'POST':
+            #print(request.user)
+            #print(request.POST)
+            #print(request.POST['kolicina'])
+        
             uporabnik = Uporabnik.objects.get(user=request.user)
-
-            if Kosarica.objects.filter(uporabnik=uporabnik).exists():
-                kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
-            else:
-                kosarica_uporabnika = Kosarica(uporabnik=uporabnik)
-                kosarica_uporabnika.save()
-
-
-            
+            kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
 
             kolicina = request.POST['kolicina']
             id_izdelka = request.POST['id_izdelka']
@@ -70,24 +56,43 @@ def index_skupina(request, index, search_string = None):
                 nov_izdelek_za_kosarico.save()
                 kosarica_uporabnika.narocila_izdelka.add(nov_izdelek_za_kosarico)
 
-
-            
             
             return JsonResponse({'success':'Izdelek dodan v košarico'}, status=200)
         else:
-            return JsonResponse({'alert':'Napaka pri dodajanju'}, status=403)
+            prva_skupina = SkupinaIzdelkov.objects.first().id
+            return HttpResponseRedirect(str(prva_skupina)+ "/")
+    else:
+        return HttpResponseRedirect("/prijava/login/")
 
-        
+
+#index_skupina je 
+# na njej je skupina izdelkov izdelki
+def index_skupina(request, index, search_string = None):
+    
+    #Preveri ce je uporabnik logiran, ce ne gre na login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/prijava/login/")
+
     #prikaz izdelkov    
     else:
 
+        #POSEBNOST - ker ob kreaciji uporabnika se NE naredi kosarica jo moramo cimprej
+        #zato je najbolje da se mu naredi kosarica ko se prvic logira na stran, 
+
+        if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
+            nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
+            nova_kosarica.save()
+            print("kosarica ustvarjena")
+
+
+
+        #logika za iskanje po tagih
         if search_string != None:
-            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string)
+            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
             
         else:
-            vsi_izdelki = Izdelek.objects.filter(aktiven=True).order_by('ime')
+            vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
         
-        vse_skupine = SkupinaIzdelkov.objects.all()
 
 
         #paginacija
@@ -95,14 +100,13 @@ def index_skupina(request, index, search_string = None):
         page = request.GET.get('page')
         paginirani_izdelki = paginator.get_page(page)
 
-        kolicina_form = KolicinaForm()
 
 
         context = {
             'opozorilo' : 'nic',
-            'skupine': vse_skupine,
-            'kolicina_form' : kolicina_form,
+            'skupine': getAllGroups(),
             'izdelki' : paginirani_izdelki,
+            'index_skupina' : index,
             
         }
 
@@ -115,6 +119,10 @@ def search(request, index , search_string):
     return index_skupina(request,index,search_string=search_string)
 
 def kosarica(request):
+
+    #Preveri ce je uporabnik logiran, ce ne gre na login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/prijava/login/")
 
     #dela ker je sam ena kosrica ustvarjena!
     #Za popraviti sumnike
@@ -137,12 +145,18 @@ def kosarica(request):
     narocila_izdelkov = kosarica_uporabnika.narocila_izdelka.all()
     
     context = {
-        'arr': narocila_izdelkov
+        'arr': narocila_izdelkov,
+        'skupine': getAllGroups(),
         }
 
     return render(request,'products/kosarica.html',context)
 
 def pregled_narocil(request):
+
+    #Preveri ce je uporabnik logiran, ce ne gre na login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/prijava/login/")
+
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
         curr_opomba = request.POST['opomba']
 
@@ -279,7 +293,8 @@ def pregled_narocil(request):
     context = {
         'arr': narocila_uporabnika,
         'msg_type': 'alert-success',
-        'message': 'Naročilo uspešno oddano.'
+        'message': 'Naročilo uspešno oddano.',
+        'skupine': getAllGroups(),
         }
 
     return render(request,'products/pregled_narocil.html',context)
