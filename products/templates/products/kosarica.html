@@ -24,7 +24,7 @@
 		<tr>
 			<td>{{forloop.counter}}</td>
 			<td>{{narocilo_izdelka.izdelek.ime}}</td>
-			<td><img src="{{ narocilo_izdelka.izdelek.slika.url }}" width="128" height="128"></td>
+			<td><img src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 			<td>{{narocilo_izdelka.kolicina}}</td>
 			<form action="/kosarica/" method="post">
 				{% csrf_token %}

@@ -7,6 +7,8 @@ import datetime
 from .models import *
 from .forms import *
 
+import os.path
+
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
@@ -185,8 +187,8 @@ def pregled_narocil(request):
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="narocilo.pdf"'
         doc = SimpleDocTemplate(response,pagesize=letter,
-                rightMargin=72,leftMargin=72,
-                topMargin=72,bottomMargin=18)
+                rightMargin=20,leftMargin=20,
+                topMargin=20,bottomMargin=20)
 
         formatted_time = datetime.date.today()
         formatted_time = str(formatted_time)
@@ -211,20 +213,29 @@ def pregled_narocil(request):
         story.append(par)
         story.append(Spacer(1, 12))
  
-        #
-        data1 = [[Paragraph(uporabnik.lastnik, styles["Line_Data_Large"])],
-            [Paragraph('LASTNIK PODJETJA', styles["Line_Label"])],
-            [Paragraph(uporabnik.podjetje, styles["Line_Data_Large"])],
-            [Paragraph('NASLOV PODJETJA', styles["Line_Label"])]
-            ]   
+        # prodajno mesto + podjetje
+        podjetje = uporabnik.podjetje
+        prodajno_mesto = uporabnik.prodajno_mesto
 
-        t1 = Table(data1, colWidths=(9 * cm))
+        podjetje_podatki = '%s <br/> %s <br/> %s, %s <br/> %s <br/> ' % (podjetje.podjetje, podjetje.naslov, podjetje.postna_stevilka, podjetje.obcina, podjetje.davcna_stevilka)
+        
+        prodajno_mesto_podatki = '%s <br/>%s <br/>%s, %s <br/>%s <br/>%s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina, prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon)
+
+
+        data1 = [[Paragraph('Prodajno mesto', styles["Line_Label"]),
+                  Paragraph('Podjetje', styles["Line_Label"])],
+
+                 [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
+                  Paragraph(podjetje_podatki, styles["Line_Data_Large"])]
+                 ]
+
+        t1 = Table(data1)
         t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (0, 1), 0.25, colors.black),
-        ('INNERGRID', (0, 2), (0, 3), 0.25, colors.black),
+            ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
+            ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ]))
-        t1.hAlign = 'LEFT'
-
         story.append(t1)
         #
         story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
@@ -245,13 +256,14 @@ def pregled_narocil(request):
         #
         data1 = [[Paragraph('#', styles["Line_Label"]),
             Paragraph('IME IZDELKA', styles["Line_Label"]),
+            Paragraph('SLIKA', styles["Line_Label"]),
             Paragraph('KODA IZDELKA', styles["Line_Label"]),
             Paragraph('VRSTA IZDELKA', styles["Line_Label"]),
             Paragraph('KOLIČINA', styles["Line_Label"]),
             Paragraph('✔', styles["Line_Label"])
             ]]
         
-        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 6.1 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,5 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
         t1.setStyle(TableStyle([
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
             ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
@@ -262,22 +274,25 @@ def pregled_narocil(request):
 
         for i, narocilo_izdelka in enumerate(narocila_izdelka):
             iteracija = str(i+1) + "."
+            #fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), narocilo_izdelka.izdelek.image_thumbnail.url)
+            #im = Image(narocilo_izdelka.izdelek.image_thumbnail.url, 2*cm, 2*cm)
+
             data1 = [[Paragraph(iteracija, styles["Line_Data"]),
                   Paragraph(narocilo_izdelka.izdelek.ime, styles["Line_Data"]),
+                  Paragraph( "Vnesi sliko - fix", styles["Line_Data"]),
                   Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
                   Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
                   Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
                   Paragraph("", styles["Line_Data"])
                   ]]
 
-            t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 6.1 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+            t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 5 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
             t1.setStyle(TableStyle([
                 ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
             story.append(t1)
-
 
 
 
