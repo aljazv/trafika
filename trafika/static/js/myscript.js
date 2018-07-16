@@ -35,21 +35,23 @@
     //http://coreymaynard.com/blog/performing-ajax-post-requests-in-django/
     // stvar deluje, poslje tudi ok csrf kodo, tako da se uporabnika avtenticira lahko
 
-  $(".test").click(function(e) {
+  $(".dodaj").click(function(e) {
    
           e.preventDefault();
-          var data = {
-              'id_izdelka': $(this).parent().parent().find(':input').attr('id'),
-              'kolicina' : $(this).parent().parent().find(':input').val()
-          }
 
-          
+
+          var data = {
+              'id_izdelka': $(this).parent().find(':input[type=number]').attr('id'),
+              'kolicina' : $(this).parent().find(':input[type=number]').val()
+          }
+                    
           $.ajax({
               "type": "POST",
               "dataType": "json",
               "url": "/",
               "data": data,
               "success": function(result) {
+                  
                   $("#info-text").show();
               },
               "error": function(result) {

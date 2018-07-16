@@ -13,63 +13,100 @@
 <div id="main" class="main">
 {% block content %}
 
-
-    <a href="/prijava/logout/">Odjava</a>
-
-    <button onclick="myFunction()">Iskanje po tagih</button> 
-    <input id="search" >
+    <!-- iskanje po tagih -->
+    <div class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Išči po oznakah" aria-label="Search">
+      <button class="btn btn-info" type="submit">Išči</button>
+    </div>
 
     
 
-    <div id="info-text"  class="alert alert-dismissible alert-info">
+    <div id="info-text"  class="alert alert-dismissible alert-info m-4">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <strong>Opa!</strong> 
+      Izdelek dodan v košarico.
     </div>
 
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if izdelki.has_previous %}
-                <a href="?page=1">&laquo; Prva</a>
-                <a href="?page={{ izdelki.previous_page_number }}">Prejšna</a>
-            {% endif %}
-
-            <span class="current">
-                Stran {{ izdelki.number }} od {{ izdelki.paginator.num_pages }}.
-            </span>
-
-            {% if izdelki.has_next %}
-                <a href="?page={{ izdelki.next_page_number }}">Naslednja</a>
-                <a href="?page={{ izdelki.paginator.num_pages }}">Zadnja &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+   
 
 
-    <table class="table">
+    <div class="row justify-content-md-center">
 
-        {% for izdelek in izdelki  %}
-        <tr>
-            <td>{{izdelek.ime}}</td>
-            <td>{{izdelek.opis}}</td>
-            <td><img src="{{ izdelek.image_thumbnail.url }}"></td>
-            <td>{{izdelek.zaloga}}</td>
-            <td>{{izdelek.aktiven}}</td>
-            
-            
-            <td>
+    {% for izdelek in izdelki  %}
+        <div class="card col-sm-3 m-3" style="width: 10rem;">
+            <img class="card-img-top  mt-3" src="{{ izdelek.image_thumbnail.url }}" alt="Slika ni na voljo">
+            <div class="card-body">
+                <h2 class="card-title">{{izdelek.ime}}</h2>
+                <p class="card-text">{{izdelek.opis}}</p>
+                {% if izdelek.zaloga %}
+                <p class="card-text text-success">Na zalogi</p>
+                {% else %}
+                <p class="card-text text-danger">Ni na zalogi</p>
+                {% endif %}
+
+                <div class="container btn-group btn-group-toggle" data-toggle="buttons">
+                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> 20
+                  </label>
+                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> 50
+                  </label>
+                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> 100
+                  </label>
+                  <div class=" col-sm-3">
+                    <input name="kolicina" required="" id="{{ izdelek.id }}" type="number" size="4" placeholder="...">
+                </div>
+
+                </div>
+
                 
-                <input name="kolicina" required="" id="{{ izdelek.id }}" type="number">
-                
-            </td>
-            <td><input class="test" type="submit" value="Dodaj v košarico" /></td>
-            
-            
+                <input class="dodaj btn btn-primary mt-3" type="submit" value="Dodaj v košarico" />
+            </div>
+        </div>
 
-        </tr>
+    {% endfor %}
+</div>
+
+ <div class="row justify-content-md-center mt-3">
+        <ul class="pagination">
+         
+        {% if izdelki.has_previous %}
+            <li class="page-item">
+                <a href="?page={{ izdelki.previous_page_number }}" class="page-link">&laquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link">&laquo;</a>
+            </li>
+        {% endif %}
+
+        {% for pg in izdelki.paginator.page_range %}
+            {% if izdelki.number == pg %}
+              <li class="page-item align-middle active">
+                <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+              </li>
+            {% else %}
+              <li class="page-item align-middle">
+                <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+              </li>
+            {% endif %}
         {% endfor %}
+       
 
-    </table>
+        {% if izdelki.has_next %}
+            <li class="page-item">
+                <a href="?page={{ izdelki.next_page_number }}" class="page-link">&raquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link"><span style="font-size: 1rem !important">&raquo;</span></a>
+            </li>
+        {% endif %}
+
+           
+        </ul>
+    </div>
 
 
 {% endblock %}

@@ -5,5 +5,7 @@ rm db.sqlite3
 
 python3 manage.py makemigrations
 python3 manage.py migrate
+python3 manage.py migrate --run-syncdb
+
 echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'adminadmin', first_name='Skrbnik')" | python3 manage.py shell
 echo "import products.naredi_bazo; products.naredi_bazo.naredi_bazo(None)" | python3 manage.py shell 
