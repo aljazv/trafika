@@ -64,7 +64,7 @@ def index(request):
             prva_skupina = SkupinaIzdelkov.objects.first().id
             return HttpResponseRedirect(str(prva_skupina)+ "/")
     else:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
 
 #index_skupina je 
@@ -73,7 +73,7 @@ def index_skupina(request, index, search_string = None):
     
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
     #prikaz izdelkov    
     else:
@@ -124,7 +124,7 @@ def kosarica(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
     #dela ker je sam ena kosrica ustvarjena!
     #Za popraviti sumnike
@@ -157,7 +157,7 @@ def pregled_narocil(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava")
 
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
         curr_opomba = request.POST['opomba']

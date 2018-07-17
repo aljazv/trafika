@@ -15,60 +15,82 @@
 
     <!-- iskanje po tagih -->
     <div class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Išči po oznakah" aria-label="Search">
+      <input class="form-control mr-sm-2" style="border:1px solid rgba(0,0,0,0.125); background-color:white" type="search" placeholder="Išči po oznakah" aria-label="Search">
       <button class="btn btn-info" type="submit">Išči</button>
     </div>
 
     
 
-    <div id="info-text"  class="alert alert-dismissible alert-info m-4">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      Izdelek dodan v košarico.
-    </div>
+    
 
 
    
 
 
-    <div class="row justify-content-md-center">
+    <div class="row mt-3">
+
+    <div id="info-text"  class="alert alert-dismissible alert-info item-card">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Izdelek dodan v košarico.
+    </div>
 
     {% for izdelek in izdelki  %}
-        <div class="card col-sm-3 m-3" style="width: 10rem;">
-            <img class="card-img-top  mt-3" src="{{ izdelek.image_thumbnail.url }}" alt="Slika ni na voljo">
-            <div class="card-body">
-                <h2 class="card-title">{{izdelek.ime}}</h2>
+
+      <div class="card p-3 mb-3 item-card" >
+        <div class="row">
+          <div class="col-md-4" style="position: relative;">
+              <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
+            </div>
+            <div class="col-md-8 px-3">
+              <div class="card-block px-3">
+                <h3 class="card-title">{{izdelek.ime}}</h3>
                 <p class="card-text">{{izdelek.opis}}</p>
+                
                 {% if izdelek.zaloga %}
                 <p class="card-text text-success">Na zalogi</p>
                 {% else %}
                 <p class="card-text text-danger">Ni na zalogi</p>
                 {% endif %}
 
-                <div class="container btn-group btn-group-toggle" data-toggle="buttons">
-                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                <div class="btn-group btn-group-toggle row" data-toggle="buttons">
+                  <label class="btn btn-secondary active col-md-2">
+                    <input type="radio" name="options" id="option1" autocomplete="off" checked> 10
+                  </label>
+                  <label class="btn btn-secondary col-md-2">
                     <input type="radio" name="options" id="option2" autocomplete="off"> 20
                   </label>
-                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                  <label class="btn btn-secondary col-md-2">
                     <input type="radio" name="options" id="option3" autocomplete="off"> 50
                   </label>
-                  <label class="btn btn-outline-success col-sm-3 mr-2">
+                  <label class="btn btn-secondary col-md-2">
                     <input type="radio" name="options" id="option3" autocomplete="off"> 100
                   </label>
-                  <div class=" col-sm-3">
-                    <input name="kolicina" required="" id="{{ izdelek.id }}" type="number" size="4" placeholder="...">
-                </div>
 
+                  <div class="col-md-2">
+                    <input name="kolicina" class="form-control p-lr" required="" id="{{ izdelek.id }}"  size="8" placeholder="Poljubno">
+                  </div>
+
+                  <div class="col-md-2">
+                    <button class="dodaj btn btn-primary" type="submit">Dodaj v košarico</button>
+                  </div>
                 </div>
 
                 
-                <input class="dodaj btn btn-primary mt-3" type="submit" value="Dodaj v košarico" />
+                
+              </div>
             </div>
+
+          </div>
         </div>
+   
+
+
+        
 
     {% endfor %}
 </div>
 
- <div class="row justify-content-md-center mt-3">
+ <div class="row mt-3">
         <ul class="pagination">
          
         {% if izdelki.has_previous %}
