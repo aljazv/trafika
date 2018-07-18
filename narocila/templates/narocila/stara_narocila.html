@@ -1,0 +1,89 @@
+{% include "base.html" %}
+<div id="main" class="main">
+    {% block content %}
+    {% if narocila_obdelano %}
+    <table class="table">
+        <tr>
+            <td>#</td>
+            <td>Datum</td>
+            <td>Podjetje</td>
+            <td>Prodajno mesto</td>
+            <td>Nacin prodaje/dostave</td>
+            <td>Stevilka narocila(opcijsko)</td>
+            <td>Uveljavi spremembe prodaje/dostave</td>
+            <td>Narocilnica</td>
+            <td>Dobavnica</td>
+        </tr>
+        {% for narocilo in narocila_obdelano  %}
+        
+        <tr>
+            <td>{{forloop.counter}}.</td>
+            <td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
+            <td>{{narocilo.uporabnik.podjetje.ime}}</td>
+            <td>{{narocilo.uporabnik.prodajno_mesto.ime}}</td>
+            <form action="/narocila/stara_narocila/" method="post">
+                {% csrf_token %}
+                <td>
+                    {% if narocilo.nacin_prodaje == "Odkup" %}
+                    <select name="nacinProdaje">
+                        <option value="Komisija">Komisija</option>
+                        <option value="Odkup" selected="selected">Odkup</option>
+                    </select>
+                    {% else %}
+                    <select name="nacinProdaje">
+                        <option value="Komisija" selected="selected">Komisija</option>
+                        <option value="Odkup">Odkup</option>
+                    </select>
+                    {% endif %}
+
+                    {% if narocilo.nacin_dostave == "Osebno" %}
+                    <select name="nacinDostave">
+                        <option value="Osebno" selected="selected">Osebno</option>
+                        <option value="Posta">Posta</option>
+                    </select>
+                    {% else %}
+                    <select name="nacinDostave">
+                        <option value="Osebno">Osebno</option>
+                        <option value="Posta" selected="selected">Posta</option>
+                    </select>
+                    {% endif %}
+                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    <button type="submit" name="uveljavi">Uveljavi</button>
+                </td>
+            </form>
+
+            <form action="/narocila/stara_narocila/" method="post">
+                {% csrf_token %}
+                <td>
+                    <input type="text" name="st_narocila" value="{{ narocilo.st_narocila }}" size="10">
+                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    <button type="submit" name="uveljavi_stNarocila">Uveljavi</button>
+                </td>
+            </form>
+
+            <form action="/narocila/stara_narocila/" method="post">
+                {% csrf_token %}
+                <td>
+                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    <button type="submit" name="prenesi_narocilnica">Prenesi</button>
+                </td>
+            </form>
+
+            <form action="/narocila/stara_narocila/" method="post">
+                {% csrf_token %}
+                <td>
+                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    <button type="submit" name="prenesi_dobavnica">Prenesi</button>
+                </td>
+            </form>
+        </tr>
+
+        {% endfor %}
+    </table>
+
+    {% else %}
+    Ni starih narocil.
+    {% endif %}
+
+    {% endblock %}
+</div>

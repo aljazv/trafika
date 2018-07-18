@@ -52,7 +52,7 @@ class ProdajnoMesto(models.Model):
    telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
 
 class Podjetje(models.Model):
-    podjetje = models.CharField(max_length = 100, verbose_name="Ime podjetja")
+    ime = models.CharField(max_length = 100, verbose_name="Ime podjetja")
     naslov = models.CharField(max_length = 100, verbose_name="Naslov podjetja")
     postna_stevilka = models.CharField(max_length = 100, verbose_name="Poštna številka")
     obcina = models.CharField(max_length = 100, verbose_name="Občina")
@@ -68,13 +68,14 @@ class Narocilo(models.Model):
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
     opomba = models.CharField(blank=True, max_length=200)
     # ce ne specificiras datuma se bo shranil trenutni datum
-    datum = models.DateTimeField(auto_now=True, verbose_name="Datum naročila")
+    datum = models.DateTimeField(auto_now_add=True, verbose_name="Datum naročila")
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka)
     
 
     je_obdelan = models.BooleanField(default=False, verbose_name="Ali je naročilo že obdelano")
     nacin_prodaje = models.CharField(max_length = 100, verbose_name="Način prodaje")
     nacin_dostave = models.CharField(max_length = 100, verbose_name="Način dostave")
+    st_narocila = models.CharField(max_length = 100, verbose_name="Številka naročila")
 
     def __str__(self):
         if self.je_obdelan:

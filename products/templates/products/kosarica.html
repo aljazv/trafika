@@ -22,7 +22,7 @@
 		</tr>
 		{% for narocilo_izdelka in arr  %}
 		<tr>
-			<td>{{forloop.counter}}</td>
+			<td>{{forloop.counter}}.</td>
 			<td>{{narocilo_izdelka.izdelek.ime}}</td>
 			<td><img src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 			<td>{{narocilo_izdelka.kolicina}}</td>
@@ -47,7 +47,7 @@
 
 	<form action="/pregled_narocil/" method="post">
 		{% csrf_token %}
-		<input type="text" name="opomba" placeholder="Opomba" size="70"><br>
+		<input type="text" name="opomba" placeholder="Opomba" size="70">
 		<button type="submit" name="oddaj_narocilo">Oddaj narocilo</button>
 	</form>
 
