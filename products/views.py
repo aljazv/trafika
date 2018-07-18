@@ -274,12 +274,12 @@ def pregled_narocil(request):
 
         for i, narocilo_izdelka in enumerate(narocila_izdelka):
             iteracija = str(i+1) + "."
-            #fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), narocilo_izdelka.izdelek.image_thumbnail.url)
-            #im = Image(narocilo_izdelka.izdelek.image_thumbnail.url, 2*cm, 2*cm)
+
+            im = Image(narocilo_izdelka.izdelek.image_thumbnail, 2*cm, 2*cm)
 
             data1 = [[Paragraph(iteracija, styles["Line_Data"]),
                   Paragraph(narocilo_izdelka.izdelek.ime, styles["Line_Data"]),
-                  Paragraph( "Vnesi sliko - fix", styles["Line_Data"]),
+                  im,
                   Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
                   Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
                   Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
