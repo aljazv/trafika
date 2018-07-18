@@ -10,24 +10,20 @@
 
 {% endblock %}
 
-<div id="main" class="main">
 {% block content %}
 
-    <!-- iskanje po tagih -->
-    <div class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" style="border:1px solid rgba(0,0,0,0.125); background-color:white" type="search" placeholder="Išči po oznakah" id="search">
-      <button class="btn btn-info" onclick="myFunction()">Išči</button>
+<div id="main" class="main">
+    <div class="m-3">
+      <h1>{{ime_skupine}}</h1>
+      <!-- iskanje po tagih -->
+      <div class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2 costum-input"  type="search" placeholder="Išči po oznakah" id="search">
+        <button class="btn btn-info" onclick="myFunction()">Išči</button>
+      </div>
     </div>
 
-    
 
-    
-
-
-   
-
-
-    <div class="row mt-3">
+    <div class="row mt-3 justify-content-md-center">
 
     <div id="info-text"  class="alert alert-dismissible alert-info item-card">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -37,7 +33,7 @@
     {% for izdelek in izdelki  %}
 
       <div class="card p-3 mb-3 item-card" >
-        <div class="row">
+        <div class="row ">
           <div class="col-md-4" style="position: relative;">
               <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
             </div>
@@ -52,25 +48,25 @@
                 <p class="card-text text-danger">Ni na zalogi</p>
                 {% endif %}
 
-                <div class="btn-group btn-group-toggle row" data-toggle="buttons">
-                  <label class="btn btn-secondary active col-md-2">
+                <div class="btn-group btn-group-toggle row" data-toggle="buttons" style="">
+                  <label class="btn btn-secondary active col-md-1">
                     <input type="radio" name="options" id="option1" autocomplete="off" checked> 10
                   </label>
-                  <label class="btn btn-secondary col-md-2">
+                  <label class="btn btn-secondary col-md-1">
                     <input type="radio" name="options" id="option2" autocomplete="off"> 20
                   </label>
-                  <label class="btn btn-secondary col-md-2">
+                  <label class="btn btn-secondary col-md-1">
                     <input type="radio" name="options" id="option3" autocomplete="off"> 50
                   </label>
-                  <label class="btn btn-secondary col-md-2">
+                  <label class="btn btn-secondary col-md-1">
                     <input type="radio" name="options" id="option3" autocomplete="off"> 100
                   </label>
 
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <input name="kolicina" class="form-control p-lr" required="" id="{{ izdelek.id }}"  size="8" placeholder="Poljubno">
                   </div>
 
-                  <div class="col-md-2">
+                  <div class="col-md-4">
                     <button class="dodaj btn btn-primary" type="submit">Dodaj v košarico</button>
                   </div>
                 </div>
@@ -130,7 +126,6 @@
         </ul>
     </div>
 
-
+</div>
 {% endblock %}
 
-</div>

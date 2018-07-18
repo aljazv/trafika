@@ -86,8 +86,6 @@ def index_skupina(request, index, search_string = None):
         if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
             nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
             nova_kosarica.save()
-            print("kosarica ustvarjena")
-
 
 
         #logika za iskanje po tagih
@@ -98,6 +96,7 @@ def index_skupina(request, index, search_string = None):
             vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
         
 
+        skupina = SkupinaIzdelkov.objects.get(id=index);
 
         #paginacija
         paginator = Paginator(vsi_izdelki, 25)
@@ -111,6 +110,7 @@ def index_skupina(request, index, search_string = None):
             'skupine': getAllGroups(),
             'izdelki' : paginirani_izdelki,
             'index_skupina' : index,
+            'ime_skupine': skupina.ime
             
         }
 
@@ -161,9 +161,11 @@ def pregled_narocil(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/prijava")
 
+    set_msg = False
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
         curr_opomba = request.POST['opomba']
 
+        set_msg = True
         kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
         curr_uporabnik = Uporabnik.objects.get(user = request.user)
 
@@ -200,6 +202,7 @@ def pregled_narocil(request):
         'arr': narocila_uporabnika,
         'msg_type': 'alert-success',
         'message': 'Naročilo uspešno oddano.',
+        'show_msg': set_msg,
         'skupine': getAllGroups(),
         }
 

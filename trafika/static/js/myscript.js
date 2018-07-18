@@ -11,6 +11,7 @@
       if (nav.hasClass('sidenav')){
         nav.removeClass('sidenav');
         main.removeClass('main');
+        $(".card.p-3.mb-3.item-card").addClass("auto-m");
       }
     }
 
@@ -20,6 +21,7 @@
       if (! nav.hasClass('sidenav')){
         nav.addClass('sidenav');
         main.addClass('main')
+        $(".card.p-3.mb-3.item-card").removeClass("auto-m");
       }
     }
   }
@@ -49,9 +51,7 @@
               'id_izdelka': inp.attr('id'),
               'kolicina' : inp.val()
           }
-
-  
-                    
+      
           $.ajax({
               "type": "POST",
               "dataType": "json",
