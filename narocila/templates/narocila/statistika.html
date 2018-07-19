@@ -1,94 +1,154 @@
 {% include "base.html" %}
 
 
+
+{% block content %}
 <div id="main" class="main">
-    {% block content %}
+<div class="m-3">
+
+    <h1>Statistika</h1>
+
+    <div class="row mt-4">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi skupaj po artiklu (EAN kodi):</h4>
+            <div class="row form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <button type="submit" class="btn btn-info" name="prenesi_excel_skupine">Prenesi</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="row mt-4">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi po artiklu (EAN koda) znotraj prodajnega mesta:</h4>
+         
+            <div class="row form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                 <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
+                    <option value=""> </option>
+                    {% for mesto in prodajno_mesto  %}
+                    <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-info" name="prenesi_excel_skupine_trafika">Prenesi</button>
+            </div>
+
+           
+        </form>
+    </div>
+  
 
 
-    <form action="/narocila/statistika/" method="post">
-        {% csrf_token %}
-        <p>
-            Prenesi skupaj po artiklu (EAN kodi):
-            <button type="submit" name="prenesi_excel_skupine">Prenesi</button>
-            Zacetni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
-            Koncni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+    <div class="row mt-4">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi motivno skupaj:</h4>
 
-        </p>
-    </form>
+           <div class="row form-inline">
 
-    <form action="/narocila/statistika/" method="post">
-        {% csrf_token %}
-        <p>
-            Prenesi po artiklu (EAN koda) znotraj prodajnega mesta:
-            <button type="submit" name="prenesi_excel_skupine_trafika">Prenesi</button>
-            Zacetni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
-            Koncni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
 
-            <select name="prodajno_mesto" required>
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                 <select name="skupina_izdelkov" class="form-control costum-input mr-3" required>
+                   <option value=""> </option>
+                {% for skupina in skupine_izdelkov  %}
+                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
+                {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-info" name="prenesi_excel_motivno">Prenesi</button>
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="row mt-4">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi: motivno znotraj artikla po posamičnem prodajnem mestu</h4>
+            <div class="row form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
                 <option value=""> </option>
                 {% for mesto in prodajno_mesto  %}
                 <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
                 {% endfor %}
-            </select>
+                </select>
 
-        </p>
-    </form>
-
-    <form action="/narocila/statistika/" method="post">
-        {% csrf_token %}
-        <p>
-            Prenesi motivno skupaj:
-            <button type="submit" name="prenesi_excel_motivno">Prenesi</button>
-            Zacetni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
-            Koncni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
-
-            <select name="skupina_izdelkov" required>
+                <select name="skupina_izdelkov" class="form-control costum-input mr-3" required>
                 <option value=""> </option>
                 {% for skupina in skupine_izdelkov  %}
                 <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
                 {% endfor %}
-            </select>
+                </select>
 
-        </p>
-    </form>
+                <button type="submit" class="btn btn-info" name="prenesi_excel_motivno_trafika">Prenesi</button>
+            </div>
 
-    <form action="/narocila/statistika/" method="post">
-        {% csrf_token %}
-        <p>
-            Prenesi: motivno znotraj artikla po posamicnem prodajnem mestu
-            <button type="submit" name="prenesi_excel_motivno_trafika">Prenesi</button>
-            Zacetni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
-            Koncni datum(fromat: DD.MM.YYYY):
-            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+            
+         </form>
+    </div>
 
-            <select name="prodajno_mesto" required>
-                <option value=""> </option>
-                {% for mesto in prodajno_mesto  %}
-                <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
-                {% endfor %}
-            </select>
-
-            <select name="skupina_izdelkov" required>
-                <option value=""> </option>
-                {% for skupina in skupine_izdelkov  %}
-                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
-                {% endfor %}
-            </select>
-
-        </p>
-    </form>
-
-    {% endblock %}
+</div>
 </div>
 
+
+
 <script type="text/javascript">
+
+    $( function() {
+        $( ".date-menu" ).datepicker({ });
+        $(".date-menu").datepicker({
+        firstDay: 1 ,
+        dayNamesMin: [ 'Ne', 'Po', 'To', 'Sr', 'Če', 'Pe', 'So'],
+        });
+
+        $( ".date-menu" ).on( "change", function() {
+            $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+        });
+    });
 
     function myFunction(element) {
         var text_datum = element.value;
@@ -99,7 +159,7 @@
         }
         else {
             element.setCustomValidity(""); //more bit!
-            split = text_datum.split('.');
+            split = text_datum.split('/');
             datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
             var stDni_meseca = datum_tabela[split[1] - 1];
@@ -113,3 +173,5 @@
         }
     }
 </script>
+
+{% endblock %}

@@ -1,21 +1,27 @@
 {% include "base.html" %}
-<div id="main" class="main">
+
     {% block content %}
+<div id="main" class="main">
+    <div class="m-3">
+    <h1>Obdelana naročila</h1>
+
     {% if narocila_obdelano %}
-    <table class="table">
-        <tr>
-            <td>#</td>
-            <td>Datum</td>
-            <td>Podjetje</td>
-            <td>Prodajno mesto</td>
-            <td>Nacin prodaje/dostave</td>
-            <td>Stevilka narocila(opcijsko)</td>
-            <td>Narocilnica</td>
-            <td>Dobavnica</td>
-        </tr>
+   <table class="table table-responsive mt-3 table-hover">
+        <thead>
+            <tr class="table-light">
+                <td>#</td>
+                <td>Datum</td>
+                <td>Podjetje</td>
+                <td>Prodajno mesto</td>
+                <td>Način prodaje/dostave</td>
+                <td>Številka naročila (opcijsko)</td>
+                <td>Naročilnica</td>
+                <td>Dobavnica</td>
+            </tr>
+        </thead>
         {% for narocilo in narocila_obdelano  %}
         
-        <tr>
+        <tr class="table-light">
             <td>{{forloop.counter}}.</td>
             <td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
             <td>{{narocilo.uporabnik.podjetje.ime}}</td>
@@ -23,40 +29,61 @@
             <form action="/narocila/stara_narocila/" method="post">
                 {% csrf_token %}
                 <td>
-                    {% if narocilo.nacin_prodaje == "Odkup" %}
-                    <select name="nacinProdaje">
-                        <option value="Komisija">Komisija</option>
-                        <option value="Odkup" selected="selected">Odkup</option>
-                    </select>
-                    {% else %}
-                    <select name="nacinProdaje">
-                        <option value="Komisija" selected="selected">Komisija</option>
-                        <option value="Odkup">Odkup</option>
-                    </select>
-                    {% endif %}
+                    <div class="row">
+                        <div>
+                            <div>
+                                {% if narocilo.nacin_prodaje == "Odkup" %}
+                                <select class="form-control" name="nacinProdaje">
+                                    <option value="Komisija">Komisija</option>
+                                    <option value="Odkup" selected="selected">Odkup</option>
+                                </select>
+                                {% else %}
+                                <select class="form-control" name="nacinProdaje">
+                                    <option value="Komisija" selected="selected">Komisija</option>
+                                    <option value="Odkup">Odkup</option>
+                                </select>
+                                {% endif %}
+                            </div>
 
-                    {% if narocilo.nacin_dostave == "Osebno" %}
-                    <select name="nacinDostave">
-                        <option value="Osebno" selected="selected">Osebno</option>
-                        <option value="Posta">Posta</option>
-                    </select>
-                    {% else %}
-                    <select name="nacinDostave">
-                        <option value="Osebno">Osebno</option>
-                        <option value="Posta" selected="selected">Posta</option>
-                    </select>
-                    {% endif %}
-                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
-                    <button type="submit" name="uveljavi">Uveljavi</button>
+                            <div class="mt-1">
+                                {% if narocilo.nacin_dostave == "Osebno" %}
+                                <select class="form-control" name="nacinDostave">
+                                    <option value="Osebno" selected="selected">Osebno</option>
+                                    <option value="Posta">Posta</option>
+                                </select>
+                                {% else %}
+                                <select class="form-control" name="nacinDostave">
+                                    <option value="Osebno">Osebno</option>
+                                    <option value="Posta" selected="selected">Posta</option>
+                                </select>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                        <button type="submit" class="btn btn-primary ml-1" name="uveljavi">Uveljavi</button>
+                    </div>
+                </td>
+            </form>
+
+            <form action="/narocila/stara_narocila/" method="post">
+                {% csrf_token %}
+                <td class="row">
+                   <div class="form-inline my-2 my-lg-0">
+                        <input type="text" class="form-control mr-2 costum-input" name="st_narocila" value="{{ narocilo.st_narocila }}" size="10">
+                    
+                        <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    
+                        <button type="submit" class="btn btn-primary" name="uveljavi_stNarocila">Spremeni</button>
+                    </div>
                 </td>
             </form>
 
             <form action="/narocila/stara_narocila/" method="post">
                 {% csrf_token %}
                 <td>
-                    <input type="text" name="st_narocila" value="{{ narocilo.st_narocila }}" size="10">
                     <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
-                    <button type="submit" name="uveljavi_stNarocila">Uveljavi</button>
+                    <button type="submit" class="btn btn-info" name="prenesi_narocilnica"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
                 </td>
             </form>
 
@@ -64,15 +91,7 @@
                 {% csrf_token %}
                 <td>
                     <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
-                    <button type="submit" name="prenesi_narocilnica">Prenesi</button>
-                </td>
-            </form>
-
-            <form action="/narocila/stara_narocila/" method="post">
-                {% csrf_token %}
-                <td>
-                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
-                    <button type="submit" name="prenesi_dobavnica">Prenesi</button>
+                    <button type="submit" class="btn btn-info" name="prenesi_dobavnica"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
                 </td>
             </form>
         </tr>
@@ -81,8 +100,9 @@
     </table>
 
     {% else %}
-    Ni starih narocil.
+    <p>Ni starih naročil.</p>
     {% endif %}
-
-    {% endblock %}
 </div>
+
+</div>
+    {% endblock %}
