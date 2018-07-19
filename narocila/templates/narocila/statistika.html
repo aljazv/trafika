@@ -1,0 +1,115 @@
+{% include "base.html" %}
+
+
+<div id="main" class="main">
+    {% block content %}
+
+
+    <form action="/narocila/statistika/" method="post">
+        {% csrf_token %}
+        <p>
+            Prenesi skupaj po artiklu (EAN kodi):
+            <button type="submit" name="prenesi_excel_skupine">Prenesi</button>
+            Zacetni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+            Koncni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+
+        </p>
+    </form>
+
+    <form action="/narocila/statistika/" method="post">
+        {% csrf_token %}
+        <p>
+            Prenesi po artiklu (EAN koda) znotraj prodajnega mesta:
+            <button type="submit" name="prenesi_excel_skupine_trafika">Prenesi</button>
+            Zacetni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+            Koncni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+
+            <select name="prodajno_mesto" required>
+                <option value=""> </option>
+                {% for mesto in prodajno_mesto  %}
+                <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
+                {% endfor %}
+            </select>
+
+        </p>
+    </form>
+
+    <form action="/narocila/statistika/" method="post">
+        {% csrf_token %}
+        <p>
+            Prenesi motivno skupaj:
+            <button type="submit" name="prenesi_excel_motivno">Prenesi</button>
+            Zacetni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+            Koncni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+
+            <select name="skupina_izdelkov" required>
+                <option value=""> </option>
+                {% for skupina in skupine_izdelkov  %}
+                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
+                {% endfor %}
+            </select>
+
+        </p>
+    </form>
+
+    <form action="/narocila/statistika/" method="post">
+        {% csrf_token %}
+        <p>
+            Prenesi: motivno znotraj artikla po posamicnem prodajnem mestu
+            <button type="submit" name="prenesi_excel_motivno_trafika">Prenesi</button>
+            Zacetni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_zac" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+            Koncni datum(fromat: DD.MM.YYYY):
+            <input type="text" oninput="myFunction(this)" name="datum_kon" value="" style="width: 120px;" placeholder="dd.mm.yyyy" required />
+
+            <select name="prodajno_mesto" required>
+                <option value=""> </option>
+                {% for mesto in prodajno_mesto  %}
+                <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="skupina_izdelkov" required>
+                <option value=""> </option>
+                {% for skupina in skupine_izdelkov  %}
+                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
+                {% endfor %}
+            </select>
+
+        </p>
+    </form>
+
+    {% endblock %}
+</div>
+
+<script type="text/javascript">
+
+    function myFunction(element) {
+        var text_datum = element.value;
+        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g);
+
+        if (m == null) {
+            element.setCustomValidity("Nepravilen vnos datuma");
+        }
+        else {
+            element.setCustomValidity(""); //more bit!
+            split = text_datum.split('.');
+            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            var stDni_meseca = datum_tabela[split[1] - 1];
+
+
+            if (split[0] > stDni_meseca) {
+                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
+                return
+            }
+            
+        }
+    }
+</script>

@@ -21,6 +21,10 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, PageBreak
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+
 from time import gmtime, strftime
 
 
@@ -169,7 +173,8 @@ def pregled_narocil(request):
         kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
         curr_uporabnik = Uporabnik.objects.get(user = request.user)
 
-        narocilo = Narocilo(uporabnik = curr_uporabnik, opomba = curr_opomba)
+        potnik = Potnik.objects.get(prodajno_mesto = curr_uporabnik.prodajno_mesto) #dodas se potnika!
+        narocilo = Narocilo(uporabnik = curr_uporabnik, opomba = curr_opomba, potnik = potnik)
         narocilo.save()
         for narocilo_add in kosarica_uporabnika.narocila_izdelka.all():
             narocilo.narocila_izdelka.add(narocilo_add)
@@ -224,15 +229,15 @@ def natisni_narocilnica(request, narocilo):
             
     styles=getSampleStyleSheet()
     p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
-    p1 = styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-    p2 = styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    p3 = styles.add(ParagraphStyle(name='Left', alignment=TA_LEFT))
-    p4 = styles.add(ParagraphStyle(name='Line_Data', alignment=TA_LEFT, fontSize=11, leading=10))
-    p5 = styles.add(ParagraphStyle(name='Line_Data_Small', alignment=TA_LEFT, fontSize=7, leading=8))
-    p6 = styles.add(ParagraphStyle(name='Line_Data_Large', alignment=TA_LEFT, fontSize=12, leading=12))
-    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest', alignment=TA_LEFT, fontSize=14, leading=15))
-    p8 = styles.add(ParagraphStyle(name='Line_Label', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
-    p9 = styles.add(ParagraphStyle(name='Line_Label_Center', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
+    p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
+    p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
+    p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=11, leading=13))
+    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
+    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
+    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
 
     ptext = '<font size=12>%s</font>' % formatted_time
     par = Paragraph(ptext, p0)
@@ -264,6 +269,8 @@ def natisni_narocilnica(request, narocilo):
     ]))
     story.append(t1)
     #
+    story.append(Spacer(1, 20))
+    #
     story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
     #
     datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
@@ -289,7 +296,7 @@ def natisni_narocilnica(request, narocilo):
         Paragraph('✔', styles["Line_Label"])
         ]]
         
-    t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,5 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+    t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
     t1.setStyle(TableStyle([
         ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
         ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
@@ -314,7 +321,7 @@ def natisni_narocilnica(request, narocilo):
                 Paragraph("", styles["Line_Data"])
                 ]]
 
-        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 5 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
         t1.setStyle(TableStyle([
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
             ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
