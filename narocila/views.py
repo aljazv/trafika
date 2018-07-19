@@ -5,8 +5,11 @@ from django.shortcuts import render
 import datetime
 
 from products.views import *
+from . import excel
 
 from products.models import *
+
+
 # Create your views here.
 
 
@@ -112,7 +115,8 @@ def natisni_dobavnica(request, narocilo):
     
     for narocilo_izdelka in narocila_izdelka:
         tabela[narocilo_izdelka.izdelek.skupina_izdelkov] += narocilo_izdelka.kolicina
-    
+
+    tabela = {x:y for x,y in tabela.items() if y!=0} #izbrises te k so 0!
 
     uporabnik = narocilo.uporabnik
     story = []
@@ -256,3 +260,4 @@ def natisni_dobavnica(request, narocilo):
         story.append(t1)
 
     return story
+

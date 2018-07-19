@@ -13,6 +13,9 @@ def naredi_bazo(request):
     prodajno_mesto = ProdajnoMesto(ime = "Trafika Škofja Loka", naslov = "Škofja Loka 88", postna_stevilka = "4220", obcina = "Škofja Loka", kontaktna_oseba = "Anja Novak", telefon = "041500677")
     prodajno_mesto.save()
 
+    prodajno_mesto1 = ProdajnoMesto(ime = "Trafika Ljubljana", naslov = "Cankarjeva ulica 1", postna_stevilka = "1000", obcina = "Ljubljana", kontaktna_oseba = "Luka Cvek", telefon = "041456289")
+    prodajno_mesto1.save()
+
     podjetje = Podjetje(ime = "trafika d.o.o.", naslov = "Škofja Loka 12", postna_stevilka = "4220", obcina = "Škofja Loka", davcna_stevilka = "67294308")
     podjetje.save()
 
