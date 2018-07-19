@@ -18,7 +18,7 @@
 					<th scope="col">#</th> 
 					<th scope="col">Ime izdelka</th> 
 					<th scope="col">Slika</th> 
-					<th scope="col">Količina naročenih izdelkov</th> 
+					<th scope="col">Količina</th> 
 					<th scope="col">Spremeni količino</th> 
 					<th scope="col">Odstrani izdelek iz košarice</th> 
 				</tr>
@@ -27,7 +27,7 @@
 			<tr class="table-light">
 				<td>{{forloop.counter}}.</td>
 				<td>{{narocilo_izdelka.izdelek.ime}}</td>
-				<td><img src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
+				<td><img style="max-width:380px" src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 				<td>{{narocilo_izdelka.kolicina}}</td>
 				<form action="/kosarica/" method="post" class="form-inline">
 					{% csrf_token %}
@@ -37,7 +37,7 @@
 						
 						<input class="form-control mr-2 costum-input" placeholder="Spremeni količino"  name="kolicina" min="0" size="15">
 				
-						<button type="submit" class="btn btn-info" name="spremeni_kolicino"><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
+						<button type="submit" class="btn btn-primary" name="spremeni_kolicino"><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
 
 						</div>
 					

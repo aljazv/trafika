@@ -13,6 +13,10 @@ body{
   background-color: #f7f7f9;
 }
 
+.statistics-label{
+  font-size: 0.7em;
+}
+
 .costum-input{
   border:1px solid rgba(0,0,0,0.125); 
   background-color:white;
