@@ -30,12 +30,30 @@ def naredi_bazo(request):
         user_admin.is_superuser=True
     
     user_admin.save()
-   
+    #naredi potnika
+    user, created = User.objects.get_or_create(username="potnik", email="potnik@gmail.com")
+    user.first_name = "Jure"
+    user.last_name = "Hovelja"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=True
+        user.is_superuser=False
+    
+    user.save()
+
+    potnik = Potnik(user = user, prodajno_mesto = prodajno_mesto, telefon = "031786453", email = "potnik@gmail.com")
+    potnik.save()
+
+    #
     uporabnik_admin = Uporabnik(user = user_admin, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     uporabnik_admin.save()
 
-    skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti", koda = "238947298347")
+    skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti", koda = "2389472983")
     skupina_izdelkov1.save()
+
+    skupina_izdelkov2 = SkupinaIzdelkov(ime = "Razglednice", koda = "2734242398")
+    skupina_izdelkov2.save()
 
     tag_bled = Tag(ime = "Bled")
     tag_bled.save()
@@ -50,8 +68,19 @@ def naredi_bazo(request):
     narocilo_triglav = NarociloIzdelka(izdelek = izdelek_triglav,kolicina = 100)
     narocilo_triglav.save()
 
+    
+
+    izdelek_razglednica1 = Izdelek(ime = "Razglednica test 1", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov2, koda = "AZU4as356B")
+    izdelek_razglednica1.slika.save("jama.jpg", File(open(r'media/gallery/mag_panoramski_11.jpg','rb')))
+    narocilo_izdelek_razglednica1 = NarociloIzdelka(izdelek = izdelek_razglednica1,kolicina = 100)
+    narocilo_izdelek_razglednica1.save()
+
+    izdelek_razglednica2 = Izdelek(ime = "Razglednica test 2", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov2, koda = "sadfasdf")
+    izdelek_razglednica2.slika.save("marija.jpg", File(open(r'media/gallery/magneti_zbirno_201727.jpg','rb')))
+    narocilo_izdelek_razglednica2 = NarociloIzdelka(izdelek = izdelek_razglednica2,kolicina = 100)
+    narocilo_izdelek_razglednica2.save()
+
     kosarica = Kosarica(uporabnik = uporabnik_admin)
     kosarica.save()
-    kosarica.narocila_izdelka.add(narocilo_bled,narocilo_triglav)
+    kosarica.narocila_izdelka.add(narocilo_bled,narocilo_triglav,narocilo_izdelek_razglednica1,narocilo_izdelek_razglednica2)
     kosarica.save()
-    
