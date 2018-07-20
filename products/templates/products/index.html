@@ -30,6 +30,13 @@
       Izdelek dodan v košarico.
     </div>
 
+    <div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Izberite ali vpišite pravilno količino.
+    </div>
+
+  
+
     {% for izdelek in izdelki  %}
 
       <div class="card p-3 mb-3 item-card" >
@@ -49,25 +56,25 @@
                 {% endif %}
 
                 <div class="btn-group btn-group-toggle row" data-toggle="buttons" style="">
-                  <label class="btn btn-secondary active col-md-1">
-                    <input type="radio" name="options" id="option1" autocomplete="off" checked> 10
+                  <label class="btn btn-secondary col-md-1">
+                    <input type="radio" name="options" id="option1" autocomplete="off"  value="10">10
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> 20
+                    <input type="radio" name="options" id="option2" autocomplete="off" value="20">20
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option3" autocomplete="off"> 50
+                    <input type="radio" name="options" id="option3" autocomplete="off" value="50">50
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option3" autocomplete="off"> 100
+                    <input type="radio" name="options" id="option4" autocomplete="off" value="100">100
                   </label>
 
                   <div class="col-md-3">
-                    <input name="kolicina" class="form-control p-lr" required="" id="{{ izdelek.id }}"  size="8" placeholder="Poljubno">
+                    <input name="kolicina" class="form-control p-lr" required="" id="option5"  size="8" placeholder="Poljubno">
                   </div>
 
                   <div class="col-md-3">
-                    <button class="dodaj btn btn-primary" type="submit">Dodaj v košarico</button>
+                    <button class="dodaj btn btn-primary" id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
                   </div>
                 </div>
 

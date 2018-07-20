@@ -26,12 +26,37 @@
     }
   }
 
+  function checkNum(event){
 
+    event.preventDefault();
+
+    val = $(":input[name='kolicina']").val()
+    var isnum = /^\d+$/.test(val);
+    if (! isnum){
+      $("#warning-text").show();
+    
+      return;
+    }
+    $("#warning-text").hide();
+  
+  }
+
+
+  function removeActive(){
+
+    $(this).parent().parent()
+    .find(':input[name="options"]').prop('checked', false)
+    .parent().removeClass("active");
+
+  }
 
 
   $(document).ready(function(){
-    resize();
+  resize();
    $("#info-text").hide();
+   $("#warning-text").hide();
+   $(':input[name="kolicina"]').on("focus", removeActive);
+   $("button.odstrani_izdelek").on('click', checkNum);
 
 ///verlic
     //http://coreymaynard.com/blog/performing-ajax-post-requests-in-django/
@@ -44,12 +69,31 @@
           if ($(this).hasClass("disabled"))
             return;
 
-          var inp = $(this).parent().parent().find(':input[name="kolicina"]');
+          var inp = $(this).parent().parent().find(':input[name="options"]:checked');
+          
+          if (inp.length==0){
+            inp = $(this).parent().parent().find(':input[name="kolicina"]');
+          
+            
+          }
+
+          
+         var isnum = /^\d+$/.test(inp.val());
+          if (! isnum){
+           
+            $("#warning-text").show();
+            return;
+          }
+
+
+          $("#warning-text").hide();
+   
           var button= $(this);
-          console.log(inp)
+          value = parseInt(inp.val());
+
           var data = {
-              'id_izdelka': inp.attr('id'),
-              'kolicina' : inp.val()
+              'id_izdelka': button.attr('id'),
+              'kolicina' : value
           }
       
           $.ajax({
@@ -62,6 +106,7 @@
                   button.text("Dodano")
                   button.removeClass("btn-primary")
                   button.addClass("btn-success disabled")
+
               },
               "error": function(result) {
                   console.log(result);
@@ -97,13 +142,14 @@
 
     });
 
-function myFunction() {
+  function myFunction() {
     var a = document.getElementById("search").value;
-    console.log(a);
+
     window.location.href = a; 
-    }
+  }
 ///verlic end
 
+  
 
   window.onresize = function() {
    
