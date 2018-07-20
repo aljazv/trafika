@@ -15,8 +15,8 @@ def prenesi_xls(request):
         datum_zac = request.POST['datum_zac']
         datum_kon = request.POST['datum_kon']
 
-        datum_split_zac = datum_zac.split(".")
-        datum_split_kon = datum_kon.split(".")
+        datum_split_zac = datum_zac.split("/")
+        datum_split_kon = datum_kon.split("/")
 
         zacetni_datum= datetime(int(datum_split_zac[2]), int(datum_split_zac[1]), int(datum_split_zac[0]))
         koncni_datum = datetime(int(datum_split_kon[2]), int(datum_split_kon[1]), int(datum_split_kon[0]))
@@ -82,8 +82,8 @@ def prenesi_xls(request):
         datum_zac = request.POST['datum_zac']
         datum_kon = request.POST['datum_kon']
 
-        datum_split_zac = datum_zac.split(".")
-        datum_split_kon = datum_kon.split(".")
+        datum_split_zac = datum_zac.split("/")
+        datum_split_kon = datum_kon.split("/")
 
         zacetni_datum= datetime(int(datum_split_zac[2]), int(datum_split_zac[1]), int(datum_split_zac[0]))
         koncni_datum = datetime(int(datum_split_kon[2]), int(datum_split_kon[1]), int(datum_split_kon[0]))
@@ -151,8 +151,8 @@ def prenesi_xls(request):
         datum_zac = request.POST['datum_zac']
         datum_kon = request.POST['datum_kon']
 
-        datum_split_zac = datum_zac.split(".")
-        datum_split_kon = datum_kon.split(".")
+        datum_split_zac = datum_zac.split("/")
+        datum_split_kon = datum_kon.split("/")
 
         zacetni_datum= datetime(int(datum_split_zac[2]), int(datum_split_zac[1]), int(datum_split_zac[0]))
         koncni_datum = datetime(int(datum_split_kon[2]), int(datum_split_kon[1]), int(datum_split_kon[0]))
@@ -240,8 +240,8 @@ def prenesi_xls(request):
         datum_zac = request.POST['datum_zac']
         datum_kon = request.POST['datum_kon']
 
-        datum_split_zac = datum_zac.split(".")
-        datum_split_kon = datum_kon.split(".")
+        datum_split_zac = datum_zac.split("/")
+        datum_split_kon = datum_kon.split("/")
 
         zacetni_datum= datetime(int(datum_split_zac[2]), int(datum_split_zac[1]), int(datum_split_zac[0]))
         koncni_datum = datetime(int(datum_split_kon[2]), int(datum_split_kon[1]), int(datum_split_kon[0]))

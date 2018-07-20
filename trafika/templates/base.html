@@ -29,8 +29,10 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav flex-column">
 
-      <a class="nav-item nav-link mb-3" href="#">Navodila</a>
+      <a class="nav-item nav-link mb-3" href="#"><i class="fa fa-map-signs"></i>  Navodila</a>
 
+      <a class="nav-item nav-link empty" ><i class="fa fa-futbol-o"></i> Izdelki</a>
+      <span id="item-menu-links">
       {% for skupina in skupine %}
         
         {% if skupina.id == index_skupina %} 
@@ -41,12 +43,12 @@
         {% endif %}
       
       {% endfor %}
+      </span>
 
+      <a class="nav-item nav-link mt-3 {{ active_kosarica}}" href="/kosarica/"><i class="fa fa-shopping-basket"></i> Košarica</a>
+      <a class="nav-item nav-link {{ active_narocila }}" href="/pregled_narocil/"><i class="fa fa-file-text-o"></i> Pregled naročil</a>
 
-      <a class="nav-item nav-link mt-3 {{ active_kosarica}}" href="/kosarica/">Košarica</a>
-      <a class="nav-item nav-link {{ active_narocila }}" href="/pregled_narocil/">Pregled naročil</a>
-
-      	<a class="nav-item nav-link mt-3" href="/odjava/">Odjava</a>
+      	<a class="nav-item nav-link mt-3" href="/odjava/"><i class="fa fa-sign-out"></i>  Odjava</a>
 
     </div>
   </div>

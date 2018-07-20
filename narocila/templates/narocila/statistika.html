@@ -16,12 +16,12 @@
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
-                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text"  class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Končni datum: </label>
-                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <button type="submit" class="btn btn-info" name="prenesi_excel_skupine">Prenesi</button>
@@ -39,12 +39,12 @@
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
-                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Končni datum: </label>
-                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                  <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
@@ -72,12 +72,12 @@
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
-                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Končni datum: </label>
-                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                  <select name="skupina_izdelkov" class="form-control costum-input mr-3" required>
@@ -102,12 +102,12 @@
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
-                    <input type="text" oninput="myFunction(this)" class="form-control date-menu costum-input" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Končni datum: </label>
-                    <input type="text" class="form-control date-menu costum-input"oninput="myFunction(this)" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
                 <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
@@ -139,26 +139,27 @@
 <script type="text/javascript">
 
     $( function() {
-        $( ".date-menu" ).datepicker({ });
+        $( ".date-menu" ).on('input', checkdate );
+
         $(".date-menu").datepicker({
         firstDay: 1 ,
         dayNamesMin: [ 'Ne', 'Po', 'To', 'Sr', 'Če', 'Pe', 'So'],
-        });
-
-        $( ".date-menu" ).on( "change", function() {
-            $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+         showOtherMonths: true,
+          selectOtherMonths: true,
+          dateFormat: 'dd/mm/yy'
         });
     });
 
-    function myFunction(element) {
-        var text_datum = element.value;
-        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g);
+    function checkdate() {
+        var text_datum = $(this).val();
+        console.log(text_datum)
+        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
 
         if (m == null) {
-            element.setCustomValidity("Nepravilen vnos datuma");
+            $(this)[0].setCustomValidity("Nepravilen vnos datuma");
         }
         else {
-            element.setCustomValidity(""); //more bit!
+            $(this)[0].setCustomValidity(""); //more bit!
             split = text_datum.split('/');
             datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
