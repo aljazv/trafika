@@ -1,4 +1,4 @@
- function getBootstrapDeviceSize() {
+function getBootstrapDeviceSize() {
       return $('#users-device-size').find('div:visible').first().attr('id');
     }
 
@@ -26,18 +26,24 @@
     }
   }
 
-  function checkNum(event){
+  function checkNum(el, e){
 
-    event.preventDefault();
+    e.preventDefault();
 
-    val = $(":input[name='kolicina']").val()
+    val = el.siblings(":input[name='kolicina']").val()
     var isnum = /^\d+$/.test(val);
+
     if (! isnum){
       $("#warning-text").show();
     
       return;
     }
+
     $("#warning-text").hide();
+
+    console.log(el.closest('form[name="change-val"]'));
+    el.closest('form[name="change-val"]').submit();
+  
   
   }
 
@@ -50,70 +56,6 @@
 
   }
 
-
-  $(document).ready(function(){
-  resize();
-   $("#info-text").hide();
-   $("#warning-text").hide();
-   $(':input[name="kolicina"]').on("focus", removeActive);
-   $("button.odstrani_izdelek").on('click', checkNum);
-
-///verlic
-    //http://coreymaynard.com/blog/performing-ajax-post-requests-in-django/
-    // stvar deluje, poslje tudi ok csrf kodo, tako da se uporabnika avtenticira lahko
-
-  $(".dodaj").click(function(e) {
-          
-          e.preventDefault();
-
-          if ($(this).hasClass("disabled"))
-            return;
-
-          var inp = $(this).parent().parent().find(':input[name="options"]:checked');
-          
-          if (inp.length==0){
-            inp = $(this).parent().parent().find(':input[name="kolicina"]');
-          
-            
-          }
-
-          
-         var isnum = /^\d+$/.test(inp.val());
-          if (! isnum){
-           
-            $("#warning-text").show();
-            return;
-          }
-
-
-          $("#warning-text").hide();
-   
-          var button= $(this);
-          value = parseInt(inp.val());
-
-          var data = {
-              'id_izdelka': button.attr('id'),
-              'kolicina' : value
-          }
-      
-          $.ajax({
-              "type": "POST",
-              "dataType": "json",
-              "url": "/",
-              "data": data,
-              "success": function(result) {
-            
-                  button.text("Dodano")
-                  button.removeClass("btn-primary")
-                  button.addClass("btn-success disabled")
-
-              },
-              "error": function(result) {
-                  console.log(result);
-              },
-          });
-      });
-  });
 
   //dobi csrf kodo
   function getCookie(name) {
@@ -147,11 +89,70 @@
 
     window.location.href = a; 
   }
-///verlic end
 
+
+  function addToBasket(el, e){
+    e.preventDefault();
+
+    if (el.hasClass("disabled"))
+      return;
+
+    var inp = el.parent().parent().find(':input[name="options"]:checked');
+
+    if (inp.length==0){
+      inp = el.parent().parent().find(':input[name="kolicina"]');   
+    }
+
+    var isnum = /^\d+$/.test(inp.val());
+    if (! isnum){
+     
+      $("#warning-text").show();
+      return;
+    }
+
+
+    $("#warning-text").hide();
+
+    var button= el;
+    value = parseInt(inp.val());
+
+    var data = {
+        'id_izdelka': button.attr('id'),
+        'kolicina' : value
+    }
+
+    $.ajax({
+        "type": "POST",
+        "dataType": "json",
+        "url": "/",
+        "data": data,
+        "success": function(result) {
+      
+            button.text("Dodano")
+            button.removeClass("btn-primary")
+            button.addClass("btn-success disabled")
+
+        },
+        "error": function(result) {
+            console.log(result);
+        },
+    });
+};
   
-
   window.onresize = function() {
    
     resize();
   }
+
+$(document).ready(function(){
+  resize();
+  $("#info-text").hide();
+  $("#warning-text").hide();
+  $(':input[name="kolicina"]').on("focus", removeActive);
+
+
+  $(".dodaj").on('click', function(event){
+    addToBasket($(this), event);
+  }); 
+
+}); 
