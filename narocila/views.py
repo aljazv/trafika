@@ -132,18 +132,36 @@ def natisni_dobavnica(request, narocilo):
     p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
     p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
     p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
-    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=11, leading=13))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=9, leading=13))
     p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
     p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
     p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
     p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
     p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
     
+    styles.add(ParagraphStyle(name='sidarta_label',fontName='Vera', font='Helvetica-Bold', fontSize=15, leading=6, alignment=TA_LEFT))
+    #ptext = '<font size=12>%s</font>' % formatted_time #čas ko se natisne
+    #par = Paragraph(ptext, p0)
+    #story.append(par)
+    
+    #ptext = '<font size=20>DOBAVNICA</font>'
+    #par = Paragraph(ptext, styles["Line_Data_Largest"])
+    #story.append(par)
 
-    ptext = '<font size=12>%s</font>' % formatted_time
-    par = Paragraph(ptext, p0)
-    story.append(par)
-    story.append(Spacer(1, 12))
+    data1 = [[Paragraph('DOBAVNICA', styles["Line_Data_Largest"]),
+            Paragraph('', styles["Line_Label"]),
+            Paragraph('', styles["Line_Label"])
+            ]]
+        
+    t1 = Table(data1, colWidths=(6.6 * cm,6.6 * cm,6.6 * cm), rowHeights = (0.5*cm))
+    t1.setStyle(TableStyle([
+        ('BACKGROUND',(2,0),(2,0),colors.black)
+    ]))
+    story.append(t1)
+
+    story.append(Spacer(1, 30))
+
+
  
     # prodajno mesto + podjetje
     podjetje = uporabnik.podjetje
@@ -151,111 +169,154 @@ def natisni_dobavnica(request, narocilo):
 
     podjetje_podatki = '%s <br/> %s <br/> %s, %s <br/> %s <br/> ' % (podjetje.ime, podjetje.naslov, podjetje.postna_stevilka, podjetje.obcina, podjetje.davcna_stevilka)
         
-    prodajno_mesto_podatki = '%s <br/>%s <br/>%s, %s <br/>%s <br/>%s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina, prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon)
+    prodajno_mesto_podatki = '%s <br/>%s <br/>%s %s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina)
 
+    sidarta = 'Trpinčeva 41c, SI - 1000 Ljubljana <br/>tel • 01 561 34 73, fax • 0590 72897 <br/>office@sidarta.si <br/> www.sidarta.si'
 
-    data1 = [[Paragraph('Prodajno mesto', styles["Line_Label"]),
-                Paragraph('Podjetje', styles["Line_Label"])],
+    print(prodajno_mesto_podatki)
 
-                [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
-                Paragraph(podjetje_podatki, styles["Line_Data_Large"])]
-                ]
-
-    t1 = Table(data1)
-    t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    story.append(t1)
-    #
-    story.append(Spacer(1, 20))
-    #
-    story.append(Paragraph("DOBAVNICA", styles["Line_Label_Center"]))
-    #
-    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
+    prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon
     leto_dobavnice = narocilo.datum.strftime("%Y")
     st_dobavnice = leto_dobavnice[-2:] + str(narocilo.id).zfill(4)
 
-    data1 = [[Paragraph('ŠTEVILKA DOBAVNICE', styles["Line_Label"]),
-              Paragraph('DATUM NAROČILA', styles["Line_Label"])],
+    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
 
-            [Paragraph(st_dobavnice, styles["Line_Data_Largest"]),
-             Paragraph(datum, styles["Line_Data_Largest"])
-            ]]
-    t1 = Table(data1)
+    data1 = [#1 vrstica
+             [Paragraph('Prodajno mesto/naslov dostave', styles["Line_Label"]),
+              Paragraph('Številka dobavnice', styles["Line_Label"]),
+              Paragraph('SIDARTA', styles["sidarta_label"])
+              ],
+              #2
+             [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
+              Paragraph(st_dobavnice, styles["Line_Data_Large"]),
+              Paragraph(sidarta, styles["Line_Data_Small"])
+              ],
+              #3
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('Datum naročila', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #4
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(datum, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ],
+              #5
+              [Paragraph('Kontaktna oseba', styles["Line_Label"]),
+              Paragraph('Način prodaje', styles["Line_Label"]),
+              Paragraph('Potnik', styles["Line_Label"])
+              ],
+              #6
+              [Paragraph(prodajno_mesto.kontaktna_oseba, styles["Line_Data_Large"]),
+              Paragraph(narocilo.nacin_prodaje, styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.user.first_name + " " + narocilo.potnik.user.last_name, styles["Line_Data_Large"])
+              ],
+              #7
+              [Paragraph('Telefon', styles["Line_Label"]),
+              Paragraph('Način Dostave', styles["Line_Label"]),
+              Paragraph('Telefon', styles["Line_Label"])
+              ],
+              #8
+              [Paragraph(prodajno_mesto.telefon, styles["Line_Data_Large"]),
+              Paragraph(narocilo.nacin_dostave, styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.telefon, styles["Line_Data_Large"])
+              ],
+              #9
+              [Paragraph('Sedež podjetja', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('mail', styles["Line_Label"])
+              ],
+              #10
+              [Paragraph(podjetje_podatki, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.email, styles["Line_Data_Large"])
+              ],
+              #11
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #12
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ]
+              ]
+
+    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.4*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('VALIGN',(2,1),(2,1),'MIDDLE'), # naslov sidarte na sredini
+        #('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('SPAN',(0,1),(0,3)),
+        ('SPAN',(2,1),(2,3)),
+        ('SPAN',(0,9),(0,11)),
+        ('LINEBELOW', (2, 3), (2, 3), 2, colors.black)
     ]))
     story.append(t1)
+
     #
-
-    data1 = [[Paragraph('NAČIN DOSTAVE', styles["Line_Label"]),
-                Paragraph('NAČIN PRODAJE', styles["Line_Label"])],
-
-                [Paragraph(narocilo.nacin_prodaje, styles["Line_Data_Large"]),
-                Paragraph(narocilo.nacin_dostave, styles["Line_Data_Large"])]
-                ]
-
-    t1 = Table(data1)
-    t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    story.append(t1)
-
-    #
-    potnik = narocilo.potnik
-    potnik_podatki = '%s %s <br/> %s <br/> %s ' % (potnik.user.first_name, potnik.user.last_name, potnik.telefon, potnik.email)
-
-    data1 = [[Paragraph('POTNIK', styles["Line_Label"])],
-            [Paragraph(potnik_podatki, styles["Line_Data"])
-            ]]
-    t1 = Table(data1)
-    t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    story.append(t1)
-
+    story.append(Spacer(1, 20))
+    
     #
     data1 = [[Paragraph('št', styles["Line_Label"]),
             Paragraph('črtna koda EAN', styles["Line_Label"]),
             Paragraph('artikel', styles["Line_Label"]),
+            Paragraph('šifra', styles["Line_Label"]),
             Paragraph('količina', styles["Line_Label"])
             ]]
         
-    t1 = Table(data1, colWidths=(1 * cm, 7.7 * cm,6 * cm, 5 * cm))
+    t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
     ]))
     story.append(t1)
     #
 
     for i, key in enumerate(tabela):
         iteracija = str(i+1) + "."
-        
+
+
+        motivi = narocila_izdelka.filter(izdelek__skupina_izdelkov = key)
+        print(motivi)
         data1 = [[Paragraph(iteracija, styles["Line_Data"]),
                 Paragraph(key.koda, styles["Line_Data"]),
                 Paragraph(key.ime, styles["Line_Data"]),
-                Paragraph(str(tabela[key]), styles["Line_Data"])
+                Paragraph('', styles["Line_Data"]),
+                Paragraph('', styles["Line_Data"])
                 ]]
 
-        t1 = Table(data1, colWidths=(1 * cm, 7.7 * cm,6 * cm, 5 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
         t1.setStyle(TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
+        ]))
+        story.append(t1)
+
+        for motiv in motivi:
+            print(motiv)
+            data1 = [[Paragraph('', styles["Line_Data"]),
+                Paragraph('', styles["Line_Data"]),
+                Paragraph('', styles["Line_Data"]),
+                Paragraph(motiv.izdelek.koda, styles["Line_Data"]),
+                Paragraph(str(motiv.kolicina), styles["Line_Data"])
+                ]]
+            t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+            t1.setStyle(TableStyle([
+                ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
+            ]))
+            story.append(t1)
+
+
+        data1 = [[Paragraph('', styles["Line_Data"]),
+                Paragraph('Skupaj', styles["Line_Data"]),
+                Paragraph('', styles["Line_Data"]),
+                Paragraph('', styles["Line_Data"]),
+                Paragraph(str(tabela[key]), styles["Line_Data"])
+                ]]
+        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+        t1.setStyle(TableStyle([
+            ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
         ]))
         story.append(t1)
 
