@@ -34,22 +34,28 @@
 				<td>{{narocilo_izdelka.izdelek.ime}}</td>
 				<td><img style="max-width:380px" src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 				<td>{{narocilo_izdelka.kolicina}}</td>
-				<form action="/kosarica/" method="post" name="change-val" class="form-inline">
-					{% csrf_token %}
+				
+					
 					<td class="row">
+						<form action="/kosarica/" method="post" name="change-val" class="form-inline">
+							{% csrf_token %}
 						<div class="form-inline my-2 my-lg-0">
 						<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
 						
-						<input class="form-control mr-2 costum-input" placeholder="Spremeni količino"  name="kolicina" min="0" size="15">
+						<input class="form-control mr-2 costum-input" placeholder="Spremeni količino"  type="number" name="kolicina" min="0" size="15">
 				
-						<button type="submit" class="btn btn-primary" name="spremeni_kolicino"><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
-
+						<button type="submit" class="btn btn-primary spremeni_kolicino" name="spremeni_kolicino" ><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
+						
 						</div>
 					
 					</td>
 					<td>
-						<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
-						<button type="submit" class="btn btn-danger btn-large-text odstrani_izdelek" ><i class="fa fa-times"></i>  &nbsp;Odstrani </button>
+						<form action="/kosarica/" method="post" name="remove-item" class="form-inline">
+							{% csrf_token %}
+							<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
+							<button class="btn btn-danger btn-large-text odstrani_izdelek" name="odstrani_izdelek" type="submit"><i class="fa fa-times"></i>  &nbsp;Odstrani 
+						</button>
+						</form>
 					</td>
 				</form>
 			</tr>
