@@ -1,6 +1,6 @@
 .sidenav {
     height: 100%;
-    width: 230px;
+    width: 290px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -9,9 +9,33 @@
     padding-top: 20px;
 }
 
+.sidenav a{
+  font-size: 1rem;
+}
+
 body{
   background-color: #f7f7f9;
 }
+
+.empty:hover{
+
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#item-menu-links{
+  margin-left: 30px;
+  font-size: 0.9rem;
+}
+
+.statistics-label{
+  font-size: 0.7em;
+}
+
+.costum-input{
+  border:1px solid rgba(0,0,0,0.125); 
+  background-color:white;
+}
+
 
 .login{
   background-color: #fff;
@@ -23,13 +47,17 @@ body{
 
 
 .main{
-    margin-left: 400px; /* Same as the width of the sidenav */
+    margin-left: 300px; /* Same as the width of the sidenav */
     font-size: 28px; /* Increased text to enable scrolling */
     padding: 20px 30px;
 }
 
 p{
   font-size: 0.7em;
+}
+
+td{
+  font-size: 1rem;
 }
 
 .sm-input{
@@ -67,7 +95,10 @@ p{
 
 .item-card{
   
-  width:80%;
+  width:85%;
 }
 
+.auto-m{
+  margin:auto;
+}
 
