@@ -244,6 +244,11 @@ def natisni_narocilnica(request, narocilo):
     story.append(par)
     story.append(Spacer(1, 12))
  
+    ptext = '<font size=20>NAROČILNICA</font>'
+    par = Paragraph(ptext, styles["Line_Data_Largest"])
+    story.append(par)
+    story.append(Spacer(1, 30))
+
     # prodajno mesto + podjetje
     podjetje = uporabnik.podjetje
     prodajno_mesto = uporabnik.prodajno_mesto
