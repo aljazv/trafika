@@ -40,6 +40,9 @@ p, .statistics-label{
   font-size: 0.5em;
 }
 
+.mt-8{
+  margin-top: 3rem;
+}
 
 .costum-input{
   border:1px solid rgba(0,0,0,0.125); 
@@ -73,17 +76,24 @@ p, .statistics-label{
 }
 .centered-img{
   min-width: 80%;
-  min-height: 80%;
   max-height: 100%;  
   max-width: 100%; 
   width: auto;
   height: auto;
-  
+  vertical-align: middle;
   top: 0;  
   bottom: 0;  
   left: 0;  
   right: 0;  
   margin: auto;
+  padding: 5px;
+  border:1px solid rgba(0,0,0,0.15); 
+}
+
+.img-helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
 }
 
 .item-card{

@@ -8,11 +8,11 @@
 
     <h1>Statistika</h1>
 
-    <div class="row mt-4">
+    <div class="mt-4">
         <form action="/narocila/statistika/" method="post">
             {% csrf_token %}
             <h4>Prenesi skupaj po artiklu (EAN kodi):</h4>
-            <div class="row form-inline">
+            <div class="form-inline">
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
@@ -24,18 +24,18 @@
                     <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
                 </div>
 
-                <button type="submit" class="btn btn-info" name="prenesi_excel_skupine">Prenesi</button>
+                
             </div>
-
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_skupine">Prenesi</button>
         </form>
     </div>
 
-    <div class="row mt-4">
+    <div class="mt-8">
         <form action="/narocila/statistika/" method="post">
             {% csrf_token %}
             <h4>Prenesi po artiklu (EAN koda) znotraj prodajnega mesta:</h4>
          
-            <div class="row form-inline">
+            <div class="form-inline">
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
@@ -54,21 +54,21 @@
                     {% endfor %}
                 </select>
 
-                <button type="submit" class="btn btn-info" name="prenesi_excel_skupine_trafika">Prenesi</button>
+                
             </div>
-
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_skupine_trafika">Prenesi</button>
            
         </form>
     </div>
   
 
 
-    <div class="row mt-4">
+    <div class="mt-8">
         <form action="/narocila/statistika/" method="post">
             {% csrf_token %}
             <h4>Prenesi motivno skupaj:</h4>
 
-           <div class="row form-inline">
+           <div class="form-inline">
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
@@ -86,19 +86,18 @@
                 <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
                 {% endfor %}
                 </select>
-
-                <button type="submit" class="btn btn-info" name="prenesi_excel_motivno">Prenesi</button>
             </div>
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_motivno">Prenesi</button>
         </form>
     </div>
 
 
 
-    <div class="row mt-4">
+    <div class="mt-8">
         <form action="/narocila/statistika/" method="post">
             {% csrf_token %}
-            <h4>Prenesi: motivno znotraj artikla po posamičnem prodajnem mestu</h4>
-            <div class="row form-inline">
+            <h4>Prenesi motivno znotraj artikla po posamičnem prodajnem mestu</h4>
+            <div class="form-inline">
 
                 <div class="form-group mr-3">
                     <label class="statistics-label mr-2">Začetni datum: </label>
@@ -124,8 +123,10 @@
                 {% endfor %}
                 </select>
 
-                <button type="submit" class="btn btn-info" name="prenesi_excel_motivno_trafika">Prenesi</button>
+                
             </div>
+
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_motivno_trafika">Prenesi</button>
 
             
          </form>
@@ -133,46 +134,5 @@
 
 </div>
 </div>
-
-
-
-<script type="text/javascript">
-
-    $( function() {
-        $( ".date-menu" ).on('input', checkdate );
-
-        $(".date-menu").datepicker({
-        firstDay: 1 ,
-        dayNamesMin: [ 'Ne', 'Po', 'To', 'Sr', 'Če', 'Pe', 'So'],
-         showOtherMonths: true,
-          selectOtherMonths: true,
-          dateFormat: 'dd/mm/yy'
-        });
-    });
-
-    function checkdate() {
-        var text_datum = $(this).val();
-        console.log(text_datum)
-        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
-
-        if (m == null) {
-            $(this)[0].setCustomValidity("Nepravilen vnos datuma");
-        }
-        else {
-            $(this)[0].setCustomValidity(""); //more bit!
-            split = text_datum.split('/');
-            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-            var stDni_meseca = datum_tabela[split[1] - 1];
-
-
-            if (split[0] > stDni_meseca) {
-                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
-                return
-            }
-            
-        }
-    }
-</script>
 
 {% endblock %}

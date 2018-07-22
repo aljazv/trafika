@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿  <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -8,10 +8,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'jquery-ui-1.12.1.custom/jquery-ui.min.css' %}" />
+
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/myscript.js' %}"></script>
     <script src="{% static 'jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/myscript.js' %}"></script>
+
     <title>{% block title %}Naročilo{% endblock %}</title>
 
 	{% block head %}
@@ -33,6 +35,7 @@
 
       <a class="nav-item nav-link empty" ><i class="fa fa-futbol-o"></i> Izdelki</a>
       <span id="item-menu-links">
+
       {% for skupina in skupine %}
         
         {% if skupina.id == index_skupina %} 
@@ -45,7 +48,7 @@
       {% endfor %}
       </span>
 
-      <a class="nav-item nav-link mt-3 {{ active_kosarica}}" href="/kosarica/"><i class="fa fa-shopping-basket"></i> Košarica</a>
+      <a class="nav-item nav-link mt-3 {{ activ1e_kosarica}}" href="/kosarica/"><i class="fa fa-shopping-basket"></i> Košarica</a>
       <a class="nav-item nav-link {{ active_narocila }}" href="/pregled_narocil/"><i class="fa fa-file-text-o"></i> Pregled naročil</a>
 
       	<a class="nav-item nav-link mt-3" href="/odjava/"><i class="fa fa-sign-out"></i>  Odjava</a>
