@@ -84,10 +84,13 @@ function getBootstrapDeviceSize() {
 
     });
 
-  function myFunction() {
-    var a = document.getElementById("search").value;
+  function searchByTag() {
+    var a = $("#search").val();
 
-    window.location.href = a; 
+    if (a && a.length >=1)
+      window.location.href = a;
+    else
+      $("#backToAll").submit();
   }
 
 

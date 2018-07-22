@@ -17,7 +17,7 @@
 
 		{% if arr %}
 
-		<table class="table table-responsive mt-3 table-hover">
+		<table class="table table-responsive mt-3 table-hover ">
 			<thead>
 				<tr class="table-light">
 					<th scope="col">#</th> 
@@ -65,7 +65,7 @@
 
 
 
-		<form action="/pregled_narocil/" method="post" class="form-inline row">
+		<form action="/pregled_narocil/" method="post" class="form-inline">
 			{% csrf_token %}
 
 			<input type="text" class="form-control costum-input mr-2 col-sm-9" name="opomba" placeholder="Opomba" size="70">

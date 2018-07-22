@@ -9,8 +9,12 @@
     padding-top: 20px;
 }
 
-.sidenav a{
+.sidenav a, td{
   font-size: 1rem;
+}
+
+#info-text, #warning-text{
+  visibility: hidden;
 }
 
 body{
@@ -27,9 +31,15 @@ body{
   font-size: 0.9rem;
 }
 
-.statistics-label{
+p, .statistics-label{
   font-size: 0.7em;
 }
+
+.sm-input, .page-item,  .tags{
+
+  font-size: 0.5em;
+}
+
 
 .costum-input{
   border:1px solid rgba(0,0,0,0.125); 
@@ -52,18 +62,6 @@ body{
     padding: 20px 30px;
 }
 
-p{
-  font-size: 0.7em;
-}
-
-td{
-  font-size: 1rem;
-}
-
-.sm-input{
-
-  font-size: 0.5em;
-}
 
 .no-p{
   padding: 0px !important;
@@ -73,11 +71,6 @@ td{
   padding-left:0.8rem;
   padding-right:0.8rem;
 }
-
-.page-item{
-  font-size: 0.5em;
-}
-
 .centered-img{
   min-width: 80%;
   min-height: 80%;
