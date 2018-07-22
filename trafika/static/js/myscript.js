@@ -94,16 +94,18 @@ function getBootstrapDeviceSize() {
   }
 
 
-  function addToBasket(el, e){
+  function addToBasket(button, e){
     e.preventDefault();
 
-    if (el.hasClass("disabled"))
+    if (button.hasClass("disabled"))
       return;
 
-    var inp = el.parent().parent().find(':input[name="options"]:checked');
+
+    var itemId = button.attr('id');
+    var inp = button.parent().parent().find(':input[name="group-'+itemId+'"]:checked');
 
     if (inp.length==0){
-      inp = el.parent().parent().find(':input[name="kolicina"]');   
+      inp = button.parent().parent().find(':input[name="kolicina"]');   
     }
 
     var isnum = /^\d+$/.test(inp.val());
@@ -116,11 +118,10 @@ function getBootstrapDeviceSize() {
 
     $("#warning-text").hide();
 
-    var button= el;
     value = parseInt(inp.val());
 
     var data = {
-        'id_izdelka': button.attr('id'),
+        'id_izdelka': itemId,
         'kolicina' : value
     }
 

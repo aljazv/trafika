@@ -63,18 +63,18 @@
                   {% endfor %}
                 </div>
 
-                <div class="btn-group btn-group-toggle row" data-toggle="buttons" >
+                  <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option1" autocomplete="off"  value="10">10
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off"  value="10">10
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option2" autocomplete="off" value="20">20
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="20">20
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option3" autocomplete="off" value="50">50
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="50">50
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option4" autocomplete="off" value="100">100
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="100">100
                   </label>
 
                   <div class="col-md-3">

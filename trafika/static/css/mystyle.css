@@ -14,7 +14,7 @@
 }
 
 #info-text, #warning-text{
-  visibility: hidden;
+  display: none;
 }
 
 body{
