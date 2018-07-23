@@ -84,23 +84,28 @@ function getBootstrapDeviceSize() {
 
     });
 
-  function myFunction() {
-    var a = document.getElementById("search").value;
+  function searchByTag() {
+    var a = $("#search").val();
 
-    window.location.href = a; 
+    if (a && a.length >=1)
+      window.location.href = a;
+    else
+      $("#backToAll").submit();
   }
 
 
-  function addToBasket(el, e){
+  function addToBasket(button, e){
     e.preventDefault();
 
-    if (el.hasClass("disabled"))
+    if (button.hasClass("disabled"))
       return;
 
-    var inp = el.parent().parent().find(':input[name="options"]:checked');
+
+    var itemId = button.attr('id');
+    var inp = button.parent().parent().find(':input[name="group-'+itemId+'"]:checked');
 
     if (inp.length==0){
-      inp = el.parent().parent().find(':input[name="kolicina"]');   
+      inp = button.parent().parent().find(':input[name="kolicina"]');   
     }
 
     var isnum = /^\d+$/.test(inp.val());
@@ -113,11 +118,10 @@ function getBootstrapDeviceSize() {
 
     $("#warning-text").hide();
 
-    var button= el;
     value = parseInt(inp.val());
 
     var data = {
-        'id_izdelka': button.attr('id'),
+        'id_izdelka': itemId,
         'kolicina' : value
     }
 
@@ -138,6 +142,30 @@ function getBootstrapDeviceSize() {
         },
     });
 };
+
+function checkdate() {
+        var text_datum = $(this).val();
+        console.log(text_datum)
+        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
+
+        if (m == null) {
+            $(this)[0].setCustomValidity("Nepravilen vnos datuma");
+        }
+        else {
+            $(this)[0].setCustomValidity(""); //more bit!
+            split = text_datum.split('/');
+            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            var stDni_meseca = datum_tabela[split[1] - 1];
+
+
+            if (split[0] > stDni_meseca) {
+                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
+                return
+            }
+            
+        }
+    }
   
   window.onresize = function() {
    
@@ -154,5 +182,15 @@ $(document).ready(function(){
   $(".dodaj").on('click', function(event){
     addToBasket($(this), event);
   }); 
+
+  $( ".date-menu" ).on('input', checkdate );
+
+  $(".date-menu").datepicker({
+  firstDay: 1 ,
+  dayNamesMin: [ 'Ne', 'Po', 'To', 'Sr', 'Če', 'Pe', 'So'],
+   showOtherMonths: true,
+    selectOtherMonths: true,
+    dateFormat: 'dd/mm/yy'
+  });
 
 }); 

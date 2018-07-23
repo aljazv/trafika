@@ -17,8 +17,11 @@
       <h1>{{ime_skupine}}</h1>
       <!-- iskanje po tagih -->
       <div class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2 costum-input"  type="search" placeholder="Išči po oznakah" id="search">
-        <button class="btn btn-info" onclick="myFunction()">Išči</button>
+        <form id="backToAll" method="get" action="/{{index_skupina}}">
+        </form>
+        <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah" id="search">
+        <button class="btn btn-info" onclick="searchByTag()"><i class="fa fa-search"></i>   &nbsp;Išči</button>
+        
       </div>
     </div>
 
@@ -35,13 +38,16 @@
       Izberite ali vpišite pravilno količino.
     </div>
 
-  
+
+    {% if opozorilo %}
+    <p class="text-justify mt-3">Ni zadetkov</p>
+    {% endif %}
 
     {% for izdelek in izdelki  %}
 
       <div class="card p-3 mb-3 item-card" >
         <div class="row ">
-          <div class="col-md-4" style="position: relative;">
+          <div class="col-md-4">
               <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
             </div>
             <div class="col-md-8 px-3">
@@ -49,24 +55,26 @@
                 <h3 class="card-title">{{izdelek.ime}}</h3>
                 <p class="card-text">{{izdelek.opis}}</p>
                 
-                {% if izdelek.zaloga %}
-                <p class="card-text text-success">Na zalogi</p>
-                {% else %}
-                <p class="card-text text-danger">Ni na zalogi</p>
-                {% endif %}
+                <div class="tags mb-4">
+                  Oznake:
 
-                <div class="btn-group btn-group-toggle row" data-toggle="buttons" style="">
+                  {% for tag in izdelek.tag.all  %}
+                    <span class="badge badge-info text-sm">{{tag}}</span>
+                  {% endfor %}
+                </div>
+
+                  <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option1" autocomplete="off"  value="10">10
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off"  value="10">10
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option2" autocomplete="off" value="20">20
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="20">20
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option3" autocomplete="off" value="50">50
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="50">50
                   </label>
                   <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="options" id="option4" autocomplete="off" value="100">100
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="100">100
                   </label>
 
                   <div class="col-md-3">
@@ -93,7 +101,7 @@
     {% endfor %}
 </div>
 
- <div class="row mt-3">
+  <div class="mt-3 item-card">
         <ul class="pagination">
          
         {% if izdelki.has_previous %}
@@ -106,17 +114,39 @@
             </li>
         {% endif %}
 
-        {% for pg in izdelki.paginator.page_range %}
-            {% if izdelki.number == pg %}
-              <li class="page-item align-middle active">
-                <a href="?page={{pg}}" class="page-link">{{pg}}</a>
-              </li>
-            {% else %}
-              <li class="page-item align-middle">
-                <a href="?page={{pg}}" class="page-link">{{pg}}</a>
-              </li>
-            {% endif %}
-        {% endfor %}
+
+        {% if izdelki.has_other_pages %}
+
+          {% for pg in izdelki.paginator.page_range %}
+
+              {% if pg|add:"2" >= izdelki.number and pg|add:"-2" <= izdelki.number %}
+                {% if izdelki.number == pg %}
+                  
+                  <li class="page-item align-middle active">
+                    <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item align-middle">
+                    <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+                  </li>
+                {% endif %}
+
+              {% elif pg|add:"3" == izdelki.number %}
+                <li class="page-item align-middle">
+                  <a class="page-link disabled" style=":hover: {cursor:default;}">...</a>
+                </li>
+              {% elif pg|add:"-3" == izdelki.number %}
+                <li class="page-item align-middle">
+                  <a class="page-link disabled" style=":hover: {cursor:default;}">...</a>
+                </li>
+              {% endif %}
+          {% endfor %}
+
+        {% else %}
+          <li class="page-item align-middle active">
+            <a class="page-link disabled" style=":hover: {cursor:default;}">1</a>
+          </li>
+        {% endif %}
        
 
         {% if izdelki.has_next %}

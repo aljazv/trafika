@@ -37,6 +37,9 @@ def getAllGroups():
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
+    if request.user.is_authenticated and request.user.is_superuser:
+        return HttpResponseRedirect("/narocila/nova_narocila/")
+
     if request.user.is_authenticated:
 
             #dodajanje izdelkov v koscarico preko AJAX
@@ -91,7 +94,6 @@ def index_skupina(request, index, search_string = None):
             nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
             nova_kosarica.save()
 
-
         #logika za iskanje po tagih
         if search_string != None:
             vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
@@ -103,17 +105,18 @@ def index_skupina(request, index, search_string = None):
         skupina = SkupinaIzdelkov.objects.get(id=index);
 
         #paginacija
-        paginator = Paginator(vsi_izdelki, 25)
+        paginator = Paginator(vsi_izdelki, 3)
         page = request.GET.get('page')
         paginirani_izdelki = paginator.get_page(page)
 
 
 
         context = {
-            'opozorilo' : 'nic',
+            'opozorilo' : vsi_izdelki.count() == 0,
             'skupine': getAllGroups(),
             'izdelki' : paginirani_izdelki,
             'index_skupina' : index,
+            'search_string': search_string,
             'ime_skupine': skupina.ime
             
         }

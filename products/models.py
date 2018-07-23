@@ -27,7 +27,7 @@ class Izdelek(models.Model):
                                  format='JPEG',
                                  options={'quality': 60})
     skupina_izdelkov = models.ForeignKey(SkupinaIzdelkov,  null = True, on_delete=models.SET_NULL)
-    tag = models.ManyToManyField(Tag)
+    tag = models.ManyToManyField(Tag, blank=True)
     koda = models.CharField(max_length=100, verbose_name="Koda izdelka")
 
     zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi")
