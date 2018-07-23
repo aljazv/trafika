@@ -37,6 +37,9 @@ def getAllGroups():
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
+    if request.user.is_authenticated and request.user.is_superuser:
+        return HttpResponseRedirect("/narocila/nova_narocila/")
+
     if request.user.is_authenticated:
 
             #dodajanje izdelkov v koscarico preko AJAX

@@ -19,20 +19,25 @@ def naredi_bazo(request):
     podjetje = Podjetje(ime = "trafika d.o.o.", naslov = "Škofja Loka 12", postna_stevilka = "4220", obcina = "Škofja Loka", davcna_stevilka = "67294308")
     podjetje.save()
 
-    uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = podjetje, prodajno_mesto = prodajno_mesto)
-    uporabnik1.save()
+    #uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = podjetje, prodajno_mesto = prodajno_mesto)
+    #uporabnik1.save()
 
-    #naredi admina
-    user_admin, created = User.objects.get_or_create(username="adminadmin", email="admin@gmail.com")
-    user_admin.first_name = "admin"
-    user_admin.last_name = "admin"
+    #naredi uporabnika
+    user_uporabnik, created = User.objects.get_or_create(username="uporabnik", email="uporabnik@gmail.com")
+    user_uporabnik.first_name = "Mitja"
+    user_uporabnik.last_name = "Resnik"
 
     if created:
-        user_admin.set_password("adminadmin")
-        user_admin.is_staff=True
-        user_admin.is_superuser=True
+        user_uporabnik.set_password("adminadmin")
+        user_uporabnik.is_staff=False
+        user_uporabnik.is_superuser=False
+
+    user_uporabnik.save()
+    uporabnik = Uporabnik(user = user_uporabnik, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
+    uporabnik.save()
     
-    user_admin.save()
+    
+
     #naredi potnika
     user, created = User.objects.get_or_create(username="potnik", email="potnik@gmail.com")
     user.first_name = "Jure"
@@ -49,8 +54,7 @@ def naredi_bazo(request):
     potnik.save()
 
     #
-    uporabnik_admin = Uporabnik(user = user_admin, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
-    uporabnik_admin.save()
+  
 
     skupina_izdelkov1 = SkupinaIzdelkov(ime = "Magneti", koda = "2389472983")
     skupina_izdelkov1.save()
@@ -91,7 +95,7 @@ def naredi_bazo(request):
     narocilo_izdelek_razglednica2 = NarociloIzdelka(izdelek = izdelek_razglednica2,kolicina = 100)
     narocilo_izdelek_razglednica2.save()
 
-    kosarica = Kosarica(uporabnik = uporabnik_admin)
+    kosarica = Kosarica(uporabnik = uporabnik)
     kosarica.save()
     kosarica.narocila_izdelka.add(narocilo_bled,narocilo_triglav,narocilo_izdelek_razglednica1,narocilo_izdelek_razglednica2)
     kosarica.save()

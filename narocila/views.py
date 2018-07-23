@@ -14,95 +14,103 @@ from products.models import *
 
 
 def nova_narocila(request):
-    if request.method == 'POST' and 'obdelano' in request.POST:
-        narocilo_id = request.POST['narocilo_id']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        narocilo.je_obdelan = True
-        narocilo.save()
-    if request.method == 'POST' and 'prenesi' in request.POST:
-        
-        narocilo_id = request.POST['narocilo_id']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
-        story=[]
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
-        doc = SimpleDocTemplate(response,pagesize=letter,
-            rightMargin=20,leftMargin=20,
-            topMargin=20,bottomMargin=20)
 
-        story = natisni_narocilnica(request,narocilo)
-        doc.build(story)
-        return response
+    if request.user.is_authenticated:
+        if request.method == 'POST' and 'obdelano' in request.POST:
+            narocilo_id = request.POST['narocilo_id']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            narocilo.je_obdelan = True
+            narocilo.save()
+        if request.method == 'POST' and 'prenesi' in request.POST:
+          
+            narocilo_id = request.POST['narocilo_id']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
+            story=[]
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
+            doc = SimpleDocTemplate(response,pagesize=letter,
+              rightMargin=20,leftMargin=20,
+              topMargin=20,bottomMargin=20)
+
+            story = natisni_narocilnica(request,narocilo)
+            doc.build(story)
+            return response
 
 
-    narocila_neobdelano = Narocilo.objects.filter(je_obdelan = False)
+        narocila_neobdelano = Narocilo.objects.filter(je_obdelan = False)
 
-    context = {
-        'narocila_neobdelano': narocila_neobdelano
-        }
+        context = {
+          'narocila_neobdelano': narocila_neobdelano
+          }
 
-    return render(request,'narocila/nova_narocila.html',context)
+        return render(request,'narocila/nova_narocila.html',context)
+    else:
+        return HttpResponseRedirect("/prijava/")
 
 def stara_narocila(request):
 
-    if request.method == 'POST' and 'uveljavi' in request.POST:
-        narocilo_id = request.POST['narocilo_id']
-        nacin_prodaje = request.POST['nacinProdaje']
-        nacin_dostave = request.POST['nacinDostave']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        narocilo.nacin_prodaje = nacin_prodaje
-        narocilo.nacin_dostave = nacin_dostave
-        narocilo.save()
+    if request.user.is_authenticated:
+        if request.method == 'POST' and 'uveljavi' in request.POST:
+            narocilo_id = request.POST['narocilo_id']
+            nacin_prodaje = request.POST['nacinProdaje']
+            nacin_dostave = request.POST['nacinDostave']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            narocilo.nacin_prodaje = nacin_prodaje
+            narocilo.nacin_dostave = nacin_dostave
+            narocilo.save()
 
-    if request.method == 'POST' and 'prenesi_narocilnica' in request.POST:
-        narocilo_id = request.POST['narocilo_id']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
-        story=[]
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
-        doc = SimpleDocTemplate(response,pagesize=letter,
-            rightMargin=20,leftMargin=20,
-            topMargin=20,bottomMargin=20)
+        if request.method == 'POST' and 'prenesi_narocilnica' in request.POST:
+            narocilo_id = request.POST['narocilo_id']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
+            story=[]
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
+            doc = SimpleDocTemplate(response,pagesize=letter,
+                rightMargin=20,leftMargin=20,
+                topMargin=20,bottomMargin=20)
 
-        story = natisni_narocilnica(request,narocilo)
-        doc.build(story)
-        return response
+            story = natisni_narocilnica(request,narocilo)
+            doc.build(story)
+            return response
 
-    if request.method == 'POST' and 'prenesi_dobavnica' in request.POST:
+        if request.method == 'POST' and 'prenesi_dobavnica' in request.POST:
 
-        # dobavnica ID!
-        
+            # dobavnica ID!
+            
 
-        narocilo_id = request.POST['narocilo_id']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "dobavnica" + str(narocilo.id) + ".pdf"
-        story=[]
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
-        doc = SimpleDocTemplate(response,pagesize=letter,
-            rightMargin=20,leftMargin=20,
-            topMargin=20,bottomMargin=20)
+            narocilo_id = request.POST['narocilo_id']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            ime_datoteke = "dobavnica" + str(narocilo.id) + ".pdf"
+            story=[]
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
+            doc = SimpleDocTemplate(response,pagesize=letter,
+                rightMargin=20,leftMargin=20,
+                topMargin=20,bottomMargin=20)
 
-        story = natisni_dobavnica(request,narocilo)
-        doc.build(story)
-        return response
-    if request.method == 'POST' and 'uveljavi_stNarocila' in request.POST:
-        narocilo_id = request.POST['narocilo_id']
-        st_narocila = request.POST['st_narocila']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        narocilo.st_narocila = st_narocila
-        narocilo.save()
+            story = natisni_dobavnica(request,narocilo)
+            doc.build(story)
+            return response
+        if request.method == 'POST' and 'uveljavi_stNarocila' in request.POST:
+            narocilo_id = request.POST['narocilo_id']
+            st_narocila = request.POST['st_narocila']
+            narocilo = Narocilo.objects.get(id = narocilo_id)
+            narocilo.st_narocila = st_narocila
+            narocilo.save()
 
 
-    narocila_obdelano = Narocilo.objects.filter(je_obdelan = True)
+        narocila_obdelano = Narocilo.objects.filter(je_obdelan = True)
 
-    context = {
-        'narocila_obdelano': narocila_obdelano
-        }
+        context = {
+            'narocila_obdelano': narocila_obdelano
+            }
 
-    return render(request,'narocila/stara_narocila.html',context)
+        return render(request,'narocila/stara_narocila.html',context)
+
+    else:
+        return HttpResponseRedirect("/prijava/")
 
 
 def natisni_dobavnica(request, narocilo):
