@@ -97,6 +97,8 @@ function getBootstrapDeviceSize() {
   function addToBasket(button, e){
     e.preventDefault();
 
+
+
     if (button.hasClass("disabled"))
       return;
 
@@ -115,10 +117,17 @@ function getBootstrapDeviceSize() {
       return;
     }
 
-
     $("#warning-text").hide();
 
     value = parseInt(inp.val());
+
+    if (button.data("min") > value ){
+      $("#warning-text2").show();
+      return;
+    }
+
+    $("#warning-text2").hide();
+
 
     var data = {
         'id_izdelka': itemId,

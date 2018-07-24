@@ -8,6 +8,7 @@ from imagekit.processors import ResizeToFill
 class SkupinaIzdelkov(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime skupine izdelkov")
     koda = models.CharField(max_length=100, verbose_name="EAN koda skupine izdelkov")
+    min_narocilo = models.IntegerField(default=25)
 
     def __str__(self):
         return self.ime 
@@ -67,7 +68,7 @@ class Potnik(models.Model):
 class Uporabnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
-    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")
+    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")  
 
 class Narocilo(models.Model):
 
