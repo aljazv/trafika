@@ -105,7 +105,7 @@ def index_skupina(request, index, search_string = None):
         skupina = SkupinaIzdelkov.objects.get(id=index);
 
         #paginacija
-        paginator = Paginator(vsi_izdelki, 3)
+        paginator = Paginator(vsi_izdelki, 7)
         page = request.GET.get('page')
         paginirani_izdelki = paginator.get_page(page)
 
@@ -221,7 +221,7 @@ def natisni_narocilnica(request, narocilo):
 
     narocila_izdelka = narocilo.narocila_izdelka.all()
         
-    uporabnik = Uporabnik.objects.get(user = request.user)
+    uporabnik = Uporabnik.objects.get(user = narocilo.uporabnik.user)
     story = []
 
     formatted_time = datetime.date.today()

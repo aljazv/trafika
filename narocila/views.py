@@ -101,7 +101,8 @@ def stara_narocila(request):
             narocilo.save()
 
 
-        narocila_obdelano = Narocilo.objects.filter(je_obdelan = True)
+        narocila_obdelano = Narocilo.objects.filter(je_obdelan = True).order_by('-datum')
+
 
         context = {
             'narocila_obdelano': narocila_obdelano
@@ -235,7 +236,7 @@ def natisni_dobavnica(request, narocilo):
               Paragraph('mail', styles["Line_Label"])
               ],
               #10
-              [Paragraph(podjetje_podatki, styles["Line_Data_Large"]),
+              [Paragraph(podjetje_podatki, styles["Line_Data"]),
               Paragraph('', styles["Line_Data_Large"]),
               Paragraph(narocilo.potnik.email, styles["Line_Data_Large"])
               ],
