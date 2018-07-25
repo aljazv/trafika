@@ -79,14 +79,14 @@ def naredi_bazo(request):
 
     #Bled
     izdelek_bled = Izdelek(ime = "Magnet Bled", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "MAG001")
-    izdelek_bled.slika.save('Bled.jpg', File(open(r'media/gallery/bled.jpg','rb')))
+    izdelek_bled.slika.save('Bled.jpg', File(open(r'media/gallery/Bled.jpg','rb')))
     izdelek_bled.tag.add(tag_slovenia,tag_bled);
 
     #narocilo_bled = NarociloIzdelka(izdelek = izdelek_bled,kolicina = 25)
     #narocilo_bled.save()
 
     izdelek_triglav = Izdelek(ime = "Magnet Triglav", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "MAG015")
-    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'media/gallery/triglav.jpg','rb')))
+    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'media/gallery/Triglav.jpg','rb')))
     izdelek_triglav.tag.add(tag_slovenia,tag_triglav);
     #narocilo_triglav = NarociloIzdelka(izdelek = izdelek_triglav,kolicina = 100)
     #narocilo_triglav.save()
