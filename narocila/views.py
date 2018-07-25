@@ -135,20 +135,22 @@ def natisni_dobavnica(request, narocilo):
     tabela1 = formatted_time.split("-")
     formatted_time = tabela1[2] + "." + tabela1[1] + "." + tabela1[0]
 
+    #GretaSansStd-Bold
+    #GretaSansStd-Regular
             
     styles=getSampleStyleSheet()
     p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
-    p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
-    p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
-    p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
-    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=9, leading=13))
-    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
-    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
-    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
-    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
-    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
+    p1 = styles.add(ParagraphStyle(name='Center',fontName='GretaSansStd-Regular', alignment=TA_CENTER))
+    p2 = styles.add(ParagraphStyle(name='Right',fontName='GretaSansStd-Regular', alignment=TA_RIGHT))
+    p3 = styles.add(ParagraphStyle(name='Left',fontName='GretaSansStd-Regular', alignment=TA_LEFT))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=9, leading=14))
+    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=7, leading=14))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=12, leading=14))
+    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=20, leading=14))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=7, leading=14, alignment=TA_LEFT))
+    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=14, alignment=TA_CENTER))
     
-    styles.add(ParagraphStyle(name='sidarta_label',fontName='Vera', font='Helvetica-Bold', fontSize=15, leading=6, alignment=TA_LEFT))
+    styles.add(ParagraphStyle(name='sidarta_label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=17, leading=14, alignment=TA_LEFT))
     #ptext = '<font size=12>%s</font>' % formatted_time #čas ko se natisne
     #par = Paragraph(ptext, p0)
     #story.append(par)
@@ -252,7 +254,7 @@ def natisni_dobavnica(request, narocilo):
               ]
               ]
 
-    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.4*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
 
     t1.setStyle(TableStyle([
         ('VALIGN',(0,0),(-1,-1),'TOP'),
@@ -267,16 +269,14 @@ def natisni_dobavnica(request, narocilo):
 
     #
     story.append(Spacer(1, 20))
-    
     #
     data1 = [[Paragraph('št', styles["Line_Label"]),
             Paragraph('črtna koda EAN', styles["Line_Label"]),
             Paragraph('artikel', styles["Line_Label"]),
-            Paragraph('šifra', styles["Line_Label"]),
             Paragraph('količina', styles["Line_Label"])
             ]]
         
-    t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+    t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm, 5 * cm))
     t1.setStyle(TableStyle([
         ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
     ]))
@@ -286,48 +286,45 @@ def natisni_dobavnica(request, narocilo):
     for i, key in enumerate(tabela):
         iteracija = str(i+1) + "."
 
-
-        motivi = narocila_izdelka.filter(izdelek__skupina_izdelkov = key)
-        print(motivi)
         data1 = [[Paragraph(iteracija, styles["Line_Data"]),
                 Paragraph(key.koda, styles["Line_Data"]),
                 Paragraph(key.ime, styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"])
+                Paragraph(str(tabela[key]), styles["Line_Data"]) 
                 ]]
+            
 
-        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
         t1.setStyle(TableStyle([
             ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
         ]))
         story.append(t1)
 
-        for motiv in motivi:
-            print(motiv)
-            data1 = [[Paragraph('', styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"]),
-                Paragraph(motiv.izdelek.koda, styles["Line_Data"]),
-                Paragraph(str(motiv.kolicina), styles["Line_Data"])
-                ]]
-            t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
-            t1.setStyle(TableStyle([
-                ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
-            ]))
-            story.append(t1)
+        #for motiv in motivi:
+        #    print(motiv)
+        #    data1 = [[Paragraph('', styles["Line_Data"]),
+        #        Paragraph('', styles["Line_Data"]),
+        #        Paragraph('', styles["Line_Data"]),
+        #        Paragraph(motiv.izdelek.koda, styles["Line_Data"]),
+        #        Paragraph(str(motiv.kolicina), styles["Line_Data"])
+        #        ]]
+        #    t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+        #    t1.setStyle(TableStyle([
+        #        ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
+        #    ]))
+        #    story.append(t1)
 
 
-        data1 = [[Paragraph('', styles["Line_Data"]),
-                Paragraph('Skupaj', styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"]),
-                Paragraph('', styles["Line_Data"]),
-                Paragraph(str(tabela[key]), styles["Line_Data"])
-                ]]
-        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
-        t1.setStyle(TableStyle([
-            ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
-        ]))
-        story.append(t1)
+        #data1 = [[Paragraph('', styles["Line_Data"]),
+        #        Paragraph('Skupaj', styles["Line_Data"]),
+        #        Paragraph('', styles["Line_Data"]),
+        #        Paragraph('', styles["Line_Data"]),
+        #        Paragraph(str(tabela[key]), styles["Line_Data"])
+        #        ]]
+        #t1 = Table(data1, colWidths=(1 * cm, 6 * cm,5 * cm,2.7*cm, 5 * cm))
+        #t1.setStyle(TableStyle([
+        #    ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
+        #]))
+        #story.append(t1)
 
     return story
 
