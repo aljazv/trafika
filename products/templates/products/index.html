@@ -64,7 +64,7 @@
                   Oznake:
 
                   {% for tag in izdelek.tag.all  %}
-                    <span class="badge badge-info text-sm">{{tag}}</span>
+                    <span class="badge badge-info text-sm"><a href="/{{index_skupina}}/{{tag}}" >{{tag}}</a></span>
                   {% endfor %}
                 </div>
                 <div class="tags mb-4">
