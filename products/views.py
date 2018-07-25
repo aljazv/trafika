@@ -109,15 +109,13 @@ def index_skupina(request, index, search_string = None):
         page = request.GET.get('page')
         paginirani_izdelki = paginator.get_page(page)
 
-
-
         context = {
             'opozorilo' : vsi_izdelki.count() == 0,
             'skupine': getAllGroups(),
             'izdelki' : paginirani_izdelki,
             'index_skupina' : index,
             'search_string': search_string,
-            'ime_skupine': skupina.ime
+            'skupina': skupina
             
         }
 

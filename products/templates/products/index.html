@@ -1,6 +1,6 @@
 {% include "base.html" with skupine=skupine index_skupina=index_skupina %}
 
-
+{% load filters %}
 {% block head %}
 
 
@@ -14,7 +14,7 @@
 
 <div id="main" class="main">
     <div class="m-3">
-      <h1>{{ime_skupine}}</h1>
+      <h1>{{skupina.ime}}</h1>
       <!-- iskanje po tagih -->
       <div class="form-inline my-2 my-lg-0">
         <form id="backToAll" method="get" action="/{{index_skupina}}">
@@ -36,6 +36,11 @@
     <div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       Izberite ali vpišite pravilno količino.
+    </div>
+
+    <div id="warning-text2"  class="alert alert-dismissible alert-warning item-card">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Minimalna količina naročila je {{skupina.min_narocilo}}.
     </div>
 
 
@@ -64,25 +69,23 @@
                 </div>
 
                   <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
-                  <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off"  value="10">10
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
                   </label>
-                  <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="20">20
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo|multiply:2 }}">{{ skupina.min_narocilo|multiply:2 }}
                   </label>
-                  <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="50">50
-                  </label>
-                  <label class="btn btn-secondary col-md-1">
-                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="100">100
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="{{ skupina.min_narocilo|multiply:4 }}">{{ skupina.min_narocilo|multiply:4 }}
                   </label>
 
                   <div class="col-md-3">
-                    <input name="kolicina" class="form-control p-lr" required="" id="option5"  type="number" min=0 size="8" placeholder="Poljubno">
+                    <input name="kolicina" class="form-control p-lr" required="" id="option5"  type="number" min=1 size="8" placeholder="min. {{skupina.min_narocilo}}">
                   </div>
 
                   <div class="col-md-3">
-                    <button class="dodaj btn btn-primary" id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
+                    <input hidden id="min-order">
+                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
                   </div>
                 </div>
 

@@ -13,7 +13,7 @@
   font-size: 1rem;
 }
 
-#info-text, #warning-text{
+#info-text, #warning-text, #warning-text2{
   display: none;
 }
 
