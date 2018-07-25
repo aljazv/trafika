@@ -21,7 +21,8 @@
 			<thead>
 				<tr class="table-light">
 					<th scope="col">#</th> 
-					<th scope="col">Ime izdelka</th> 
+					<th scope="col">Ime izdelka</th>
+					<th scope="col">Koda izdelka</th>  
 					<th scope="col">Slika</th> 
 					<th scope="col">Količina</th> 
 					<th scope="col">Spremeni količino</th> 
@@ -32,6 +33,7 @@
 			<tr class="table-light">
 				<td>{{forloop.counter}}.</td>
 				<td>{{narocilo_izdelka.izdelek.ime}}</td>
+				<td>{{narocilo_izdelka.izdelek.koda}}</td>
 				<td><img style="max-height:80px" src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 				<td>{{narocilo_izdelka.kolicina}}</td>
 				

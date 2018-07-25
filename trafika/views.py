@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.contrib import auth
+from products.models import Kosarica
 from django.template.context_processors import csrf
 import datetime
 
@@ -19,6 +20,9 @@ def login(request):
 
 
 def logout(request):
+
+	kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
+	kosarica_uporabnika.narocila_izdelka.clear()
 	auth.logout(request)
 	return HttpResponseRedirect('/prijava/')
 

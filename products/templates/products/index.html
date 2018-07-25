@@ -19,7 +19,7 @@
       <div class="form-inline my-2 my-lg-0">
         <form id="backToAll" method="get" action="/{{index_skupina}}">
         </form>
-        <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah" id="search">
+        <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah ali kodi" id="search">
         <button class="btn btn-info" onclick="searchByTag()"><i class="fa fa-search"></i>   &nbsp;Išči</button>
         
       </div>
@@ -66,6 +66,10 @@
                   {% for tag in izdelek.tag.all  %}
                     <span class="badge badge-info text-sm">{{tag}}</span>
                   {% endfor %}
+                </div>
+                <div class="tags mb-4">
+                  Koda:
+                    <span class="badge badge-info text-sm">{{izdelek.koda}}</span>
                 </div>
 
                   <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
