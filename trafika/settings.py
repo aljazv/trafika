@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'narocila.apps.NarocilaConfig',
     'products.apps.ProductsConfig',
     'imagekit',
     'django.contrib.admin',
@@ -65,6 +66,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+        'libraries':{
+        'filters': 'trafika.templates.filters',
+
+        }
         },
     },
 ]
@@ -125,7 +130,7 @@ STATICFILES_DIRS = [
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 

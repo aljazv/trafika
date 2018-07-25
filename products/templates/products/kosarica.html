@@ -1,60 +1,82 @@
 {% include "base.html" with active_kosarica="active" skupine=skupine %}
 
-
-<div id="main" class="main">
 	{% block content %}
+<div id="main" class="main">
+	<div class="m-3">
+		<h1>Košarica</h1>
+		<form action="/pregled_narocil/" method="post">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-primary mb-3" name="pregled_narocil">Pregled starih naročil</button>
+		</form>
+
+		<div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
+	      <button type="button" class="close" data-dismiss="alert">&times;</button>
+	      Vpišite pravilno količino.
+	    </div>
 
 
-	<form action="/pregled_narocil/" method="post">
-		{% csrf_token %}
-		<button type="submit" name="pregled_narocil">Pregled starih narocil</button>
-	</form>
-	{% if arr %}
+		{% if arr %}
 
-	<table class="table">
-		<tr>
-			<td>#</td>
-			<td>Ime izdelka</td>
-			<td>Slika</td>
-			<td>Kolicina narocenih izdelkov</td>
-			<td>Spremeni kolicino</td>
-			<td>Odstrani izdelek iz kosarice</td>
-		</tr>
-		{% for narocilo_izdelka in arr  %}
-		<tr>
-			<td>{{forloop.counter}}</td>
-			<td>{{narocilo_izdelka.izdelek.ime}}</td>
-			<td><img src="{{ narocilo_izdelka.izdelek.slika.url }}" width="128" height="128"></td>
-			<td>{{narocilo_izdelka.kolicina}}</td>
-			<form action="/kosarica/" method="post">
-				{% csrf_token %}
-				<td>
-					<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
-					<input type="number" name="kolicina" min="0">
-					<button type="submit" name="spremeni_kolicino">Spremeni</button>
-				</td>
-				<td>
-					<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
-					<button type="submit" name="odstrani_izdelek">Odstrani</button>
-				</td>
-			</form>
-		</tr>
-		{% endfor %}
-		<!-- Size od text inputa ???? -->
-	</table>
+		<table class="table table-responsive mt-3 table-hover ">
+			<thead>
+				<tr class="table-light">
+					<th scope="col">#</th> 
+					<th scope="col">Ime izdelka</th> 
+					<th scope="col">Slika</th> 
+					<th scope="col">Količina</th> 
+					<th scope="col">Spremeni količino</th> 
+					<th scope="col">Odstrani izdelek iz košarice</th> 
+				</tr>
+			</thead>
+			{% for narocilo_izdelka in arr  %}
+			<tr class="table-light">
+				<td>{{forloop.counter}}.</td>
+				<td>{{narocilo_izdelka.izdelek.ime}}</td>
+				<td><img style="max-height:80px" src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
+				<td>{{narocilo_izdelka.kolicina}}</td>
+				
+					
+					<td class="row">
+						<form action="/kosarica/" method="post" name="change-val" class="form-inline">
+							{% csrf_token %}
+						<div class="form-inline my-2 my-lg-0">
+						<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
+						
+						<input class="form-control mr-2 costum-input" placeholder="Spremeni količino"  type="number" name="kolicina" min="0" size="15">
+				
+						<button type="submit" class="btn btn-primary spremeni_kolicino" name="spremeni_kolicino" ><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
+						
+						</div>
+					
+					</td>
+					<td>
+						<form action="/kosarica/" method="post" name="remove-item" class="form-inline">
+							{% csrf_token %}
+							<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
+							<button class="btn btn-danger btn-large-text odstrani_izdelek" name="odstrani_izdelek" type="submit"><i class="fa fa-times"></i>  &nbsp;Odstrani 
+						</button>
+						</form>
+					</td>
+				</form>
+			</tr>
+			{% endfor %}
+			<!-- Size od text inputa ???? -->
+		</table>
 
 
 
-	<form action="/pregled_narocil/" method="post">
-		{% csrf_token %}
-		<input type="text" name="opomba" placeholder="Opomba" size="70"><br>
-		<button type="submit" name="oddaj_narocilo">Oddaj narocilo</button>
-	</form>
+		<form action="/pregled_narocil/" method="post" class="form-inline">
+			{% csrf_token %}
+
+			<input type="text" class="form-control costum-input mr-2 col-sm-9" name="opomba" placeholder="Opomba" size="70">
+			<button type="submit" class="btn btn-primary col-sm-2" name="oddaj_narocilo">Oddaj naročilo</button>
+		</form>
 
 
-	{% else %}
-	Kosarica je prazna.
-	{% endif %}
+		{% else %}
+		<p class="text-justify mt-3">Košarica je prazna.</p>
+		{% endif %}
+	</div>
 
-	{% endblock %}
 </div>
+{% endblock %}

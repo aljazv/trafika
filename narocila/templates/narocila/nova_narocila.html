@@ -1,0 +1,47 @@
+{% include "base.html" with active_new_orders="active"  %}
+
+    {% block content %}
+<div id="main" class="main">
+    <div class="m-3">
+        <h1>Nova naročila</h1>
+    {% if narocila_neobdelano %}
+   <table class="table table-responsive mt-3 table-hover">
+        <thead>
+            <tr class="table-light">
+                <th scope="col">#</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Podjetje</th>
+                <th scope="col">Prodajno mesto</th>
+                <th scope="col">Naročilnica</th>
+                <th scope="col">Označi kot obdelano</th>
+            </tr>
+        </thead>
+        {% for narocilo in narocila_neobdelano  %}
+            <tr class="table-light">
+                <form action="/narocila/nova_narocila/" method="post">
+                 {% csrf_token %}   
+                <td>{{forloop.counter}}.</td>
+                <td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
+                <td>{{narocilo.uporabnik.podjetje.ime}}</td>
+                <td>{{narocilo.uporabnik.prodajno_mesto.ime}}</td>
+                <td>
+                    <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    <button type="submit" class="btn btn-info" name="prenesi"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
+                </td>
+                <td>
+
+                    <button type="submit" class="btn btn-primary" name="obdelano">Obdelano</button>
+
+                </td>
+                </form>
+            </tr>
+        
+        {% endfor %}
+    </table>
+
+    {% else %}
+    <p>Ni novih naročil.</p>
+    {% endif %}
+</div>
+</div>
+    {% endblock %}

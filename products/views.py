@@ -7,15 +7,23 @@ import datetime
 from .models import *
 from .forms import *
 
+import os.path
+
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 
+from reportlab.lib import utils
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, PageBreak
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
 from time import gmtime, strftime
 
@@ -28,6 +36,9 @@ def getAllGroups():
 #index je glavna stran ki si prikaze ko se uporabnik prijavi
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
+
+    if request.user.is_authenticated and request.user.is_superuser:
+        return HttpResponseRedirect("/narocila/nova_narocila/")
 
     if request.user.is_authenticated:
 
@@ -62,7 +73,7 @@ def index(request):
             prva_skupina = SkupinaIzdelkov.objects.first().id
             return HttpResponseRedirect(str(prva_skupina)+ "/")
     else:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
 
 #index_skupina je 
@@ -71,7 +82,7 @@ def index_skupina(request, index, search_string = None):
     
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
     #prikaz izdelkov    
     else:
@@ -82,9 +93,6 @@ def index_skupina(request, index, search_string = None):
         if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
             nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
             nova_kosarica.save()
-            print("kosarica ustvarjena")
-
-
 
         #logika za iskanje po tagih
         if search_string != None:
@@ -94,19 +102,20 @@ def index_skupina(request, index, search_string = None):
             vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
         
 
+        skupina = SkupinaIzdelkov.objects.get(id=index);
 
         #paginacija
-        paginator = Paginator(vsi_izdelki, 25)
+        paginator = Paginator(vsi_izdelki, 7)
         page = request.GET.get('page')
         paginirani_izdelki = paginator.get_page(page)
 
-
-
         context = {
-            'opozorilo' : 'nic',
+            'opozorilo' : vsi_izdelki.count() == 0,
             'skupine': getAllGroups(),
             'izdelki' : paginirani_izdelki,
             'index_skupina' : index,
+            'search_string': search_string,
+            'skupina': skupina
             
         }
 
@@ -122,7 +131,7 @@ def kosarica(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava/")
 
     #dela ker je sam ena kosrica ustvarjena!
     #Za popraviti sumnike
@@ -155,15 +164,18 @@ def pregled_narocil(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
     if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/login/")
+        return HttpResponseRedirect("/prijava")
 
+    set_msg = False
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
         curr_opomba = request.POST['opomba']
 
+        set_msg = True
         kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
         curr_uporabnik = Uporabnik.objects.get(user = request.user)
 
-        narocilo = Narocilo(uporabnik = curr_uporabnik, opomba = curr_opomba)
+        potnik = Potnik.objects.get(prodajno_mesto = curr_uporabnik.prodajno_mesto) #dodas se potnika!
+        narocilo = Narocilo(uporabnik = curr_uporabnik, opomba = curr_opomba, potnik = potnik)
         narocilo.save()
         for narocilo_add in kosarica_uporabnika.narocila_izdelka.all():
             narocilo.narocila_izdelka.add(narocilo_add)
@@ -173,116 +185,18 @@ def pregled_narocil(request):
         return HttpResponseRedirect('/pregled_narocil/') #da ne submita forme se enkrat
 
     if request.method == 'POST' and 'prenesi_pdf' in request.POST:
-
         narocilo_id = request.POST['narocilo_id']
         narocilo = Narocilo.objects.get(id = narocilo_id)
-
-        narocila_izdelka = narocilo.narocila_izdelka.all()
-        
-        uporabnik = Uporabnik.objects.get(user = request.user)
-
+        ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
         story=[]
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="narocilo.pdf"'
+        response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
         doc = SimpleDocTemplate(response,pagesize=letter,
-                rightMargin=72,leftMargin=72,
-                topMargin=72,bottomMargin=18)
+            rightMargin=20,leftMargin=20,
+            topMargin=20,bottomMargin=20)
 
-        formatted_time = datetime.date.today()
-        formatted_time = str(formatted_time)
-        tabela = formatted_time.split("-")
-        formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
-
-            
-        styles=getSampleStyleSheet()
-        p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
-        p1 = styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-        p2 = styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-        p3 = styles.add(ParagraphStyle(name='Left', alignment=TA_LEFT))
-        p4 = styles.add(ParagraphStyle(name='Line_Data', alignment=TA_LEFT, fontSize=11, leading=10))
-        p5 = styles.add(ParagraphStyle(name='Line_Data_Small', alignment=TA_LEFT, fontSize=7, leading=8))
-        p6 = styles.add(ParagraphStyle(name='Line_Data_Large', alignment=TA_LEFT, fontSize=12, leading=12))
-        p7 = styles.add(ParagraphStyle(name='Line_Data_Largest', alignment=TA_LEFT, fontSize=14, leading=15))
-        p8 = styles.add(ParagraphStyle(name='Line_Label', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
-        p9 = styles.add(ParagraphStyle(name='Line_Label_Center', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
-
-        ptext = '<font size=12>%s</font>' % formatted_time
-        par = Paragraph(ptext, p0)
-        story.append(par)
-        story.append(Spacer(1, 12))
- 
-        #
-        data1 = [[Paragraph(uporabnik.lastnik, styles["Line_Data_Large"])],
-            [Paragraph('LASTNIK PODJETJA', styles["Line_Label"])],
-            [Paragraph(uporabnik.podjetje, styles["Line_Data_Large"])],
-            [Paragraph('NASLOV PODJETJA', styles["Line_Label"])]
-            ]   
-
-        t1 = Table(data1, colWidths=(9 * cm))
-        t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (0, 1), 0.25, colors.black),
-        ('INNERGRID', (0, 2), (0, 3), 0.25, colors.black),
-        ]))
-        t1.hAlign = 'LEFT'
-
-        story.append(t1)
-        #
-        story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
-        #
-        datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
-        
-        data1 = [[Paragraph('DATUM NAROČILA', styles["Line_Label"])],
-                [Paragraph(datum, styles["Line_Data_Largest"])
-             ]]
-        t1 = Table(data1)
-        t1.setStyle(TableStyle([
-            ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-            ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ]))
-        story.append(t1)
-        #
-        data1 = [[Paragraph('#', styles["Line_Label"]),
-            Paragraph('IME IZDELKA', styles["Line_Label"]),
-            Paragraph('KODA IZDELKA', styles["Line_Label"]),
-            Paragraph('VRSTA IZDELKA', styles["Line_Label"]),
-            Paragraph('KOLIČINA', styles["Line_Label"]),
-            Paragraph('✔', styles["Line_Label"])
-            ]]
-        
-        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 6.1 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
-        t1.setStyle(TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ]))
-        story.append(t1)
-        #
-
-        for i, narocilo_izdelka in enumerate(narocila_izdelka):
-            iteracija = str(i+1) + "."
-            data1 = [[Paragraph(iteracija, styles["Line_Data"]),
-                  Paragraph(narocilo_izdelka.izdelek.ime, styles["Line_Data"]),
-                  Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
-                  Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
-                  Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
-                  Paragraph("", styles["Line_Data"])
-                  ]]
-
-            t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 6.1 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
-            t1.setStyle(TableStyle([
-                ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ]))
-            story.append(t1)
-
-
-
-
+        story = natisni_narocilnica(request,narocilo)
         doc.build(story)
-
         return response
 
     curr_uporabnik = Uporabnik.objects.get(user = request.user)
@@ -294,7 +208,134 @@ def pregled_narocil(request):
         'arr': narocila_uporabnika,
         'msg_type': 'alert-success',
         'message': 'Naročilo uspešno oddano.',
+        'show_msg': set_msg,
         'skupine': getAllGroups(),
         }
 
     return render(request,'products/pregled_narocil.html',context)
+
+def natisni_narocilnica(request, narocilo):
+    
+
+    narocila_izdelka = narocilo.narocila_izdelka.all()
+        
+    uporabnik = Uporabnik.objects.get(user = narocilo.uporabnik.user)
+    story = []
+
+    formatted_time = datetime.date.today()
+    formatted_time = str(formatted_time)
+    tabela = formatted_time.split("-")
+    formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
+
+            
+    styles=getSampleStyleSheet()
+    p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
+    p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
+    p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
+    p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=11, leading=13))
+    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
+    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
+    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
+
+    ptext = '<font size=12>%s</font>' % formatted_time
+    par = Paragraph(ptext, p0)
+    story.append(par)
+    story.append(Spacer(1, 12))
+ 
+    ptext = '<font size=20>NAROČILNICA</font>'
+    par = Paragraph(ptext, styles["Line_Data_Largest"])
+    story.append(par)
+    story.append(Spacer(1, 30))
+
+    # prodajno mesto + podjetje
+    podjetje = uporabnik.podjetje
+    prodajno_mesto = uporabnik.prodajno_mesto
+
+    podjetje_podatki = '%s <br/> %s <br/> %s, %s <br/> %s <br/> ' % (podjetje.ime, podjetje.naslov, podjetje.postna_stevilka, podjetje.obcina, podjetje.davcna_stevilka)
+        
+    prodajno_mesto_podatki = '%s <br/>%s <br/>%s, %s <br/><br/>%s <br/>%s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina, prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon)
+
+
+    data1 = [[Paragraph('Prodajno mesto', styles["Line_Label"]),
+                Paragraph('Podjetje', styles["Line_Label"])],
+
+                [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
+                Paragraph(podjetje_podatki, styles["Line_Data_Large"])]
+                ]
+
+    t1 = Table(data1)
+    t1.setStyle(TableStyle([
+        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
+        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    story.append(t1)
+    #
+    story.append(Spacer(1, 20))
+    #
+    story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
+    #
+    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
+        
+    data1 = [[Paragraph('DATUM NAROČILA', styles["Line_Label"])],
+            [Paragraph(datum, styles["Line_Data_Largest"])
+            ]]
+    t1 = Table(data1)
+    t1.setStyle(TableStyle([
+        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
+        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    story.append(t1)
+    #
+    data1 = [[Paragraph('#', styles["Line_Label"]),
+        Paragraph('IME IZDELKA', styles["Line_Label"]),
+        Paragraph('SLIKA', styles["Line_Label"]),
+        Paragraph('KODA IZDELKA', styles["Line_Label"]),
+        Paragraph('VRSTA IZDELKA', styles["Line_Label"]),
+        Paragraph('KOLIČINA', styles["Line_Label"]),
+        Paragraph('✔', styles["Line_Label"])
+        ]]
+        
+    t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+    t1.setStyle(TableStyle([
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    story.append(t1)
+    #
+    for i, narocilo_izdelka in enumerate(narocila_izdelka):
+        iteracija = str(i+1) + "."
+        img = utils.ImageReader(narocilo_izdelka.izdelek.image_thumbnail)
+        iw, ih = img.getSize()
+        aspect = ih / float(iw)
+
+        im = Image(narocilo_izdelka.izdelek.image_thumbnail, 2*cm, 2*cm*aspect)
+
+        data1 = [[Paragraph(iteracija, styles["Line_Data"]),
+                Paragraph(narocilo_izdelka.izdelek.ime, styles["Line_Data"]),
+                im,
+                Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
+                Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
+                Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
+                Paragraph("", styles["Line_Data"])
+                ]]
+
+        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+        t1.setStyle(TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        story.append(t1)
+
+    return story
+
+#def natisni_dobavnica(request, narocilo):
+

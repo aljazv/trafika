@@ -1,0 +1,138 @@
+{% include "base.html" with active_statistics="active" %}
+
+
+
+{% block content %}
+<div id="main" class="main">
+<div class="m-3">
+
+    <h1>Statistika</h1>
+
+    <div class="mt-4">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi skupaj po artiklu (EAN kodi):</h4>
+            <div class="form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text"  class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                
+            </div>
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_skupine">Prenesi</button>
+        </form>
+    </div>
+
+    <div class="mt-8">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi po artiklu (EAN koda) znotraj prodajnega mesta:</h4>
+         
+            <div class="form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                 <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
+                    <option value=""> </option>
+                    {% for mesto in prodajno_mesto  %}
+                    <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
+                    {% endfor %}
+                </select>
+
+                
+            </div>
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_skupine_trafika">Prenesi</button>
+           
+        </form>
+    </div>
+  
+
+
+    <div class="mt-8">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi motivno skupaj:</h4>
+
+           <div class="form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                 <select name="skupina_izdelkov" class="form-control costum-input mr-3" required>
+                   <option value=""> </option>
+                {% for skupina in skupine_izdelkov  %}
+                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_motivno">Prenesi</button>
+        </form>
+    </div>
+
+
+
+    <div class="mt-8">
+        <form action="/narocila/statistika/" method="post">
+            {% csrf_token %}
+            <h4>Prenesi motivno znotraj artikla po posamičnem prodajnem mestu</h4>
+            <div class="form-inline">
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Začetni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_zac" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <div class="form-group mr-3">
+                    <label class="statistics-label mr-2">Končni datum: </label>
+                    <input type="text" class="form-control date-menu costum-input" autocomplete="off" name="datum_kon" value="" size="10" placeholder="dd/mm/yyyy" required />
+                </div>
+
+                <select name="prodajno_mesto" class="form-control costum-input mr-3" required>
+                <option value=""> </option>
+                {% for mesto in prodajno_mesto  %}
+                <option value="{{ mesto.id }}"> {{ mesto.ime }}</option>
+                {% endfor %}
+                </select>
+
+                <select name="skupina_izdelkov" class="form-control costum-input mr-3" required>
+                <option value=""> </option>
+                {% for skupina in skupine_izdelkov  %}
+                <option value="{{ skupina.id }}">{{ skupina.ime }}</option>
+                {% endfor %}
+                </select>
+
+                
+            </div>
+
+            <button type="submit" class="btn btn-info mt-2" name="prenesi_excel_motivno_trafika">Prenesi</button>
+
+            
+         </form>
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

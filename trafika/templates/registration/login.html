@@ -1,7 +1,41 @@
 <!-- templates/registration/login.html -->
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
+  <title>Prijava</title>
+</head>
+<body>
+
+<div class="container login ">
+		<h2>Prijava</h2>
+
+
+	
+	<form action="/preveri/" method="post" > 
+		{% csrf_token %}
+		<div class="form-group">
+			<label for="usr">Uporabniško ime:</label>
+			<input type="text" class="form-control" value="" name="usr" id="usr">
+		</div>
+		<div class="form-group">
+			<label for="pwd">Geslo:</label>
+			<input type="password" class="form-control" value="" name="pwd" id="pwd">
+		</div>
+
+			<div class="alert alert-danger" {% if not error %} style="display:none" {% endif %}>
+					Napačno ime ali geslo!
+			</div>
+		
+		<button type="submit" class="btn btn-primary" style="margin-bottom: 10px">Prijava</button>
+	</form>
+
+	
+</div>
+
+
+</body>
+</html>

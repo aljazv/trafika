@@ -1,6 +1,6 @@
 {% include "base.html" with skupine=skupine index_skupina=index_skupina %}
 
-
+{% load filters %}
 {% block head %}
 
 
@@ -10,68 +10,162 @@
 
 {% endblock %}
 
-<div id="main" class="main">
 {% block content %}
 
+<div id="main" class="main">
+    <div class="m-3">
+      <h1>{{skupina.ime}}</h1>
+      <!-- iskanje po tagih -->
+      <div class="form-inline my-2 my-lg-0">
+        <form id="backToAll" method="get" action="/{{index_skupina}}">
+        </form>
+        <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah" id="search">
+        <button class="btn btn-info" onclick="searchByTag()"><i class="fa fa-search"></i>   &nbsp;Išči</button>
+        
+      </div>
+    </div>
 
-    <a href="/prijava/logout/">Odjava</a>
 
-    <button onclick="myFunction()">Iskanje po tagih</button> 
-    <input id="search" >
+    <div class="row mt-3 justify-content-md-center">
 
-    
-
-    <div id="info-text"  class="alert alert-dismissible alert-info">
+    <div id="info-text"  class="alert alert-dismissible alert-info item-card">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <strong>Opa!</strong> 
+      Izdelek dodan v košarico.
+    </div>
+
+    <div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Izberite ali vpišite pravilno količino.
+    </div>
+
+    <div id="warning-text2"  class="alert alert-dismissible alert-warning item-card">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Minimalna količina naročila je {{skupina.min_narocilo}}.
     </div>
 
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if izdelki.has_previous %}
-                <a href="?page=1">&laquo; Prva</a>
-                <a href="?page={{ izdelki.previous_page_number }}">Prejšna</a>
-            {% endif %}
+    {% if opozorilo %}
+    <p class="text-justify mt-3">Ni zadetkov</p>
+    {% endif %}
 
-            <span class="current">
-                Stran {{ izdelki.number }} od {{ izdelki.paginator.num_pages }}.
-            </span>
+    {% for izdelek in izdelki  %}
 
-            {% if izdelki.has_next %}
-                <a href="?page={{ izdelki.next_page_number }}">Naslednja</a>
-                <a href="?page={{ izdelki.paginator.num_pages }}">Zadnja &raquo;</a>
-            {% endif %}
-        </span>
+      <div class="card p-3 mb-3 item-card" >
+        <div class="row ">
+          <div class="col-md-4">
+              <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
+            </div>
+            <div class="col-md-8 px-3">
+              <div class="card-block px-3">
+                <h3 class="card-title">{{izdelek.ime}}</h3>
+                <p class="card-text">{{izdelek.opis}}</p>
+                
+                <div class="tags mb-4">
+                  Oznake:
+
+                  {% for tag in izdelek.tag.all  %}
+                    <span class="badge badge-info text-sm">{{tag}}</span>
+                  {% endfor %}
+                </div>
+
+                  <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
+                  </label>
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo|multiply:2 }}">{{ skupina.min_narocilo|multiply:2 }}
+                  </label>
+                  <label class="btn btn-secondary col-xs-1">
+                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="{{ skupina.min_narocilo|multiply:4 }}">{{ skupina.min_narocilo|multiply:4 }}
+                  </label>
+
+                  <div class="col-md-3">
+                    <input name="kolicina" class="form-control p-lr" required="" id="option5"  type="number" min=1 size="8" placeholder="min. {{skupina.min_narocilo}}">
+                  </div>
+
+                  <div class="col-md-3">
+                    <input hidden id="min-order">
+                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
+                  </div>
+                </div>
+
+                
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+   
+
+
+        
+
+    {% endfor %}
+</div>
+
+  <div class="mt-3 item-card">
+        <ul class="pagination">
+         
+        {% if izdelki.has_previous %}
+            <li class="page-item">
+                <a href="?page={{ izdelki.previous_page_number }}" class="page-link">&laquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link">&laquo;</a>
+            </li>
+        {% endif %}
+
+
+        {% if izdelki.has_other_pages %}
+
+          {% for pg in izdelki.paginator.page_range %}
+
+              {% if pg|add:"2" >= izdelki.number and pg|add:"-2" <= izdelki.number %}
+                {% if izdelki.number == pg %}
+                  
+                  <li class="page-item align-middle active">
+                    <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item align-middle">
+                    <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+                  </li>
+                {% endif %}
+
+              {% elif pg|add:"3" == izdelki.number %}
+                <li class="page-item align-middle">
+                  <a class="page-link disabled" style=":hover: {cursor:default;}">...</a>
+                </li>
+              {% elif pg|add:"-3" == izdelki.number %}
+                <li class="page-item align-middle">
+                  <a class="page-link disabled" style=":hover: {cursor:default;}">...</a>
+                </li>
+              {% endif %}
+          {% endfor %}
+
+        {% else %}
+          <li class="page-item align-middle active">
+            <a class="page-link disabled" style=":hover: {cursor:default;}">1</a>
+          </li>
+        {% endif %}
+       
+
+        {% if izdelki.has_next %}
+            <li class="page-item">
+                <a href="?page={{ izdelki.next_page_number }}" class="page-link">&raquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link"><span style="font-size: 1rem !important">&raquo;</span></a>
+            </li>
+        {% endif %}
+
+           
+        </ul>
     </div>
-
-
-    <table class="table">
-
-        {% for izdelek in izdelki  %}
-        <tr>
-            <td>{{izdelek.ime}}</td>
-            <td>{{izdelek.opis}}</td>
-            <td><img src="{{ izdelek.image_thumbnail.url }}"></td>
-            <td>{{izdelek.zaloga}}</td>
-            <td>{{izdelek.aktiven}}</td>
-            
-            
-            <td>
-                
-                <input name="kolicina" required="" id="{{ izdelek.id }}" type="number">
-                
-            </td>
-            <td><input class="test" type="submit" value="Dodaj v košarico" /></td>
-            
-            
-
-        </tr>
-        {% endfor %}
-
-    </table>
-
-
-{% endblock %}
 
 </div>
+{% endblock %}
+
