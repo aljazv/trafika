@@ -14,7 +14,6 @@
                 <td>Podjetje</td>
                 <td>Prodajno mesto</td>
                 <td>Način prodaje/dostave</td>
-                <td>Številka naročila (opcijsko)</td>
                 <td>Naročilnica</td>
                 <td>Dobavnica</td>
             </tr>
@@ -66,18 +65,6 @@
                 </td>
             </form>
 
-            <form action="/narocila/stara_narocila/" method="post">
-                {% csrf_token %}
-                <td class="row">
-                   <div class="form-inline my-2 my-lg-0">
-                        <input type="text" class="form-control mr-2 costum-input" name="st_narocila" value="{{ narocilo.st_narocila }}" size="10">
-                    
-                        <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
-                    
-                        <button type="submit" class="btn btn-primary" name="uveljavi_stNarocila">Spremeni</button>
-                    </div>
-                </td>
-            </form>
 
             <form action="/narocila/stara_narocila/" method="post">
                 {% csrf_token %}
@@ -91,7 +78,12 @@
                 {% csrf_token %}
                 <td>
                     <input type="hidden" name="narocilo_id" value={{ narocilo.id }}>
+                    {% if narocilo.nacin_prodaje and narocilo.nacin_dostave %}
                     <button type="submit" class="btn btn-info" name="prenesi_dobavnica"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
+                    {% else %}
+                    <button type="submit" class="btn btn-info" name="prenesi_dobavnica" disabled><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
+                    {% endif %}
+
                 </td>
             </form>
         </tr>

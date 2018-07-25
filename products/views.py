@@ -23,7 +23,11 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('GretaSansStd-Bold', 'GretaSansStd-Bold.ttf'))
+pdfmetrics.registerFont(TTFont('GretaSansStd-Regular', 'GretaSansStd-Regular.ttf'))
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+
+from reportlab.graphics.shapes import Rect,Drawing
 
 from time import gmtime, strftime
 
@@ -222,7 +226,7 @@ def natisni_narocilnica(request, narocilo):
 
     narocila_izdelka = narocilo.narocila_izdelka.all()
         
-    uporabnik = Uporabnik.objects.get(user = narocilo.uporabnik.user)
+    uporabnik = narocilo.uporabnik
     story = []
 
     formatted_time = datetime.date.today()
@@ -230,71 +234,130 @@ def natisni_narocilnica(request, narocilo):
     tabela = formatted_time.split("-")
     formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
 
+    #GretaSansStd-Bold
+    #GretaSansStd-Regular
             
     styles=getSampleStyleSheet()
     p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
-    p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
-    p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
-    p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
-    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=11, leading=13))
-    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
-    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
-    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
-    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
-    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
+    p1 = styles.add(ParagraphStyle(name='Center',fontName='GretaSansStd-Regular', alignment=TA_CENTER))
+    p2 = styles.add(ParagraphStyle(name='Right',fontName='GretaSansStd-Regular', alignment=TA_RIGHT))
+    p3 = styles.add(ParagraphStyle(name='Left',fontName='GretaSansStd-Regular', alignment=TA_LEFT))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=9, leading=14))
+    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=7, leading=14))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=12, leading=14))
+    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=20, leading=14))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=7, leading=14, alignment=TA_LEFT))
+    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=14, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='sidarta_label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=17, leading=14, alignment=TA_LEFT))
+    
+    data1 = [[Paragraph('NAROČILNICA', styles["Line_Data_Largest"]),
+            Paragraph('', styles["Line_Label"]),
+            Paragraph('', styles["Line_Label"])
+            ]]
+        
+    t1 = Table(data1, colWidths=(6.6 * cm,6.6 * cm,6.6 * cm), rowHeights = (0.5*cm))
+    t1.setStyle(TableStyle([
+        ('BACKGROUND',(2,0),(2,0),colors.black)
+    ]))
+    story.append(t1)
 
-    ptext = '<font size=12>%s</font>' % formatted_time
-    par = Paragraph(ptext, p0)
-    story.append(par)
-    story.append(Spacer(1, 12))
- 
-    ptext = '<font size=20>NAROČILNICA</font>'
-    par = Paragraph(ptext, styles["Line_Data_Largest"])
-    story.append(par)
     story.append(Spacer(1, 30))
 
-    # prodajno mesto + podjetje
+    #
     podjetje = uporabnik.podjetje
     prodajno_mesto = uporabnik.prodajno_mesto
 
     podjetje_podatki = '%s <br/> %s <br/> %s, %s <br/> %s <br/> ' % (podjetje.ime, podjetje.naslov, podjetje.postna_stevilka, podjetje.obcina, podjetje.davcna_stevilka)
         
-    prodajno_mesto_podatki = '%s <br/>%s <br/>%s, %s <br/><br/>%s <br/>%s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina, prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon)
+    prodajno_mesto_podatki = '%s <br/>%s <br/>%s %s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina)
+
+    sidarta = 'Trpinčeva 41c, SI - 1000 Ljubljana <br/>tel • 01 561 34 73, fax • 0590 72897 <br/>office@sidarta.si <br/> www.sidarta.si'
 
 
-    data1 = [[Paragraph('Prodajno mesto', styles["Line_Label"]),
-                Paragraph('Podjetje', styles["Line_Label"])],
+    prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon
+    leto_dobavnice = narocilo.datum.strftime("%Y")
+    st_dobavnice = leto_dobavnice[-2:] + str(narocilo.id).zfill(4)
 
-                [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
-                Paragraph(podjetje_podatki, styles["Line_Data_Large"])]
-                ]
+    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
 
-    t1 = Table(data1)
+    data1 = [#1 vrstica
+             [Paragraph('Prodajno mesto/naslov dostave', styles["Line_Label"]),
+              Paragraph('Številka naročilnice', styles["Line_Label"]),
+              Paragraph('SIDARTA', styles["sidarta_label"])
+              ],
+              #2
+             [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
+              Paragraph(st_dobavnice, styles["Line_Data_Large"]),
+              Paragraph(sidarta, styles["Line_Data_Small"])
+              ],
+              #3
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('Datum naročila', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #4
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(datum, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ],
+              #5
+              [Paragraph('Kontaktna oseba', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('Potnik', styles["Line_Label"])
+              ],
+              #6
+              [Paragraph(prodajno_mesto.kontaktna_oseba, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.user.first_name + " " + narocilo.potnik.user.last_name, styles["Line_Data_Large"])
+              ],
+              #7
+              [Paragraph('Telefon', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('Telefon', styles["Line_Label"])
+              ],
+              #8
+              [Paragraph(prodajno_mesto.telefon, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.telefon, styles["Line_Data_Large"])
+              ],
+              #9
+              [Paragraph('Sedež podjetja', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('mail', styles["Line_Label"])
+              ],
+              #10
+              [Paragraph(podjetje_podatki, styles["Line_Data"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.email, styles["Line_Data_Large"])
+              ],
+              #11
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #12
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ]
+              ]
+
+    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('VALIGN',(2,1),(2,1),'MIDDLE'),
+        ('SPAN',(0,1),(0,3)),
+        ('SPAN',(2,1),(2,3)),
+        ('SPAN',(0,9),(0,11)),
+        ('LINEBELOW', (2, 3), (2, 3), 2, colors.black)
     ]))
     story.append(t1)
+
+
     #
     story.append(Spacer(1, 20))
-    #
-    story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
-    #
-    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
-        
-    data1 = [[Paragraph('DATUM NAROČILA', styles["Line_Label"])],
-            [Paragraph(datum, styles["Line_Data_Largest"])
-            ]]
-    t1 = Table(data1)
-    t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    story.append(t1)
+    
     #
     data1 = [[Paragraph('#', styles["Line_Label"]),
         Paragraph('IME IZDELKA', styles["Line_Label"]),
@@ -302,17 +365,18 @@ def natisni_narocilnica(request, narocilo):
         Paragraph('KODA IZDELKA', styles["Line_Label"]),
         Paragraph('VRSTA IZDELKA', styles["Line_Label"]),
         Paragraph('KOLIČINA', styles["Line_Label"]),
-        Paragraph('✔', styles["Line_Label"])
+        Paragraph('', styles["Line_Label"])
         ]]
         
     t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
     ]))
     story.append(t1)
     #
+    d = Drawing(15, 15)
+    d.add(Rect(0, 0, 15, 15,strokeColor=colors.black,fillColor=colors.white, strokeWidth=1))
+    
     for i, narocilo_izdelka in enumerate(narocila_izdelka):
         iteracija = str(i+1) + "."
         img = utils.ImageReader(narocilo_izdelka.izdelek.image_thumbnail)
@@ -327,18 +391,14 @@ def natisni_narocilnica(request, narocilo):
                 Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
                 Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
                 Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
-                Paragraph("", styles["Line_Data"])
+                d
                 ]]
 
         t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
         t1.setStyle(TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+            ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
         ]))
         story.append(t1)
 
     return story
-
-#def natisni_dobavnica(request, narocilo):
-
