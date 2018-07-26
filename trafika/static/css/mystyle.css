@@ -13,8 +13,24 @@
   font-size: 1rem;
 }
 
-#info-text, #warning-text, #warning-text2{
-  display: none;
+#info-text, #warning-text, #warning-text2, #danger-text{
+  font-size: 1.1rem;
+  position: fixed;
+  top: 30px;
+  right: -400px;
+  width: 400px;
+  z-index:1000;
+  transition:0.5s ease;
+}
+
+.show{
+  right:20px !important;
+}
+
+.badge-info > a{
+  text-decoration: none;
+  color: white;
+
 }
 
 body{
@@ -47,8 +63,13 @@ p, .statistics-label{
 .costum-input{
   border:1px solid rgba(0,0,0,0.125); 
   background-color:white;
+  max-width:50%;
 }
 
+.disabled-buttons {
+    pointer-events: none;
+    opacity: 0.4;
+}
 
 .login{
   background-color: #fff;
