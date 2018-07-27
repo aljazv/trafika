@@ -28,9 +28,10 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
+ <img src="{% static 'images/logo_white.png' %}" width="150px" id="logo-white" class="d-block align-top logo-expand" alt="">
+
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav flex-column">
-
       {% if user.is_superuser %} 
 
         <a class="nav-item nav-link mt-3 {{active_statistics}}" href="/narocila/statistika/"><i class="fa fa-pie-chart"></i> Statistika</a>
