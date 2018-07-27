@@ -42,7 +42,7 @@ class Izdelek(models.Model):
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
 
     def __str__(self):
-        return self.ime  
+        return self.koda + " " + self.ime  
     
     class Meta:
         verbose_name = "Izdelek"
@@ -66,9 +66,15 @@ class ProdajnoMesto(models.Model):
    obcina = models.CharField(max_length = 100, verbose_name="Občina prodajnega mesta")
    kontaktna_oseba = models.CharField(max_length = 100, verbose_name="Kontaktna oseba")
    telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
+   
+   def __str__(self):
+        return self.ime + ", "+ self.naslov
+
    class Meta:
         verbose_name = "Prodajno mesto"
         verbose_name_plural = "Prodajna mesta"
+
+    
 
 class Podjetje(models.Model):
     ime = models.CharField(max_length = 100, verbose_name="Ime podjetja")
@@ -80,6 +86,9 @@ class Podjetje(models.Model):
     class Meta:
         verbose_name = "Podjetje"
         verbose_name_plural = "Podjetja"
+
+    def __str__(self):
+        return self.ime  
 
 class Potnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -96,6 +105,9 @@ class Uporabnik(models.Model):
     podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
     prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")  
     
+    def __str__(self):
+        return self.user.first_name + " " +  self.user.last_name
+
     class Meta:
         verbose_name = "Uporabnik"
         verbose_name_plural = "Uporabniki"
