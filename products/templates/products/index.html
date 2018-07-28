@@ -51,7 +51,7 @@
 
     {% for izdelek in izdelki  %}
 
-      <div class="card p-3 mb-3 item-card" >
+      <div class="card p-3 mb-3 item-card " >
         <div class="row ">
           <div class="col-md-4">
               <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
@@ -73,7 +73,7 @@
                     <span class="text-primary">{{izdelek.koda}}</span>
                 </div>
 
-                  <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
+                  <div class="btn-group btn-group-toggle row {%if not izdelek.zaloga %} disabled-buttons {%endif%}" id="group-{{ izdelek.id }}" data-toggle="buttons" >
                   <label class="btn btn-secondary col-xs-1">
                     <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
                   </label>
@@ -90,7 +90,14 @@
 
                   <div class="col-md-3">
                     <input hidden id="min-order">
-                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
+                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">
+                      {%if izdelek.zaloga %} 
+                      Dodaj v košarico
+                      {%else%}
+                      Ni na zalogi
+                      {%endif%}
+                    
+                    </button>
                   </div>
                 </div>
 
