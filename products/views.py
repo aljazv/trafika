@@ -191,7 +191,11 @@ def pregled_narocil(request):
     if request.method == 'POST' and 'prenesi_pdf' in request.POST:
         narocilo_id = request.POST['narocilo_id']
         narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
+        
+
+        leto_dobavnice = narocilo.datum.strftime("%Y")
+        st_dobavnice = leto_dobavnice[-2:] + str(narocilo.id).zfill(4)
+        ime_datoteke = "narocilnica" + "_" + st_dobavnice + ".pdf"
         story=[]
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
@@ -241,20 +245,29 @@ def natisni_narocilnica(request, narocilo):
     p3 = styles.add(ParagraphStyle(name='Left',fontName='GretaSansStd-Regular', alignment=TA_LEFT))
     p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=9, leading=14))
     p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=7, leading=14))
-    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=12, leading=14))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=10, leading=14))
     p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=20, leading=14))
-    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=7, leading=14, alignment=TA_LEFT))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=8, leading=14, alignment=TA_LEFT))
     p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=14, alignment=TA_CENTER))
+    
     styles.add(ParagraphStyle(name='sidarta_label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=17, leading=14, alignment=TA_LEFT))
     
+    width=6*cm
+    logo_path = "media/gallery/logo.jpg"
+    img = utils.ImageReader(logo_path)
+    iw, ih = img.getSize()
+    aspect = ih / float(iw)
+    logo_slika = Image(logo_path, width=width, height=(width * aspect))
+
     data1 = [[Paragraph('NAROČILNICA', styles["Line_Data_Largest"]),
             Paragraph('', styles["Line_Label"]),
-            Paragraph('', styles["Line_Label"])
+            logo_slika
             ]]
         
-    t1 = Table(data1, colWidths=(6.6 * cm,6.6 * cm,6.6 * cm), rowHeights = (0.5*cm))
+    t1 = Table(data1, colWidths=(10* cm,1.9 * cm,8 * cm), rowHeights = (0.5*cm))
     t1.setStyle(TableStyle([
-        ('BACKGROUND',(2,0),(2,0),colors.black)
+        #('BACKGROUND',(2,0),(2,0),colors.black)
+        ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
     ]))
     story.append(t1)
 
@@ -280,7 +293,7 @@ def natisni_narocilnica(request, narocilo):
     data1 = [#1 vrstica
              [Paragraph('Prodajno mesto/naslov dostave', styles["Line_Label"]),
               Paragraph('Številka naročilnice', styles["Line_Label"]),
-              Paragraph('SIDARTA', styles["sidarta_label"])
+              Paragraph('', styles["sidarta_label"])
               ],
               #2
              [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
@@ -339,7 +352,7 @@ def natisni_narocilnica(request, narocilo):
               ]
               ]
 
-    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
 
     t1.setStyle(TableStyle([
         ('VALIGN',(0,0),(-1,-1),'TOP'),

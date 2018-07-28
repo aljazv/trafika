@@ -12,12 +12,16 @@ class SkupinaIzdelkov(models.Model):
 
     def __str__(self):
         return self.ime 
+    class Meta:
+        verbose_name_plural = "Skupina izdelkov"
 
 class Tag(models.Model):
     ime = models.CharField(max_length = 100, verbose_name="Ime taga")
 
     def __str__(self):
         return self.ime 
+    class Meta:
+        verbose_name_plural = "Tag/zadetek"
 
 class Izdelek(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime izdelka")
@@ -35,14 +39,16 @@ class Izdelek(models.Model):
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
 
     def __str__(self):
-        return self.ime  
-
+        return self.ime,self.koda  
+    class Meta:
+        verbose_name_plural = "Izdelek"
 
 
 class NarociloIzdelka(models.Model):
     izdelek = models.ForeignKey(Izdelek, null = True, on_delete=models.SET_NULL)
     kolicina = models.IntegerField()
-
+    class Meta:
+        verbose_name_plural = "Naročilo izdelka"
 
 class ProdajnoMesto(models.Model):
    ime = models.CharField(max_length = 100, verbose_name="Ime prodajnega mesta")
@@ -69,6 +75,8 @@ class Uporabnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
     prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")  
+    class Meta:
+        verbose_name_plural = "Uporabnik"
 
 class Narocilo(models.Model):
 
@@ -91,8 +99,13 @@ class Narocilo(models.Model):
             return "Staro narocilo: " + str(self.id)
         else:
             return "Novo narocilo: " + str(self.id)
+    class Meta:
+        verbose_name_plural = "Naročilo"
 
 #se mi zdi da je vseeno potrebno lociti kosarico od narocil, da ne bo uporabnika kej zmedlo
 class Kosarica(models.Model):
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Košarica"
