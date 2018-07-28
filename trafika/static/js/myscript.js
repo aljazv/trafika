@@ -4,23 +4,25 @@ function getBootstrapDeviceSize() {
 
   function resize(){
     var size = getBootstrapDeviceSize();
-
+    var nav = $('#sidenav');
+    var main = $('#main');
+    var logo = $('#logo-white');
     if (size == "xs" || size == "sm" || size == "md"){
-      var nav = $('#sidenav');
-      var main = $('#main');
+
       if (nav.hasClass('sidenav')){
         nav.removeClass('sidenav');
         main.removeClass('main');
+        logo.removeClass('logo-expand')
         $(".card.p-3.mb-3.item-card").addClass("auto-m");
       }
     }
 
     else{
-      var nav = $('#sidenav');
-      var main = $('#main');
+
       if (! nav.hasClass('sidenav')){
         nav.addClass('sidenav');
         main.addClass('main')
+        logo.addClass('logo-expand')
         $(".card.p-3.mb-3.item-card").removeClass("auto-m");
       }
     }
