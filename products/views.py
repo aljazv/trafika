@@ -23,10 +23,14 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('GretaSansStd-Bold', 'GretaSansStd-Bold.ttf'))
+pdfmetrics.registerFont(TTFont('GretaSansStd-Regular', 'GretaSansStd-Regular.ttf'))
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
-from time import gmtime, strftime
+from reportlab.graphics.shapes import Rect,Drawing
 
+from time import gmtime, strftime
+from trafika.views import *
 
 #context: opozorilo je za display informacij
 
@@ -37,43 +41,43 @@ def getAllGroups():
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
-    if request.user.is_authenticated and request.user.is_superuser:
+    if not is_logged_in(request):
+          return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
         return HttpResponseRedirect("/narocila/nova_narocila/")
 
-    if request.user.is_authenticated:
+    #dodajanje izdelkov v koscarico preko AJAX
+    if request.method == 'POST':
+        #print(request.user)
+        #print(request.POST)
+        #print(request.POST['kolicina'])
+    
+        uporabnik = Uporabnik.objects.get(user=request.user)
+        kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
 
-            #dodajanje izdelkov v koscarico preko AJAX
-        if request.method == 'POST':
-            #print(request.user)
-            #print(request.POST)
-            #print(request.POST['kolicina'])
+        kolicina = request.POST['kolicina']
+        id_izdelka = request.POST['id_izdelka']
+
+        izdelek = Izdelek.objects.get(id=id_izdelka)
         
-            uporabnik = Uporabnik.objects.get(user=request.user)
-            kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
-
-            kolicina = request.POST['kolicina']
-            id_izdelka = request.POST['id_izdelka']
-
-            izdelek = Izdelek.objects.get(id=id_izdelka)
-            
-            # ce narocilo za izdelek ze obstaja mu pristejemo stevilo kolicina
-            if kosarica_uporabnika.narocila_izdelka.filter(izdelek=izdelek).exists():
-                narocilo = kosarica_uporabnika.narocila_izdelka.get(izdelek=izdelek)
-                narocilo.kolicina += int(kolicina)
-                narocilo.save()
-            #drugace naredimo novo narocilo izdelka
-            else:
-                nov_izdelek_za_kosarico = NarociloIzdelka(izdelek=izdelek, kolicina= kolicina)
-                nov_izdelek_za_kosarico.save()
-                kosarica_uporabnika.narocila_izdelka.add(nov_izdelek_za_kosarico)
-
-            
-            return JsonResponse({'success':'Izdelek dodan v košarico'}, status=200)
+        # ce narocilo za izdelek ze obstaja mu pristejemo stevilo kolicina
+        if kosarica_uporabnika.narocila_izdelka.filter(izdelek=izdelek).exists():
+            narocilo = kosarica_uporabnika.narocila_izdelka.get(izdelek=izdelek)
+            narocilo.kolicina += int(kolicina)
+            narocilo.save()
+        #drugace naredimo novo narocilo izdelka
         else:
-            prva_skupina = SkupinaIzdelkov.objects.first().id
-            return HttpResponseRedirect(str(prva_skupina)+ "/")
+            nov_izdelek_za_kosarico = NarociloIzdelka(izdelek=izdelek, kolicina= kolicina)
+            nov_izdelek_za_kosarico.save()
+            kosarica_uporabnika.narocila_izdelka.add(nov_izdelek_za_kosarico)
+
+        
+        return JsonResponse({'success':'Izdelek dodan v košarico'}, status=200)
     else:
-        return HttpResponseRedirect("/prijava/")
+        prva_skupina = SkupinaIzdelkov.objects.first().id
+        return HttpResponseRedirect(str(prva_skupina)+ "/")
+  
 
 
 #index_skupina je 
@@ -81,48 +85,49 @@ def index(request):
 def index_skupina(request, index, search_string = None):
     
     #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
+    if not is_logged_in(request):
         return HttpResponseRedirect("/prijava/")
 
+    if is_admin(request):
+        return HttpResponseRedirect("/")
+
     #prikaz izdelkov    
-    else:
+    #POSEBNOST - ker ob kreaciji uporabnika se NE naredi kosarica jo moramo cimprej
+    #zato je najbolje da se mu naredi kosarica ko se prvic logira na stran, 
 
-        #POSEBNOST - ker ob kreaciji uporabnika se NE naredi kosarica jo moramo cimprej
-        #zato je najbolje da se mu naredi kosarica ko se prvic logira na stran, 
+    if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
+        nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
+        nova_kosarica.save()
 
-        if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
-            nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
-            nova_kosarica.save()
-
-        #logika za iskanje po tagih
-        if search_string != None:
-            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
-            
-            #ce ne najde nobenega izdelka poskusi se z kodo izdelka
-            if not vsi_izdelki.exists():
-                vsi_izdelki = Izdelek.objects.filter(koda__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
-        else:
-            vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
+    #logika za iskanje po tagih
+    if search_string != None:
+        vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
         
+        #ce ne najde nobenega izdelka poskusi se z kodo izdelka
+        if not vsi_izdelki.exists():
+            vsi_izdelki = Izdelek.objects.filter(koda__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
+    else:
+        vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
+    
 
-        skupina = SkupinaIzdelkov.objects.get(id=index);
+    skupina = SkupinaIzdelkov.objects.get(id=index);
 
-        #paginacija
-        paginator = Paginator(vsi_izdelki, 7)
-        page = request.GET.get('page')
-        paginirani_izdelki = paginator.get_page(page)
+    #paginacija
+    paginator = Paginator(vsi_izdelki, 7)
+    page = request.GET.get('page')
+    paginirani_izdelki = paginator.get_page(page)
 
-        context = {
-            'opozorilo' : vsi_izdelki.count() == 0,
-            'skupine': getAllGroups(),
-            'izdelki' : paginirani_izdelki,
-            'index_skupina' : index,
-            'search_string': search_string,
-            'skupina': skupina
-            
-        }
+    context = {
+        'opozorilo' : vsi_izdelki.count() == 0,
+        'skupine': getAllGroups(),
+        'izdelki' : paginirani_izdelki,
+        'index_skupina' : index,
+        'search_string': search_string,
+        'skupina': skupina
+        
+    }
 
-        return render(request,'products/index.html',context)
+    return render(request,'products/index.html',context)
 
 # vrne izdelke ki se ujemajo v tagu s search_stringom
 def search(request, index , search_string):
@@ -133,8 +138,11 @@ def search(request, index , search_string):
 def kosarica(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/")
+    if not is_logged_in(request):
+          return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
+        return HttpResponseRedirect("/")
 
     #dela ker je sam ena kosrica ustvarjena!
     #Za popraviti sumnike
@@ -145,8 +153,8 @@ def kosarica(request):
         narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)
         narocilo_izdelka.delete()
 
-    if request.method == 'POST' and 'spremeni_kolicino' in request.POST:
-
+    elif request.method == 'POST':
+        print("KLKl")
         kolicina = request.POST['kolicina']
         narocilo_izdelka_id = request.POST['narocilo']
         narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)[0]
@@ -165,9 +173,11 @@ def kosarica(request):
 
 def pregled_narocil(request):
 
-    #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava")
+    if not is_logged_in(request):
+        return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
+        return HttpResponseRedirect("/")
 
     set_msg = False
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
@@ -222,7 +232,7 @@ def natisni_narocilnica(request, narocilo):
 
     narocila_izdelka = narocilo.narocila_izdelka.all()
         
-    uporabnik = Uporabnik.objects.get(user = narocilo.uporabnik.user)
+    uporabnik = narocilo.uporabnik
     story = []
 
     formatted_time = datetime.date.today()
@@ -230,71 +240,130 @@ def natisni_narocilnica(request, narocilo):
     tabela = formatted_time.split("-")
     formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
 
+    #GretaSansStd-Bold
+    #GretaSansStd-Regular
             
     styles=getSampleStyleSheet()
     p0 = ParagraphStyle('MyNormal',parent=styles['Normal'], alignment=TA_RIGHT)
-    p1 = styles.add(ParagraphStyle(name='Center',fontName='Vera', alignment=TA_CENTER))
-    p2 = styles.add(ParagraphStyle(name='Right',fontName='Vera', alignment=TA_RIGHT))
-    p3 = styles.add(ParagraphStyle(name='Left',fontName='Vera', alignment=TA_LEFT))
-    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='Vera', alignment=TA_LEFT, fontSize=11, leading=13))
-    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='Vera', alignment=TA_LEFT, fontSize=7, leading=8))
-    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='Vera', alignment=TA_LEFT, fontSize=12, leading=13))
-    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='Vera', alignment=TA_LEFT, fontSize=14, leading=15))
-    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='Vera', font='Helvetica-Bold', fontSize=7, leading=6, alignment=TA_LEFT))
-    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='Vera', font='Helvetica-Bold', fontSize=7, alignment=TA_CENTER))
+    p1 = styles.add(ParagraphStyle(name='Center',fontName='GretaSansStd-Regular', alignment=TA_CENTER))
+    p2 = styles.add(ParagraphStyle(name='Right',fontName='GretaSansStd-Regular', alignment=TA_RIGHT))
+    p3 = styles.add(ParagraphStyle(name='Left',fontName='GretaSansStd-Regular', alignment=TA_LEFT))
+    p4 = styles.add(ParagraphStyle(name='Line_Data',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=9, leading=14))
+    p5 = styles.add(ParagraphStyle(name='Line_Data_Small',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=7, leading=14))
+    p6 = styles.add(ParagraphStyle(name='Line_Data_Large',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=12, leading=14))
+    p7 = styles.add(ParagraphStyle(name='Line_Data_Largest',fontName='GretaSansStd-Regular', alignment=TA_LEFT, fontSize=20, leading=14))
+    p8 = styles.add(ParagraphStyle(name='Line_Label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=7, leading=14, alignment=TA_LEFT))
+    p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=14, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='sidarta_label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=17, leading=14, alignment=TA_LEFT))
+    
+    data1 = [[Paragraph('NAROČILNICA', styles["Line_Data_Largest"]),
+            Paragraph('', styles["Line_Label"]),
+            Paragraph('', styles["Line_Label"])
+            ]]
+        
+    t1 = Table(data1, colWidths=(6.6 * cm,6.6 * cm,6.6 * cm), rowHeights = (0.5*cm))
+    t1.setStyle(TableStyle([
+        ('BACKGROUND',(2,0),(2,0),colors.black)
+    ]))
+    story.append(t1)
 
-    ptext = '<font size=12>%s</font>' % formatted_time
-    par = Paragraph(ptext, p0)
-    story.append(par)
-    story.append(Spacer(1, 12))
- 
-    ptext = '<font size=20>NAROČILNICA</font>'
-    par = Paragraph(ptext, styles["Line_Data_Largest"])
-    story.append(par)
     story.append(Spacer(1, 30))
 
-    # prodajno mesto + podjetje
+    #
     podjetje = uporabnik.podjetje
     prodajno_mesto = uporabnik.prodajno_mesto
 
     podjetje_podatki = '%s <br/> %s <br/> %s, %s <br/> %s <br/> ' % (podjetje.ime, podjetje.naslov, podjetje.postna_stevilka, podjetje.obcina, podjetje.davcna_stevilka)
         
-    prodajno_mesto_podatki = '%s <br/>%s <br/>%s, %s <br/><br/>%s <br/>%s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina, prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon)
+    prodajno_mesto_podatki = '%s <br/>%s <br/>%s %s <br/>' % (prodajno_mesto.ime, prodajno_mesto.naslov, prodajno_mesto.postna_stevilka, prodajno_mesto.obcina)
+
+    sidarta = 'Trpinčeva 41c, SI - 1000 Ljubljana <br/>tel • 01 561 34 73, fax • 0590 72897 <br/>office@sidarta.si <br/> www.sidarta.si'
 
 
-    data1 = [[Paragraph('Prodajno mesto', styles["Line_Label"]),
-                Paragraph('Podjetje', styles["Line_Label"])],
+    prodajno_mesto.kontaktna_oseba,prodajno_mesto.telefon
+    leto_dobavnice = narocilo.datum.strftime("%Y")
+    st_dobavnice = leto_dobavnice[-2:] + str(narocilo.id).zfill(4)
 
-                [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
-                Paragraph(podjetje_podatki, styles["Line_Data_Large"])]
-                ]
+    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
 
-    t1 = Table(data1)
+    data1 = [#1 vrstica
+             [Paragraph('Prodajno mesto/naslov dostave', styles["Line_Label"]),
+              Paragraph('Številka naročilnice', styles["Line_Label"]),
+              Paragraph('SIDARTA', styles["sidarta_label"])
+              ],
+              #2
+             [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
+              Paragraph(st_dobavnice, styles["Line_Data_Large"]),
+              Paragraph(sidarta, styles["Line_Data_Small"])
+              ],
+              #3
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('Datum naročila', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #4
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(datum, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ],
+              #5
+              [Paragraph('Kontaktna oseba', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('Potnik', styles["Line_Label"])
+              ],
+              #6
+              [Paragraph(prodajno_mesto.kontaktna_oseba, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.user.first_name + " " + narocilo.potnik.user.last_name, styles["Line_Data_Large"])
+              ],
+              #7
+              [Paragraph('Telefon', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('Telefon', styles["Line_Label"])
+              ],
+              #8
+              [Paragraph(prodajno_mesto.telefon, styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.telefon, styles["Line_Data_Large"])
+              ],
+              #9
+              [Paragraph('Sedež podjetja', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('mail', styles["Line_Label"])
+              ],
+              #10
+              [Paragraph(podjetje_podatki, styles["Line_Data"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph(narocilo.potnik.email, styles["Line_Data_Large"])
+              ],
+              #11
+              [Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"]),
+              Paragraph('', styles["Line_Label"])
+              ],
+              #12
+              [Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"]),
+              Paragraph('', styles["Line_Data_Large"])
+              ]
+              ]
+
+    t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('VALIGN',(0,0),(-1,-1),'TOP'),
+        ('VALIGN',(2,1),(2,1),'MIDDLE'),
+        ('SPAN',(0,1),(0,3)),
+        ('SPAN',(2,1),(2,3)),
+        ('SPAN',(0,9),(0,11)),
+        ('LINEBELOW', (2, 3), (2, 3), 2, colors.black)
     ]))
     story.append(t1)
+
+
     #
     story.append(Spacer(1, 20))
-    #
-    story.append(Paragraph("NAROČILO", styles["Line_Label_Center"]))
-    #
-    datum = narocilo.datum.strftime("%d.%m.%Y, %H:%M")
-        
-    data1 = [[Paragraph('DATUM NAROČILA', styles["Line_Label"])],
-            [Paragraph(datum, styles["Line_Data_Largest"])
-            ]]
-    t1 = Table(data1)
-    t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (1, 0), 0.25, colors.black),
-        ('INNERGRID', (0, 1), (1, 1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    story.append(t1)
+    
     #
     data1 = [[Paragraph('#', styles["Line_Label"]),
         Paragraph('IME IZDELKA', styles["Line_Label"]),
@@ -302,17 +371,18 @@ def natisni_narocilnica(request, narocilo):
         Paragraph('KODA IZDELKA', styles["Line_Label"]),
         Paragraph('VRSTA IZDELKA', styles["Line_Label"]),
         Paragraph('KOLIČINA', styles["Line_Label"]),
-        Paragraph('✔', styles["Line_Label"])
+        Paragraph('', styles["Line_Label"])
         ]]
         
     t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
     t1.setStyle(TableStyle([
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
     ]))
     story.append(t1)
     #
+    d = Drawing(15, 15)
+    d.add(Rect(0, 0, 15, 15,strokeColor=colors.black,fillColor=colors.white, strokeWidth=1))
+    
     for i, narocilo_izdelka in enumerate(narocila_izdelka):
         iteracija = str(i+1) + "."
         img = utils.ImageReader(narocilo_izdelka.izdelek.image_thumbnail)
@@ -327,18 +397,14 @@ def natisni_narocilnica(request, narocilo):
                 Paragraph(narocilo_izdelka.izdelek.koda, styles["Line_Data"]),
                 Paragraph(narocilo_izdelka.izdelek.skupina_izdelkov.ime, styles["Line_Data"]),
                 Paragraph(str(narocilo_izdelka.kolicina), styles["Line_Data"]),
-                Paragraph("", styles["Line_Data"])
+                d
                 ]]
 
         t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
         t1.setStyle(TableStyle([
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+            ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
         ]))
         story.append(t1)
 
     return story
-
-#def natisni_dobavnica(request, narocilo):
-

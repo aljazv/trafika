@@ -1,0 +1,53 @@
+%!Adobe-FontList 1.14
+%Locale:0x409
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:\.DS_Store
+FileLength:6148
+FileModTime:1532467508
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Type1
+FontName:GretaSansStd-Bld
+FamilyName:Greta Sans Std
+StyleName:Bold
+MenuName:Greta Sans Std Bld
+StyleBits:0
+WeightClass:700
+WidthClass:5
+AngleClass:0
+FullName:Greta Sans Std Bld
+WritingScript:Roman
+OutlineFileName:\GretaSansStd-Bold.otf
+DataFormat:sfntData
+UsesStandardEncoding:yes
+isCFF:yes
+FileLength:188556
+FileModTime:1332807900
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Type1
+FontName:GretaSansStd-Reg
+FamilyName:Greta Sans Std
+StyleName:Regular
+MenuName:Greta Sans Std Reg
+StyleBits:0
+WeightClass:400
+WidthClass:5
+AngleClass:0
+FullName:Greta Sans Std Reg
+WritingScript:Roman
+OutlineFileName:\GretaSansStd-Regular.otf
+DataFormat:sfntData
+UsesStandardEncoding:yes
+isCFF:yes
+FileLength:178404
+FileModTime:1332807908
+%EndFont
+
