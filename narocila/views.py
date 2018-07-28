@@ -75,6 +75,11 @@ def stara_narocila(request):
             rightMargin=20,leftMargin=20,
             topMargin=20,bottomMargin=20)
 
+        story = natisni_narocilnica(request,narocilo)
+        doc.build(story)
+        return response
+
+
     if request.method == 'POST' and 'uveljavi' in request.POST:
         narocilo_id = request.POST['narocilo_id']
         nacin_prodaje = request.POST['nacinProdaje']
@@ -84,34 +89,8 @@ def stara_narocila(request):
         narocilo.nacin_dostave = nacin_dostave
         narocilo.save()
 
-    if request.method == 'POST' and 'prenesi_narocilnica' in request.POST:
-        narocilo_id = request.POST['narocilo_id']
-        narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "narocilnica" + str(narocilo.id) + ".pdf"
-        story=[]
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
-        doc = SimpleDocTemplate(response,pagesize=letter,
-            rightMargin=20,leftMargin=20,
-            topMargin=20,bottomMargin=20)
-
-        story = natisni_narocilnica(request,narocilo)
-        doc.build(story)
-        return response
-
-            narocilo_id = request.POST['narocilo_id']
-            narocilo = Narocilo.objects.get(id = narocilo_id)
-            ime_datoteke = "dobavnica" + str(narocilo.id) + ".pdf"
-            story=[]
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
-            doc = SimpleDocTemplate(response,pagesize=letter,
-                rightMargin=20,leftMargin=20,
-                topMargin=20,bottomMargin=20)
-
-        # dobavnica ID!
+    if request.method == 'POST' and 'prenesi_dobavnica' in request.POST:
         
-
         narocilo_id = request.POST['narocilo_id']
         narocilo = Narocilo.objects.get(id = narocilo_id)
         ime_datoteke = "dobavnica" + str(narocilo.id) + ".pdf"
@@ -125,6 +104,7 @@ def stara_narocila(request):
         story = natisni_dobavnica(request,narocilo)
         doc.build(story)
         return response
+
     if request.method == 'POST' and 'uveljavi_stNarocila' in request.POST:
         narocilo_id = request.POST['narocilo_id']
         st_narocila = request.POST['st_narocila']

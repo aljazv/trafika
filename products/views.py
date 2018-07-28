@@ -372,10 +372,12 @@ def natisni_narocilnica(request, narocilo):
         ('LINEBELOW', (2, 3), (2, 3), 2, colors.black)
     ]))
     story.append(t1)
-
-
     #
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 12))
+    #
+    ptext = '<font size=12>Opombe: %s</font>' % narocilo.opomba
+    par = Paragraph(ptext, styles["Line_Label"])
+    story.append(par)
     
     #
     data1 = [[Paragraph('#', styles["Line_Label"]),
