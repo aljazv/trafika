@@ -10,9 +10,14 @@
 		</form>
 
 		<div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
-	      <button type="button" class="close" data-dismiss="alert">&times;</button>
+	  
 	      Vpišite pravilno količino.
 	    </div>
+
+	    <div id="warning-text2"  class="alert alert-dismissible alert-warning item-card">
+      	Minimalna količina naročila za ta izdelek je .
+    	</div>
+
 
 
 		{% if arr %}
@@ -21,7 +26,8 @@
 			<thead>
 				<tr class="table-light">
 					<th scope="col">#</th> 
-					<th scope="col">Ime izdelka</th> 
+					<th scope="col">Ime izdelka</th>
+					<th scope="col">Koda izdelka</th>  
 					<th scope="col">Slika</th> 
 					<th scope="col">Količina</th> 
 					<th scope="col">Spremeni količino</th> 
@@ -32,22 +38,23 @@
 			<tr class="table-light">
 				<td>{{forloop.counter}}.</td>
 				<td>{{narocilo_izdelka.izdelek.ime}}</td>
+				<td>{{narocilo_izdelka.izdelek.koda}}</td>
 				<td><img style="max-height:80px" src="{{ narocilo_izdelka.izdelek.image_thumbnail.url }}"></td>
 				<td>{{narocilo_izdelka.kolicina}}</td>
 				
 					
 					<td class="row">
-						<form action="/kosarica/" method="post" name="change-val" class="form-inline">
+						<form action="/kosarica/" method="post" name="form-{{narocilo_izdelka.izdelek.id}}" class="form-inline">
 							{% csrf_token %}
 						<div class="form-inline my-2 my-lg-0">
 						<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
 						
-						<input class="form-control mr-2 costum-input" placeholder="Spremeni količino"  type="number" name="kolicina" min="0" size="15">
+						<input class="form-control mr-2 costum-input" placeholder="min. {{narocilo_izdelka.izdelek.skupina_izdelkov.min_narocilo}}" type="number" name="kolicina" min="0" size="10">
 				
-						<button type="submit" class="btn btn-primary spremeni_kolicino" name="spremeni_kolicino" ><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
+						<button type="submit" class="btn btn-primary spremeni_kolicino" name="spremeni_kolicino" data-form="form-{{narocilo_izdelka.izdelek.id}}" data-min={{narocilo_izdelka.izdelek.skupina_izdelkov.min_narocilo}}  ><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
 						
 						</div>
-					
+						</form>
 					</td>
 					<td>
 						<form action="/kosarica/" method="post" name="remove-item" class="form-inline">
@@ -57,7 +64,7 @@
 						</button>
 						</form>
 					</td>
-				</form>
+				
 			</tr>
 			{% endfor %}
 			<!-- Size od text inputa ???? -->

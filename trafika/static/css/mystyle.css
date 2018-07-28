@@ -13,8 +13,38 @@
   font-size: 1rem;
 }
 
-#info-text, #warning-text, #warning-text2{
-  display: none;
+#logo{
+  margin-top: 100px;
+  text-align: center;
+}
+
+.logo-expand{
+  position: fixed;
+  top: 50px;
+}
+
+#logo-img{
+  max-width: 10rem;
+}
+
+#info-text, #warning-text, #warning-text2, #danger-text{
+  font-size: 1.1rem;
+  position: fixed;
+  top: 30px;
+  right: -400px;
+  width: 400px;
+  z-index:1000;
+  transition:0.5s ease;
+}
+
+.show{
+  right:20px !important;
+}
+
+.badge-info > a{
+  text-decoration: none;
+  color: white;
+
 }
 
 body{
@@ -47,13 +77,18 @@ p, .statistics-label{
 .costum-input{
   border:1px solid rgba(0,0,0,0.125); 
   background-color:white;
+  max-width:50%;
 }
 
+.disabled-buttons {
+    pointer-events: none;
+    opacity: 0.4;
+}
 
 .login{
   background-color: #fff;
   max-width: 30rem; 
-  margin-top: 150px;
+  margin-top: 70px;
   padding:3%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
 }

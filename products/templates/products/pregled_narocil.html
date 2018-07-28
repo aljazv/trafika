@@ -6,6 +6,7 @@
 	<h1>Naročila</h1>
 	{% if show_msg %}<h5 class="alert {{ msg_type }}"> {{ message }} </h5> {% endif %}
 
+	{% if arr %}
 	<table class="table table-responsive mt-3 table-hover">
 		<thead>
 			<tr class="table-light">
@@ -30,6 +31,11 @@
 		</tr>
 		{% endfor %}
 	</table>
+
+	{% else %}
+	<p>Ni najdenih naročil.</p> 
+
+	{% endif %}
 </div>
 </div>
 {% endblock %}

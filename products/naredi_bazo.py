@@ -7,6 +7,62 @@ from django.core.files import File
 import os.path
 import os
 
+from openpyxl import *
+
+def uvozi_izdelke():
+    print('\x1b[6;30;42m' + 'Začetek uvažanja izdelkov ' + '\x1b[0m')
+    wb = load_workbook('products/Sifrant_Sidarta_delovna.xlsx')
+    sheet = wb.active
+    
+    #cellsa = sheet['A3':'F251']
+    for row in range(2,sheet.max_row):
+        if(sheet.cell(row,3).value is None):
+            break
+        
+        sifra = sheet.cell(row,2).value
+        artikel = sheet.cell(row,3).value
+        ean_koda = sheet.cell(row,4).value
+        opis = sheet.cell(row,5).value
+        tag = sheet.cell(row,6).value
+        tag = tag.split(", ")
+
+        #odstrani empty stringe ce se kdo ponesreci zmoti
+        list_tag = list(filter(None,tag))
+        print(list_tag)
+
+        #dodajanje tagov
+        object_list_tag = []
+        for en_tag in list_tag:
+            if Tag.objects.filter(ime=en_tag).exists():
+                object_list_tag.append(Tag.objects.get(ime=en_tag))
+            else:
+                new_tag = Tag(ime=en_tag)
+                new_tag.save()
+                object_list_tag.append(new_tag)
+
+        #dodajanje skupin
+        skupina_izdelkov = None
+        if SkupinaIzdelkov.objects.filter(koda=ean_koda).exists():
+            skupina_izdelkov = SkupinaIzdelkov.objects.get(koda=ean_koda)
+        else:
+            skupina_izdelkov = SkupinaIzdelkov(koda= ean_koda)
+            skupina_izdelkov.save()
+
+        #dodajanje izdelkov
+
+        new_izdelek = Izdelek(ime=artikel,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=sifra)
+        new_izdelek.save()
+        new_izdelek.tag.add(*object_list_tag)
+        new_izdelek.save()
+            
+
+            
+
+        
+    print('\x1b[6;30;42m' + 'Konec uvažanja izdelkov ' + '\x1b[0m')
+        
+    return
+
 
 def naredi_bazo(request):
 
@@ -79,14 +135,14 @@ def naredi_bazo(request):
 
     #Bled
     izdelek_bled = Izdelek(ime = "Magnet Bled", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "MAG001")
-    izdelek_bled.slika.save('Bled.jpg', File(open(r'media/gallery/bled.jpg','rb')))
+    izdelek_bled.slika.save('Bled.jpg', File(open(r'media/gallery/Bled.jpg','rb')))
     izdelek_bled.tag.add(tag_slovenia,tag_bled);
 
     #narocilo_bled = NarociloIzdelka(izdelek = izdelek_bled,kolicina = 25)
     #narocilo_bled.save()
 
     izdelek_triglav = Izdelek(ime = "Magnet Triglav", opis = "Dimenzija: 60x80mm", skupina_izdelkov = skupina_izdelkov1, koda = "MAG015")
-    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'media/gallery/triglav.jpg','rb')))
+    izdelek_triglav.slika.save("Triglav.jpg", File(open(r'media/gallery/Triglav.jpg','rb')))
     izdelek_triglav.tag.add(tag_slovenia,tag_triglav);
     #narocilo_triglav = NarociloIzdelka(izdelek = izdelek_triglav,kolicina = 100)
     #narocilo_triglav.save()

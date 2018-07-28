@@ -4,23 +4,25 @@ function getBootstrapDeviceSize() {
 
   function resize(){
     var size = getBootstrapDeviceSize();
-
+    var nav = $('#sidenav');
+    var main = $('#main');
+    var logo = $('#logo-white');
     if (size == "xs" || size == "sm" || size == "md"){
-      var nav = $('#sidenav');
-      var main = $('#main');
+
       if (nav.hasClass('sidenav')){
         nav.removeClass('sidenav');
         main.removeClass('main');
+        logo.removeClass('logo-expand')
         $(".card.p-3.mb-3.item-card").addClass("auto-m");
       }
     }
 
     else{
-      var nav = $('#sidenav');
-      var main = $('#main');
+
       if (! nav.hasClass('sidenav')){
         nav.addClass('sidenav');
         main.addClass('main')
+        logo.addClass('logo-expand')
         $(".card.p-3.mb-3.item-card").removeClass("auto-m");
       }
     }
@@ -34,15 +36,27 @@ function getBootstrapDeviceSize() {
     var isnum = /^\d+$/.test(val);
 
     if (! isnum){
-      $("#warning-text").show();
+      $("#warning-text").addClass("show");
     
       return;
     }
 
-    $("#warning-text").hide();
+    if ($("#warning-text").hasClass("show"))
+      $("#warning-text").removeClass("show");
 
-    console.log(el.closest('form[name="change-val"]'));
-    el.closest('form[name="change-val"]').submit();
+
+    if (el.data("min") > val){
+      $("#warning-text2").text("Minimalna količina za ta izdelek je "+ el.data("min")+".")
+      $("#warning-text2").addClass("show");
+      return;
+    }
+
+    if ($("#warning-text2").hasClass("show"))
+      $("#warning-text2").removeClass("show");
+
+
+    var fname = el.data("form");
+    $('form[name="'+fname+'"]').submit();
   
   
   }
@@ -98,6 +112,11 @@ function getBootstrapDeviceSize() {
     e.preventDefault();
 
 
+    if ($("#danger-text").hasClass("show"))
+      $("#danger-text").removeClass("show");
+
+    if ($("#info-text").hasClass("show"))
+      $("#info-text").removeClass("show");
 
     if (button.hasClass("disabled"))
       return;
@@ -113,20 +132,22 @@ function getBootstrapDeviceSize() {
     var isnum = /^\d+$/.test(inp.val());
     if (! isnum){
      
-      $("#warning-text").show();
+      $("#warning-text").addClass("show");
       return;
     }
 
-    $("#warning-text").hide();
+    if ($("#warning-text").hasClass("show"))
+      $("#warning-text").removeClass("show");
 
     value = parseInt(inp.val());
 
     if (button.data("min") > value ){
-      $("#warning-text2").show();
+      $("#warning-text2").addClass("show");
       return;
     }
 
-    $("#warning-text2").hide();
+    if ($("#warning-text2").hasClass("show"))
+      $("#warning-text2").removeClass("show");
 
 
     var data = {
@@ -142,19 +163,20 @@ function getBootstrapDeviceSize() {
         "success": function(result) {
       
             button.text("Dodano")
-            button.removeClass("btn-primary")
-            button.addClass("btn-success disabled")
+            $("#group-"+itemId).addClass("disabled-buttons")
+
+            $("#info-text").addClass("show");
 
         },
         "error": function(result) {
-            console.log(result);
+            $("#danger-text").addClass("show");
         },
     });
 };
 
 function checkdate() {
         var text_datum = $(this).val();
-        console.log(text_datum)
+
         var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
 
         if (m == null) {
@@ -183,13 +205,16 @@ function checkdate() {
 
 $(document).ready(function(){
   resize();
-  $("#info-text").hide();
-  $("#warning-text").hide();
+
   $(':input[name="kolicina"]').on("focus", removeActive);
 
 
   $(".dodaj").on('click', function(event){
     addToBasket($(this), event);
+  }); 
+
+  $(".spremeni_kolicino").on('click', function(event){
+    checkNum($(this), event);
   }); 
 
   $( ".date-menu" ).on('input', checkdate );

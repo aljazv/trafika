@@ -12,4 +12,7 @@ admin.site.register(Uporabnik)
 admin.site.register(Narocilo)
 admin.site.register(NarociloIzdelka)
 admin.site.register(Kosarica)
+admin.site.register(Potnik)
+admin.site.register(ProdajnoMesto)
+admin.site.register(Podjetje)
 

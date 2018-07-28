@@ -23,6 +23,10 @@ class Tag(models.Model):
     class Meta:
         verbose_name_plural = "Tag/zadetek"
 
+    class Meta:
+        verbose_name = "Oznaka"
+        verbose_name_plural = "Oznake"
+
 class Izdelek(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime izdelka")
     opis = models.TextField(max_length=300, verbose_name="Opis izdelka")
@@ -39,9 +43,7 @@ class Izdelek(models.Model):
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
 
     def __str__(self):
-        return self.ime,self.koda  
-    class Meta:
-        verbose_name_plural = "Izdelek"
+        return self.ime  
 
 
 class NarociloIzdelka(models.Model):
@@ -50,6 +52,7 @@ class NarociloIzdelka(models.Model):
     class Meta:
         verbose_name_plural = "Naročilo izdelka"
 
+
 class ProdajnoMesto(models.Model):
    ime = models.CharField(max_length = 100, verbose_name="Ime prodajnega mesta")
    naslov = models.CharField(max_length = 100, verbose_name="Naslov prodajnega mesta")
@@ -57,6 +60,15 @@ class ProdajnoMesto(models.Model):
    obcina = models.CharField(max_length = 100, verbose_name="Občina prodajnega mesta")
    kontaktna_oseba = models.CharField(max_length = 100, verbose_name="Kontaktna oseba")
    telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
+   
+   def __str__(self):
+        return self.ime + ", "+ self.naslov
+
+   class Meta:
+        verbose_name = "Prodajno mesto"
+        verbose_name_plural = "Prodajna mesta"
+
+    
 
 class Podjetje(models.Model):
     ime = models.CharField(max_length = 100, verbose_name="Ime podjetja")
@@ -65,19 +77,31 @@ class Podjetje(models.Model):
     obcina = models.CharField(max_length = 100, verbose_name="Občina")
     davcna_stevilka = models.CharField(max_length = 100, verbose_name="Davčna številka")
 
+    class Meta:
+        verbose_name = "Podjetje"
+        verbose_name_plural = "Podjetja"
+
+    def __str__(self):
+        return self.ime  
+
 class Potnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto") #al prodajno mesto al pa podjetje??
     telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
     email = models.CharField(max_length = 100, verbose_name="Email")
 
+    class Meta:
+        verbose_name = "Potnik"
+        verbose_name_plural = "Potniki"
+
 class Uporabnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
     prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")  
-    class Meta:
-        verbose_name_plural = "Uporabnik"
 
+    class Meta:
+        verbose_name = "Uporabnik"
+        verbose_name_plural = "Uporabniki"
 class Narocilo(models.Model):
 
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
@@ -94,6 +118,10 @@ class Narocilo(models.Model):
 
     potnik = models.ForeignKey(Potnik, null = True, on_delete=models.SET_NULL)
 
+    class Meta:
+        verbose_name = "Narocilo izdelka"
+        verbose_name_plural = "Narocilo izdelkov"
+
     def __str__(self):
         if self.je_obdelan:
             return "Staro narocilo: " + str(self.id)
@@ -102,10 +130,12 @@ class Narocilo(models.Model):
     class Meta:
         verbose_name_plural = "Naročilo"
 
+
+    class Meta:
+        verbose_name = "Narocilo"
+        verbose_name_plural = "Narocila"
+
 #se mi zdi da je vseeno potrebno lociti kosarico od narocil, da ne bo uporabnika kej zmedlo
 class Kosarica(models.Model):
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = "Košarica"

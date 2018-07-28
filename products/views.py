@@ -30,7 +30,7 @@ pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 from reportlab.graphics.shapes import Rect,Drawing
 
 from time import gmtime, strftime
-
+from trafika.views import *
 
 #context: opozorilo je za display informacij
 
@@ -41,43 +41,43 @@ def getAllGroups():
 #ce gres na main page te preusmeri na prvo skupino izdelkov
 def index(request):
 
-    if request.user.is_authenticated and request.user.is_superuser:
+    if not is_logged_in(request):
+          return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
         return HttpResponseRedirect("/narocila/nova_narocila/")
 
-    if request.user.is_authenticated:
+    #dodajanje izdelkov v koscarico preko AJAX
+    if request.method == 'POST':
+        #print(request.user)
+        #print(request.POST)
+        #print(request.POST['kolicina'])
+    
+        uporabnik = Uporabnik.objects.get(user=request.user)
+        kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
 
-            #dodajanje izdelkov v koscarico preko AJAX
-        if request.method == 'POST':
-            #print(request.user)
-            #print(request.POST)
-            #print(request.POST['kolicina'])
+        kolicina = request.POST['kolicina']
+        id_izdelka = request.POST['id_izdelka']
+
+        izdelek = Izdelek.objects.get(id=id_izdelka)
         
-            uporabnik = Uporabnik.objects.get(user=request.user)
-            kosarica_uporabnika = Kosarica.objects.get(uporabnik=uporabnik)
-
-            kolicina = request.POST['kolicina']
-            id_izdelka = request.POST['id_izdelka']
-
-            izdelek = Izdelek.objects.get(id=id_izdelka)
-            
-            # ce narocilo za izdelek ze obstaja mu pristejemo stevilo kolicina
-            if kosarica_uporabnika.narocila_izdelka.filter(izdelek=izdelek).exists():
-                narocilo = kosarica_uporabnika.narocila_izdelka.get(izdelek=izdelek)
-                narocilo.kolicina += int(kolicina)
-                narocilo.save()
-            #drugace naredimo novo narocilo izdelka
-            else:
-                nov_izdelek_za_kosarico = NarociloIzdelka(izdelek=izdelek, kolicina= kolicina)
-                nov_izdelek_za_kosarico.save()
-                kosarica_uporabnika.narocila_izdelka.add(nov_izdelek_za_kosarico)
-
-            
-            return JsonResponse({'success':'Izdelek dodan v košarico'}, status=200)
+        # ce narocilo za izdelek ze obstaja mu pristejemo stevilo kolicina
+        if kosarica_uporabnika.narocila_izdelka.filter(izdelek=izdelek).exists():
+            narocilo = kosarica_uporabnika.narocila_izdelka.get(izdelek=izdelek)
+            narocilo.kolicina += int(kolicina)
+            narocilo.save()
+        #drugace naredimo novo narocilo izdelka
         else:
-            prva_skupina = SkupinaIzdelkov.objects.first().id
-            return HttpResponseRedirect(str(prva_skupina)+ "/")
+            nov_izdelek_za_kosarico = NarociloIzdelka(izdelek=izdelek, kolicina= kolicina)
+            nov_izdelek_za_kosarico.save()
+            kosarica_uporabnika.narocila_izdelka.add(nov_izdelek_za_kosarico)
+
+        
+        return JsonResponse({'success':'Izdelek dodan v košarico'}, status=200)
     else:
-        return HttpResponseRedirect("/prijava/")
+        prva_skupina = SkupinaIzdelkov.objects.first().id
+        return HttpResponseRedirect(str(prva_skupina)+ "/")
+  
 
 
 #index_skupina je 
@@ -85,45 +85,49 @@ def index(request):
 def index_skupina(request, index, search_string = None):
     
     #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
+    if not is_logged_in(request):
         return HttpResponseRedirect("/prijava/")
 
+    if is_admin(request):
+        return HttpResponseRedirect("/")
+
     #prikaz izdelkov    
-    else:
+    #POSEBNOST - ker ob kreaciji uporabnika se NE naredi kosarica jo moramo cimprej
+    #zato je najbolje da se mu naredi kosarica ko se prvic logira na stran, 
 
-        #POSEBNOST - ker ob kreaciji uporabnika se NE naredi kosarica jo moramo cimprej
-        #zato je najbolje da se mu naredi kosarica ko se prvic logira na stran, 
+    if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
+        nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
+        nova_kosarica.save()
 
-        if not Kosarica.objects.filter(uporabnik = Uporabnik.objects.get(user=request.user)).exists():
-            nova_kosarica = Kosarica(uporabnik = Uporabnik.objects.get(user=request.user))
-            nova_kosarica.save()
-
-        #logika za iskanje po tagih
-        if search_string != None:
-            vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
-            
-        else:
-            vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
+    #logika za iskanje po tagih
+    if search_string != None:
+        vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
         
+        #ce ne najde nobenega izdelka poskusi se z kodo izdelka
+        if not vsi_izdelki.exists():
+            vsi_izdelki = Izdelek.objects.filter(koda__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
+    else:
+        vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
+    
 
-        skupina = SkupinaIzdelkov.objects.get(id=index);
+    skupina = SkupinaIzdelkov.objects.get(id=index);
 
-        #paginacija
-        paginator = Paginator(vsi_izdelki, 7)
-        page = request.GET.get('page')
-        paginirani_izdelki = paginator.get_page(page)
+    #paginacija
+    paginator = Paginator(vsi_izdelki, 7)
+    page = request.GET.get('page')
+    paginirani_izdelki = paginator.get_page(page)
 
-        context = {
-            'opozorilo' : vsi_izdelki.count() == 0,
-            'skupine': getAllGroups(),
-            'izdelki' : paginirani_izdelki,
-            'index_skupina' : index,
-            'search_string': search_string,
-            'skupina': skupina
-            
-        }
+    context = {
+        'opozorilo' : vsi_izdelki.count() == 0,
+        'skupine': getAllGroups(),
+        'izdelki' : paginirani_izdelki,
+        'index_skupina' : index,
+        'search_string': search_string,
+        'skupina': skupina
+        
+    }
 
-        return render(request,'products/index.html',context)
+    return render(request,'products/index.html',context)
 
 # vrne izdelke ki se ujemajo v tagu s search_stringom
 def search(request, index , search_string):
@@ -134,8 +138,11 @@ def search(request, index , search_string):
 def kosarica(request):
 
     #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava/")
+    if not is_logged_in(request):
+          return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
+        return HttpResponseRedirect("/")
 
     #dela ker je sam ena kosrica ustvarjena!
     #Za popraviti sumnike
@@ -146,8 +153,8 @@ def kosarica(request):
         narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)
         narocilo_izdelka.delete()
 
-    if request.method == 'POST' and 'spremeni_kolicino' in request.POST:
-
+    elif request.method == 'POST':
+        print("KLKl")
         kolicina = request.POST['kolicina']
         narocilo_izdelka_id = request.POST['narocilo']
         narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)[0]
@@ -166,9 +173,11 @@ def kosarica(request):
 
 def pregled_narocil(request):
 
-    #Preveri ce je uporabnik logiran, ce ne gre na login page
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/prijava")
+    if not is_logged_in(request):
+        return HttpResponseRedirect("/prijava/")
+
+    if is_admin(request):
+        return HttpResponseRedirect("/")
 
     set_msg = False
     if request.method == 'POST' and 'oddaj_narocilo' in request.POST:
