@@ -219,12 +219,14 @@ def pregled_narocil(request):
 				return response
 
 		curr_uporabnik = Uporabnik.objects.get(user = request.user)
-		narocila_uporabnika = Narocilo.objects.filter(uporabnik = curr_uporabnik)
+		narocila_uporabnika = Narocilo.objects.filter(uporabnik = curr_uporabnik).order_by('-datum')
 		
-		#tle skos vrze narocilo uspesno dodano -- > loh se tut zbrise. Simple.
+		paginator = Paginator(narocila_uporabnika, 10)
+		page = request.GET.get('page')
+		paginirana_narocila = paginator.get_page(page)
 
 		context = {
-				'arr': narocila_uporabnika,
+				'arr': paginirana_narocila,
 				'msg_type': 'alert-success',
 				'message': 'Naročilo uspešno oddano.',
 				'show_msg': set_msg,

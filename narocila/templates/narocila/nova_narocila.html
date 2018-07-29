@@ -4,6 +4,12 @@
 <div id="main" class="main">
     <div class="m-3">
         <h1>Nova naročila</h1>
+
+    
+    <div id="info-text"  class="alert alert-dismissible alert-success {% if confirmed %} show {% endif %} item-card">
+      Naročilo uspešno potrjeno.
+    </div>
+    
     {% if narocila_neobdelano %}
    <table class="table table-responsive mt-3 table-hover">
         <thead>
