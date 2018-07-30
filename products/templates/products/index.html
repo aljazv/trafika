@@ -16,19 +16,35 @@
     <div class="m-3">
       <h1>{{skupina.ime}}</h1>
       <!-- iskanje po tagih -->
-      <div class="form-inline my-2 my-lg-0">
-        <form id="backToAll" method="get" action="/{{index_skupina}}">
-        </form>
-        <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah ali kodi" id="search">
-        <button class="btn btn-info" onclick="searchByTag()"><i class="fa fa-search"></i>   &nbsp;Išči</button>
-        
+      <div class="row">
+        <div class="form-inline my-2 my-lg-0 col-sm-6">
+          <form id="backToAll" method="get" action="/{{index_skupina}}/?show={{per_page}}">
+          </form>
+          <input class="form-control mr-sm-2 costum-input"  {% if search_string %} value={{search_string}} {% endif %} type="search" placeholder="Išči po oznakah ali kodi" id="search">
+          <button class="btn btn-info" onclick="searchByTag()"><i class="fa fa-search"></i>   &nbsp;Išči</button>
+        </div>
+
+       
+        <div class="form-inline tags col-sm-6">
+          <div id="perpage" >
+            <form id="perpage-form" method="get" action="">
+              <label for="perpage-select" style="display: block">Prikazov na stran </label>
+              <select class="form-control  costum-input" id="perpage-select" name="show">
+                <option {%if per_page == 15%} selected {%endif %}>15</option>
+                <option {%if per_page == 25%} selected {%endif %}>25</option>
+                <option{%if per_page == 50%} selected {%endif %}>50</option>
+              </select>
+            </form>
+        </div>
+        </div>
+       
       </div>
     </div>
 
 
     <div class="row mt-3 justify-content-md-center">
 
-    <div id="info-text"  class="alert alert-dismissible alert-info item-card">
+    <div id="info-text"  class="alert alert-dismissible alert-success item-card">
       Izdelek dodan v košarico.
     </div>
 
@@ -51,7 +67,7 @@
 
     {% for izdelek in izdelki  %}
 
-      <div class="card p-3 mb-3 item-card" >
+      <div class="card p-3 mb-3 item-card " >
         <div class="row ">
           <div class="col-md-4">
               <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
@@ -73,7 +89,7 @@
                     <span class="text-primary">{{izdelek.koda}}</span>
                 </div>
 
-                  <div class="btn-group btn-group-toggle row" id="group-{{ izdelek.id }}" data-toggle="buttons" >
+                  <div class="btn-group btn-group-toggle row {%if not izdelek.zaloga %} disabled-buttons {%endif%}" id="group-{{ izdelek.id }}" data-toggle="buttons" >
                   <label class="btn btn-secondary col-xs-1">
                     <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
                   </label>
@@ -90,7 +106,14 @@
 
                   <div class="col-md-3">
                     <input hidden id="min-order">
-                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">Dodaj v košarico</button>
+                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">
+                      {%if izdelek.zaloga %} 
+                      Dodaj v košarico
+                      {%else%}
+                      Ni na zalogi
+                      {%endif%}
+                    
+                    </button>
                   </div>
                 </div>
 

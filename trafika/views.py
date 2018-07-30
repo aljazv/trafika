@@ -51,7 +51,7 @@ def is_logged_in(request):
 	return request.user.is_authenticated
 
 def is_admin(request):
-	return request.user.is_authenticated and request.user.is_staff;
+	return request.user.is_authenticated and request.user.is_staff
 
 def is_normal_user(request):
-	return request.user.is_authenticated and not request.user.is_staff;
+	return request.user.is_authenticated and not request.user.is_staff

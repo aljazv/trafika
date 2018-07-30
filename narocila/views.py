@@ -21,12 +21,13 @@ def nova_narocila(request):
     if is_normal_user(request):
         return HttpResponseRedirect("/")
 
-
+    confirmed = False
     if request.method == 'POST' and 'obdelano' in request.POST:
         narocilo_id = request.POST['narocilo_id']
         narocilo = Narocilo.objects.get(id = narocilo_id)
         narocilo.je_obdelan = True
         narocilo.save()
+        confirmed = True
     if request.method == 'POST' and 'prenesi' in request.POST:
       
         narocilo_id = request.POST['narocilo_id']
@@ -47,7 +48,8 @@ def nova_narocila(request):
     narocila_neobdelano = Narocilo.objects.filter(je_obdelan = False)
 
     context = {
-      'narocila_neobdelano': narocila_neobdelano
+      'narocila_neobdelano': narocila_neobdelano,
+      'confirmed': confirmed
       }
 
     return render(request,'narocila/nova_narocila.html',context)
@@ -113,9 +115,12 @@ def stara_narocila(request):
 
     narocila_obdelano = Narocilo.objects.filter(je_obdelan = True).order_by('-datum')
 
+    paginator = Paginator(narocila_obdelano, 15)
+    page = request.GET.get('page')
+    paginirana_narocila = paginator.get_page(page)
 
     context = {
-        'narocila_obdelano': narocila_obdelano
+        'narocila_obdelano': paginirana_narocila
         }
 
     return render(request,'narocila/stara_narocila.html',context)
