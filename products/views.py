@@ -169,10 +169,19 @@ def kosarica(request):
 
 		kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
 		narocila_izdelkov = kosarica_uporabnika.narocila_izdelka.all()
+
+		#Ce je uporabnik potnik
+		seznam_uporabnikov = None
+		if Potnik.objects.filter(uporabnik=kosarica_uporabnika.uporabnik).exists():
+			seznam_uporabnikov = Uporabnik.objects.filter(je_potnik=False)
+
+
+
 		
 		context = {
 				'arr': narocila_izdelkov,
 				'skupine': getAllGroups(),
+				'seznam_uporabnikov' : seznam_uporabnikov,
 				}
 
 		return render(request,'products/kosarica.html',context)
@@ -192,8 +201,21 @@ def pregled_narocil(request):
 				set_msg = True
 				kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
 				curr_uporabnik = Uporabnik.objects.get(user = request.user)
+				#ce potnik odda narocilo, 
+				# se na dobavnico zapise njega, 
+				# ce uporabnik odda narocilo se zapise na dobavnico potnika, ki je pooblascen za prodajno mesto
+				
+				potnik = None
 
-				potnik = Potnik.objects.get(prodajno_mesto = curr_uporabnik.prodajno_mesto) #dodas se potnika!
+				if Potnik.objects.filter(uporabnik= curr_uporabnik).exists():
+					potnik = Potnik.objects.get(uporabnik= curr_uporabnik)
+					id_uporabnik = request.POST['uporabnik']
+					curr_uporabnik = Uporabnik.objects.get(id=int(id_uporabnik))
+				else:
+					potnik = curr_uporabnik.prodajno_mesto.potnik
+
+				
+				#print(id_uporabnik)
 				narocilo = Narocilo(uporabnik = curr_uporabnik, opomba = curr_opomba, potnik = potnik)
 				narocilo.save()
 				for narocilo_add in kosarica_uporabnika.narocila_izdelka.all():
@@ -219,7 +241,15 @@ def pregled_narocil(request):
 				return response
 
 		curr_uporabnik = Uporabnik.objects.get(user = request.user)
-		narocila_uporabnika = Narocilo.objects.filter(uporabnik = curr_uporabnik).order_by('-datum')
+		# ce je potnik pokazi vsa njegova narocila
+		narocila_uporabnika = None
+		if Potnik.objects.filter(uporabnik= curr_uporabnik).exists():
+			potnik = Potnik.objects.get(uporabnik = curr_uporabnik)
+			narocila_uporabnika = Narocilo.objects.filter(potnik = potnik).order_by('-datum')
+			potnik = True
+		else:
+			narocila_uporabnika = Narocilo.objects.filter(uporabnik = curr_uporabnik).order_by('-datum')
+			potnik = False
 		
 		paginator = Paginator(narocila_uporabnika, 10)
 		page = request.GET.get('page')
@@ -231,6 +261,7 @@ def pregled_narocil(request):
 				'message': 'Naročilo uspešno oddano.',
 				'show_msg': set_msg,
 				'skupine': getAllGroups(),
+				'potnik' : potnik
 				}
 
 		return render(request,'products/pregled_narocil.html',context)
@@ -322,7 +353,7 @@ def natisni_narocilnica(request, narocilo):
 							#6
 							[Paragraph(prodajno_mesto.kontaktna_oseba, styles["Line_Data_Large"]),
 							Paragraph('', styles["Line_Data_Large"]),
-							Paragraph(narocilo.potnik.user.first_name + " " + narocilo.potnik.user.last_name, styles["Line_Data_Large"])
+							Paragraph(narocilo.potnik.uporabnik.user.first_name + " " + narocilo.potnik.uporabnik.user.last_name, styles["Line_Data_Large"])
 							],
 							#7
 							[Paragraph('Telefon', styles["Line_Label"]),
