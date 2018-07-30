@@ -11,14 +11,20 @@
 		<thead>
 			<tr class="table-light">
 				<th scope="col">#</th>
-				<th scope="col">Datum naročila</th>
+                <th scope="col">Datum naročila</th>
+                {% if potnik %}
+                <th>Naročnik</th>
+                {% endif %}
 				<th scope="col">Pregled naročila (PDF) </th>
 			</tr>
 		</thead>
 		{% for narocilo in arr  %}
 		<tr class="table-light">
 			<td>{{ forloop.counter|add:arr.start_index|add:"-1"}}</td>
-			<td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
+            <td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
+            {% if potnik %}
+            <th>{{narocilo.uporabnik.prodajno_mesto.ime}} - {{narocilo.uporabnik.user.first_name}} {{narocilo.uporabnik.user.last_name}}</th>
+            {% endif %}
 
 			
             <form action="/pregled_narocil/" method="post">

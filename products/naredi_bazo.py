@@ -66,10 +66,34 @@ def uvozi_izdelke():
 
 def naredi_bazo(request):
 
-    prodajno_mesto = ProdajnoMesto(ime = "Trafika Škofja Loka", naslov = "Škofja Loka 88", postna_stevilka = "4220", obcina = "Škofja Loka", kontaktna_oseba = "Anja Novak", telefon = "041500677")
+    
+    #naredi potnika
+    user, created = User.objects.get_or_create(username="potnik", email="potnik@gmail.com")
+    user.first_name = "Jure"
+    user.last_name = "Hovelja"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+    
+    user.save()
+
+    #potnik = Potnik(user = user, prodajno_mesto = prodajno_mesto, telefon = "031786453", email = "potnik@gmail.com")
+    #potnik.save()
+
+    potnik_uporabnik = Uporabnik(user = user, je_potnik = True)
+    potnik_uporabnik.save()
+
+    potnik = Potnik(uporabnik = potnik_uporabnik,  telefon = "031786453", email = "potnik@gmail.com")
+    potnik.save()
+
+
+
+    prodajno_mesto = ProdajnoMesto(ime = "Trafika Škofja Loka", naslov = "Škofja Loka 88", postna_stevilka = "4220", obcina = "Škofja Loka", kontaktna_oseba = "Anja Novak", telefon = "041500677", potnik=potnik)
     prodajno_mesto.save()
 
-    prodajno_mesto1 = ProdajnoMesto(ime = "Trafika Ljubljana", naslov = "Cankarjeva ulica 1", postna_stevilka = "1000", obcina = "Ljubljana", kontaktna_oseba = "Luka Cvek", telefon = "041456289")
+    prodajno_mesto1 = ProdajnoMesto(ime = "Trafika Ljubljana", naslov = "Cankarjeva ulica 1", postna_stevilka = "1000", obcina = "Ljubljana", kontaktna_oseba = "Luka Cvek", telefon = "041456289", potnik=potnik)
     prodajno_mesto1.save()
 
     podjetje = Podjetje(ime = "trafika d.o.o.", naslov = "Škofja Loka 12", postna_stevilka = "4220", obcina = "Škofja Loka", davcna_stevilka = "67294308")
@@ -77,7 +101,20 @@ def naredi_bazo(request):
 
     #uporabnik1 = Uporabnik(user = User.objects.get(username='admin'), podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     #uporabnik1.save()
+    #naredi uporabnika
+    user_uporabnik, created = User.objects.get_or_create(username="uporabnik2", email="uporabnik2@gmail.com")
+    user_uporabnik.first_name = "Kristina"
+    user_uporabnik.last_name = "Listnik"
 
+    if created:
+        user_uporabnik.set_password("adminadmin")
+        user_uporabnik.is_staff=False
+        user_uporabnik.is_superuser=False
+
+    user_uporabnik.save()
+    uporabnik = Uporabnik(user = user_uporabnik, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
+    uporabnik.save()
+    
     #naredi uporabnika
     user_uporabnik, created = User.objects.get_or_create(username="uporabnik", email="uporabnik@gmail.com")
     user_uporabnik.first_name = "Mitja"
@@ -91,23 +128,12 @@ def naredi_bazo(request):
     user_uporabnik.save()
     uporabnik = Uporabnik(user = user_uporabnik, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     uporabnik.save()
+
+    
     
     
 
-    #naredi potnika
-    user, created = User.objects.get_or_create(username="potnik", email="potnik@gmail.com")
-    user.first_name = "Jure"
-    user.last_name = "Hovelja"
 
-    if created:
-        user.set_password("adminadmin")
-        user.is_staff=True
-        user.is_superuser=False
-    
-    user.save()
-
-    potnik = Potnik(user = user, prodajno_mesto = prodajno_mesto, telefon = "031786453", email = "potnik@gmail.com")
-    potnik.save()
 
     #
   
