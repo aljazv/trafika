@@ -375,10 +375,11 @@ def natisni_narocilnica(request, narocilo):
     #
     story.append(Spacer(1, 12))
     #
-    ptext = '<font size=12>Opombe: %s</font>' % narocilo.opomba
-    par = Paragraph(ptext, styles["Line_Label"])
+    ptext = 'Opombe: %s' % narocilo.opomba
+    par = Paragraph(ptext, styles["Line_Data"])
     story.append(par)
-    
+    #
+    story.append(Spacer(1, 12))
     #
     data1 = [[Paragraph('#', styles["Line_Label"]),
         Paragraph('IME IZDELKA', styles["Line_Label"]),

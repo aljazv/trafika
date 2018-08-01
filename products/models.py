@@ -39,8 +39,8 @@ class Izdelek(models.Model):
     tag = models.ManyToManyField(Tag, blank=True)
     koda = models.CharField(max_length=100, verbose_name="Koda izdelka")
 
-    zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi")
-    aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
+    zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi? (prikaže na strani vendar naročilo ni možno)")
+    aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na na strani?")
 
     def __str__(self):
         return self.ime  

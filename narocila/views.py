@@ -93,7 +93,9 @@ def stara_narocila(request):
         
         narocilo_id = request.POST['narocilo_id']
         narocilo = Narocilo.objects.get(id = narocilo_id)
-        ime_datoteke = "dobavnica" + str(narocilo.id) + ".pdf"
+        leto_dobavnice = narocilo.datum.strftime("%Y")
+        st_dobavnice = leto_dobavnice[-2:] + str(narocilo.id).zfill(4)
+        ime_datoteke = "dobavnica" + "_" + st_dobavnice + ".pdf"
         story=[]
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="{}"'.format(ime_datoteke)
