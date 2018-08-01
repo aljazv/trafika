@@ -174,28 +174,52 @@ function getBootstrapDeviceSize() {
     });
 };
 
+
+function showPerPage(){
+
+  if ($("#danger-text").hasClass("show"))
+    $("#danger-text").removeClass("show");
+
+  data = {
+    'perpage-select': $("#perpage-select").val()
+  }
+  $.ajax({
+    "type": "POST",
+    "dataType": "json",
+    "url": "/session/",
+    "data": data,
+    "success": function(result) {
+        location.reload();
+
+    },
+    "error": function(result) {
+        $("#danger-text").addClass("show");
+    },
+});
+}
+
 function checkdate() {
-        var text_datum = $(this).val();
+    var text_datum = $(this).val();
 
-        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
+    var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\/(1[012]|0?[1-9])\/((?:19|20)\d{2})\s*$/g);
 
-        if (m == null) {
-            $(this)[0].setCustomValidity("Nepravilen vnos datuma");
+    if (m == null) {
+        $(this)[0].setCustomValidity("Nepravilen vnos datuma");
+    }
+    else {
+        $(this)[0].setCustomValidity(""); //more bit!
+        split = text_datum.split('/');
+        datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        var stDni_meseca = datum_tabela[split[1] - 1];
+
+
+        if (split[0] > stDni_meseca) {
+            element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
+            return
         }
-        else {
-            $(this)[0].setCustomValidity(""); //more bit!
-            split = text_datum.split('/');
-            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-            var stDni_meseca = datum_tabela[split[1] - 1];
-
-
-            if (split[0] > stDni_meseca) {
-                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
-                return
-            }
-            
-        }
+        
+    }
     }
   
   window.onresize = function() {
@@ -207,6 +231,8 @@ $(document).ready(function(){
   resize();
 
   $(':input[name="kolicina"]').on("focus", removeActive);
+
+  $('#perpage-select').on("change", showPerPage);
 
 
   $(".dodaj").on('click', function(event){

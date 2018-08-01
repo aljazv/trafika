@@ -10,7 +10,6 @@
 		</form>
 
 		<div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
-	  
 	      Vpišite pravilno količino.
 	    </div>
 
@@ -76,6 +75,15 @@
 			{% csrf_token %}
 
 			<input type="text" class="form-control costum-input mr-2 col-sm-9" name="opomba" placeholder="Opomba" size="70">
+			{% if seznam_uporabnikov %}
+				<select name="uporabnik" >
+				{% for uporabnik in seznam_uporabnikov %}
+					
+					<option value="{{uporabnik.id}}">{{uporabnik.user.first_name}} {{uporabnik.user.last_name}}</option>
+					
+				{% endfor %}
+				</select>			
+			{% endif%}
 			<button type="submit" class="btn btn-primary col-sm-2" name="oddaj_narocilo">Oddaj naročilo</button>
 		</form>
 

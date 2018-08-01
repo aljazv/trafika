@@ -60,6 +60,7 @@ class ProdajnoMesto(models.Model):
    obcina = models.CharField(max_length = 100, verbose_name="Občina prodajnega mesta")
    kontaktna_oseba = models.CharField(max_length = 100, verbose_name="Kontaktna oseba")
    telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
+   potnik = models.ForeignKey("Potnik", on_delete=models.CASCADE, verbose_name="Pooblaščen potnik")
    
    def __str__(self):
         return self.ime + ", "+ self.naslov
@@ -84,24 +85,32 @@ class Podjetje(models.Model):
     def __str__(self):
         return self.ime  
 
-class Potnik(models.Model):
+
+
+class Uporabnik(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto") #al prodajno mesto al pa podjetje??
+    podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje", blank = True, null = True)
+    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto", blank = True, null = True)
+    je_potnik = models.BooleanField(default = False, verbose_name="Ali je potnik")  
+    
+    def __str__(self):
+        return self.user.first_name + " " +  self.user.last_name
+
+    class Meta:
+        verbose_name = "Uporabnik"
+        verbose_name_plural = "Uporabniki"
+
+class Potnik(models.Model):
+    #user = models.OneToOneField(User, on_delete=models.CASCADE)
+    uporabnik = models.OneToOneField(Uporabnik, on_delete=models.CASCADE)
+    #prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto") #al prodajno mesto al pa podjetje??
     telefon = models.CharField(max_length = 100, verbose_name="Telefonska številka")
     email = models.CharField(max_length = 100, verbose_name="Email")
 
     class Meta:
         verbose_name = "Potnik"
         verbose_name_plural = "Potniki"
-
-class Uporabnik(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    podjetje = models.ForeignKey(Podjetje, on_delete=models.CASCADE, verbose_name="Podjetje")
-    prodajno_mesto = models.ForeignKey(ProdajnoMesto, on_delete=models.CASCADE, verbose_name="Prodajno mesto")  
-
-    class Meta:
-        verbose_name = "Uporabnik"
-        verbose_name_plural = "Uporabniki"
+        
 class Narocilo(models.Model):
 
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)

@@ -35,9 +35,10 @@
     <div class="navbar-nav flex-column">
       {% if user.is_superuser %} 
 
-        <a class="nav-item nav-link mt-3 {{active_statistics}}" href="/narocila/statistika/"><i class="fa fa-pie-chart"></i> Statistika</a>
-        <a class="nav-item nav-link {{active_new_orders}}" href="/narocila/nova_narocila/"><i class="fa fa-file-text-o"></i>  Nova naročila</a>
+        
+        <a class="nav-item nav-link mt-3 {{active_new_orders}}" href="/narocila/nova_narocila/"><i class="fa fa-file-text-o"></i>  Nova naročila</a>
         <a class="nav-item nav-link {{active_old_orders}}" href="/narocila/stara_narocila/"><i class="fa fa-file-text-o"></i>  Stara naročila</a>
+        <a class="nav-item nav-link {{active_statistics}}" href="/narocila/statistika/"><i class="fa fa-pie-chart"></i> Statistika</a>
         <a class="nav-item nav-link " href="/admin/"><i class="fa fa-database"></i>  Urejanje baze</a>
 
 
