@@ -7,7 +7,6 @@ from imagekit.processors import ResizeToFill
 
 class SkupinaIzdelkov(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime skupine izdelkov")
-    koda = models.CharField(max_length=100, verbose_name="EAN koda skupine izdelkov")
     min_narocilo = models.IntegerField(default=25)
 
     def __str__(self):
@@ -29,6 +28,7 @@ class Tag(models.Model):
 
 class Izdelek(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime izdelka")
+    ean_koda = models.CharField(max_length=100, verbose_name="EAN koda skupine izdelkov")
     opis = models.TextField(max_length=300, verbose_name="Opis izdelka")
     slika = models.ImageField(upload_to="gallery", verbose_name= "Slika izdelka")
     image_thumbnail = ImageSpecField(source='slika',

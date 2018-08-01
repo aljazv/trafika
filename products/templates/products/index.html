@@ -84,10 +84,7 @@
                     <span class="badge badge-info text-sm"><a href="/{{index_skupina}}/{{tag}}" >{{tag}}</a></span>
                   {% endfor %}
                 </div>
-                <div class="tags mb-4">
-                  Koda:
-                    <span class="text-primary">{{izdelek.koda}}</span>
-                </div>
+                
 
                   <div class="btn-group btn-group-toggle row {%if not izdelek.zaloga %} disabled-buttons {%endif%}" id="group-{{ izdelek.id }}" data-toggle="buttons" >
                   <label class="btn btn-secondary col-xs-1">
