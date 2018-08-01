@@ -43,14 +43,18 @@ class Izdelek(models.Model):
     aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na na strani?")
 
     def __str__(self):
-        return self.ime  
+        return self.ime + " " +  self.ean_koda 
 
 
 class NarociloIzdelka(models.Model):
     izdelek = models.ForeignKey(Izdelek, null = True, on_delete=models.SET_NULL)
     kolicina = models.IntegerField()
     class Meta:
-        verbose_name_plural = "Naročilo izdelka"
+        verbose_name_plural = "Naročilo izdelkov"
+        verbose_name = "Naročilo izdelka"
+    def __str__(self):
+        return "ID:"+str(self.id) + " "+ self.izdelek.ime + " Količina:" +  str(self.kolicina)
+
 
 
 class ProdajnoMesto(models.Model):
@@ -94,12 +98,18 @@ class Uporabnik(models.Model):
     je_potnik = models.BooleanField(default = False, verbose_name="Ali je potnik")  
     
     def __str__(self):
-        return self.user.first_name + " " +  self.user.last_name
+
+        if Potnik.objects.filter(uporabnik=self).exists():
+            return "Potnik: "+self.user.first_name + " " +  self.user.last_name
+        else:
+            return "Uporabnik: "+self.user.first_name + " " +  self.user.last_name
+
 
     class Meta:
         verbose_name = "Uporabnik"
         verbose_name_plural = "Uporabniki"
 
+#potnik ima pri uporabniku empty field prodajnega mesta in podjetja
 class Potnik(models.Model):
     #user = models.OneToOneField(User, on_delete=models.CASCADE)
     uporabnik = models.OneToOneField(Uporabnik, on_delete=models.CASCADE)
@@ -110,6 +120,9 @@ class Potnik(models.Model):
     class Meta:
         verbose_name = "Potnik"
         verbose_name_plural = "Potniki"
+    
+    def __str__(self):
+        return self.uporabnik.user.first_name + " " +  self.uporabnik.user.last_name
         
 class Narocilo(models.Model):
 
@@ -137,14 +150,19 @@ class Narocilo(models.Model):
         else:
             return "Novo narocilo: " + str(self.id)
     class Meta:
-        verbose_name_plural = "Naročilo"
+        verbose_name_plural = "Naročila"
+        verbose_name = "Naročilo"
 
 
-    class Meta:
-        verbose_name = "Narocilo"
-        verbose_name_plural = "Narocila"
+        
 
 #se mi zdi da je vseeno potrebno lociti kosarico od narocil, da ne bo uporabnika kej zmedlo
 class Kosarica(models.Model):
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Košarice"
+        verbose_name = "Košarica"
+
+    
