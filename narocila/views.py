@@ -240,7 +240,7 @@ def natisni_dobavnica(request, narocilo):
               #6
               [Paragraph(prodajno_mesto.kontaktna_oseba, styles["Line_Data_Large"]),
               Paragraph(narocilo.nacin_prodaje, styles["Line_Data_Large"]),
-              Paragraph(narocilo.potnik.user.first_name + " " + narocilo.potnik.user.last_name, styles["Line_Data_Large"])
+              Paragraph(narocilo.potnik.uporabnik.user.first_name + " " + narocilo.potnik.uporabnik.user.last_name, styles["Line_Data_Large"])
               ],
               #7
               [Paragraph('Telefon', styles["Line_Label"]),
