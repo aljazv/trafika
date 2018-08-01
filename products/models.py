@@ -12,15 +12,16 @@ class SkupinaIzdelkov(models.Model):
 
     def __str__(self):
         return self.ime 
-    
     class Meta:
-        verbose_name_plural = "Skupina Izdelkov"
+        verbose_name_plural = "Skupina izdelkov"
 
 class Tag(models.Model):
     ime = models.CharField(max_length = 100, verbose_name="Ime taga")
 
     def __str__(self):
         return self.ime 
+    class Meta:
+        verbose_name_plural = "Tag/zadetek"
 
     class Meta:
         verbose_name = "Oznaka"
@@ -38,25 +39,18 @@ class Izdelek(models.Model):
     tag = models.ManyToManyField(Tag, blank=True)
     koda = models.CharField(max_length=100, verbose_name="Koda izdelka")
 
-    zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi")
-    aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na strani")
+    zaloga = models.BooleanField(default=True, verbose_name="Ali je izdelek na zalogi? (prikaže na strani vendar naročilo ni možno)")
+    aktiven = models.BooleanField(default=True, verbose_name="Ali naj bo prikazan na na strani?")
 
     def __str__(self):
-        return self.koda + " " + self.ime  
-    
-    class Meta:
-        verbose_name = "Izdelek"
-        verbose_name_plural = "Izdelki"
-
+        return self.ime  
 
 
 class NarociloIzdelka(models.Model):
     izdelek = models.ForeignKey(Izdelek, null = True, on_delete=models.SET_NULL)
     kolicina = models.IntegerField()
-
     class Meta:
-        verbose_name = "Narocilo izdelka"
-        verbose_name_plural = "Narocilo izdelkov"
+        verbose_name_plural = "Naročilo izdelka"
 
 
 class ProdajnoMesto(models.Model):
@@ -142,6 +136,8 @@ class Narocilo(models.Model):
             return "Staro narocilo: " + str(self.id)
         else:
             return "Novo narocilo: " + str(self.id)
+    class Meta:
+        verbose_name_plural = "Naročilo"
 
 
     class Meta:
@@ -152,7 +148,3 @@ class Narocilo(models.Model):
 class Kosarica(models.Model):
     narocila_izdelka = models.ManyToManyField(NarociloIzdelka, blank=True)
     uporabnik = models.ForeignKey(Uporabnik, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Kosarica"
-        verbose_name_plural = "Kosarice"
