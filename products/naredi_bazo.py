@@ -9,26 +9,38 @@ import os
 
 from openpyxl import *
 
-def uvozi_izdelke():
-    print('\x1b[6;30;42m' + 'Začetek uvažanja izdelkov ' + '\x1b[0m')
-    wb = load_workbook('products/Sifrant_Sidarta_delovna.xlsx')
+def uvozi_s_siframi(imedatoteke, imeskupine):
+    print('\x1b[6;30;42m' + 'Začetek uvažanja '+ imedatoteke + '\x1b[0m')
+
+    #dodajanje skupin
+    skupina_izdelkov = None
+    if SkupinaIzdelkov.objects.filter(ime=imeskupine).exists():
+        skupina_izdelkov = SkupinaIzdelkov.objects.get(ime=imeskupine)
+    else:
+        skupina_izdelkov = SkupinaIzdelkov(ime= imeskupine)
+        skupina_izdelkov.save()
+
+
+    wb = load_workbook('products/'+ imedatoteke + '.xlsx')
     sheet = wb.active
     
     #cellsa = sheet['A3':'F251']
-    for row in range(2,sheet.max_row):
+    for row in range(5,sheet.max_row):
         if(sheet.cell(row,3).value is None):
             break
         
         sifra = sheet.cell(row,2).value
-        artikel = sheet.cell(row,3).value
-        ean_koda = sheet.cell(row,4).value
-        opis = sheet.cell(row,5).value
-        tag = sheet.cell(row,6).value
+        #artikel = sheet.cell(row,3).value
+        ean_koda = sheet.cell(row,5).value
+        opis = sheet.cell(row,4).value
+        opis_dimenzij = sheet.cell(row,6).value
+        opis = opis + " "+ opis_dimenzij
+        tag = sheet.cell(row,7).value
         tag = tag.split(", ")
 
         #odstrani empty stringe ce se kdo ponesreci zmoti
         list_tag = list(filter(None,tag))
-        print(list_tag)
+        #print(list_tag)
 
         #dodajanje tagov
         object_list_tag = []
@@ -40,17 +52,20 @@ def uvozi_izdelke():
                 new_tag.save()
                 object_list_tag.append(new_tag)
 
-        #dodajanje skupin
-        skupina_izdelkov = None
-        if SkupinaIzdelkov.objects.filter(koda=ean_koda).exists():
-            skupina_izdelkov = SkupinaIzdelkov.objects.get(koda=ean_koda)
-        else:
-            skupina_izdelkov = SkupinaIzdelkov(koda= ean_koda)
-            skupina_izdelkov.save()
+        
+
 
         #dodajanje izdelkov
 
-        new_izdelek = Izdelek(ime=artikel,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=sifra)
+        new_izdelek = Izdelek(ime=sifra,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=sifra, ean_koda=ean_koda)
+        pot_do_slike = "products/slike/"+sifra+".jpg"
+
+        try:
+            new_izdelek.slika.save(sifra+ ".jpg", File(open(pot_do_slike,'rb')))
+        except IOError:
+            new_izdelek.slika.save("logo.jpg", File(open("products/slike/logo.jpg",'rb')))
+            #print(sifra)
+
         new_izdelek.save()
         new_izdelek.tag.add(*object_list_tag)
         new_izdelek.save()
@@ -59,9 +74,85 @@ def uvozi_izdelke():
             
 
         
-    print('\x1b[6;30;42m' + 'Konec uvažanja izdelkov ' + '\x1b[0m')
+    print('\x1b[6;30;42m' + 'Konec uvažanja izdelkov ' + imedatoteke+ '\x1b[0m')
         
     return
+
+def uvozi_brez_siframi(imedatoteke, imeskupine, sheet_name):
+    print('\x1b[6;30;42m' + 'Začetek uvažanja '+ imedatoteke + '\x1b[0m')
+
+    #dodajanje skupin
+    skupina_izdelkov = None
+    if SkupinaIzdelkov.objects.filter(ime=imeskupine).exists():
+        skupina_izdelkov = SkupinaIzdelkov.objects.get(ime=imeskupine)
+    else:
+        skupina_izdelkov = SkupinaIzdelkov(ime= imeskupine)
+        skupina_izdelkov.save()
+
+
+    wb = load_workbook('products/'+ imedatoteke + '.xlsx')
+    sheet = wb[sheet_name]
+    
+    #cellsa = sheet['A3':'F251']
+    for row in range(5,sheet.max_row):
+        if(sheet.cell(row,3).value is None):
+            break
+        
+        sifra = sheet.cell(row,5).value
+        artikel = sheet.cell(row,3).value
+        ean_koda = sheet.cell(row,5).value
+        opis = sheet.cell(row,4).value
+        opis_dimenzij = sheet.cell(row,6).value
+        opis = opis + " "+ opis_dimenzij
+        tag = sheet.cell(row,7).value
+        tag = tag.split(", ")
+
+        #odstrani empty stringe ce se kdo ponesreci zmoti
+        list_tag = list(filter(None,tag))
+        #print(list_tag)
+
+        #dodajanje tagov
+        object_list_tag = []
+        for en_tag in list_tag:
+            if Tag.objects.filter(ime=en_tag).exists():
+                object_list_tag.append(Tag.objects.get(ime=en_tag))
+            else:
+                new_tag = Tag(ime=en_tag)
+                new_tag.save()
+                object_list_tag.append(new_tag)
+
+        
+
+
+        #dodajanje izdelkov
+
+        new_izdelek = Izdelek(ime=artikel,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=ean_koda, ean_koda=ean_koda)
+        pot_do_slike = "products/slike/nislike.jpg"
+
+        try:
+            new_izdelek.slika.save("nislike.jpg", File(open(pot_do_slike,'rb')))
+        except IOError:
+            new_izdelek.slika.save("logo.jpg", File(open("products/slike/logo.jpg",'rb')))
+            #print(sifra)
+
+        new_izdelek.save()
+        new_izdelek.tag.add(*object_list_tag)
+        new_izdelek.save()
+            
+
+            
+
+        
+    print('\x1b[6;30;42m' + 'Konec uvažanja izdelkov ' + imedatoteke+ '\x1b[0m')
+        
+    return
+
+def uvozi_izdelke():
+    uvozi_s_siframi("Seznam_artiklov_Sifrant_razglednice_ok", "Razglednice")
+    uvozi_s_siframi("Seznam_artiklov_Sifrant_magnet_kovinski_ok", "Magneti")
+    uvozi_brez_siframi("Seznam_artiklov_Sifrant_knjige_zemljevidi_sid_ok", "Knjige","knjige")
+    uvozi_brez_siframi("Seznam_artiklov_Sifrant_knjige_zemljevidi_sid_ok", "Zemljevidi","zemljevidi")
+    
 
 
 def naredi_bazo(request):
@@ -130,10 +221,11 @@ def naredi_bazo(request):
     uporabnik.save()
 
     
-    
+    uvozi_izdelke()
     
 
-
+    ######## UPORABLJAMO SEDAJ REALNE IZDELKE
+    '''
 
     #
   
@@ -217,3 +309,4 @@ def naredi_bazo(request):
     #kosarica.save()
     #kosarica.narocila_izdelka.add(narocilo_bled,narocilo_triglav,narocilo_izdelek_razglednica1,narocilo_izdelek_razglednica2)
     #kosarica.save()
+    '''
