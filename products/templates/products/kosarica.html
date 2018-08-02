@@ -74,17 +74,19 @@
 		<form action="/pregled_narocil/" method="post" class="form-inline">
 			{% csrf_token %}
 
-			<input type="text" class="form-control costum-input mr-2 col-sm-9" name="opomba" placeholder="Opomba" size="70">
+			<input type="text" class="form-control costum-input mr-2 col-sm-7" name="opomba" placeholder="Opomba" size="70">
 			{% if seznam_uporabnikov %}
-				<select name="uporabnik" >
+				
+				<select class="form-control mr-2 col-sm-2 costum-input" style="max-width: 100% !important;" name="uporabnik" >
 				{% for uporabnik in seznam_uporabnikov %}
 					
-					<option value="{{uporabnik.id}}">{{uporabnik.user.first_name}} {{uporabnik.user.last_name}}</option>
+					<option value="{{uporabnik.id}}">{{uporabnik.prodajno_mesto.ime}} - {{uporabnik.user.first_name}} {{uporabnik.user.last_name}}</option>
 					
 				{% endfor %}
-				</select>			
+				</select>		
+				
 			{% endif%}
-			<button type="submit" class="btn btn-primary col-sm-2" name="oddaj_narocilo">Oddaj naročilo</button>
+			<button type="submit" class="btn btn-primary col-sm-3" name="oddaj_narocilo">Oddaj naročilo</button>
 		</form>
 
 
@@ -94,4 +96,4 @@
 	</div>
 
 </div>
-{% endblock %}
+{% endblock %} 
