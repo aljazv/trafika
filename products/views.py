@@ -153,17 +153,19 @@ def kosarica(request):
 		#dela ker je sam ena kosrica ustvarjena!
 		#Za popraviti sumnike
 		#plus se dimenzije slik
+
+
 		if request.method == 'POST' and 'odstrani_izdelek' in request.POST:
 
 				narocilo_izdelka_id = request.POST['narocilo']
 				narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)
 				narocilo_izdelka.delete()
 
-		elif request.method == 'POST':
+		elif request.method == 'POST' and request.POST['kolicina']:
 
 				kolicina = request.POST['kolicina']
 				narocilo_izdelka_id = request.POST['narocilo']
-				narocilo_izdelka = NarociloIzdelka.objects.filter(id = narocilo_izdelka_id)[0]
+				narocilo_izdelka = NarociloIzdelka.objects.get(id = narocilo_izdelka_id)
 				narocilo_izdelka.kolicina = kolicina
 				narocilo_izdelka.save()
 

@@ -42,13 +42,13 @@
 				<td>{{narocilo_izdelka.kolicina}}</td>
 				
 					
-					<td class="row">
+					<td>
 						<form action="/kosarica/" method="post" name="form-{{narocilo_izdelka.izdelek.id}}" class="form-inline">
 							{% csrf_token %}
-						<div class="form-inline my-2 my-lg-0">
+						<div class="input-group">
 						<input type="hidden" name="narocilo" value={{ narocilo_izdelka.id }}>
 						
-						<input class="form-control mr-2 costum-input" placeholder="min. {{narocilo_izdelka.izdelek.skupina_izdelkov.min_narocilo}}" type="number" name="kolicina" min="0" size="10">
+						<input class="form-control mr-2 costum-input" placeholder="{{narocilo_izdelka.izdelek.skupina_izdelkov.min_narocilo}}"  style="padding: 0.5rem; min-width:30%"  type="number" name="kolicina" min="0" size="10">
 				
 						<button type="submit" class="btn btn-primary spremeni_kolicino" name="spremeni_kolicino" data-form="form-{{narocilo_izdelka.izdelek.id}}" data-min={{narocilo_izdelka.izdelek.skupina_izdelkov.min_narocilo}}  ><i class="fa fa-pencil"></i> 	&nbsp;Spremeni</button>
 						

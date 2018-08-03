@@ -19,6 +19,7 @@
                 <th scope="col">Podjetje</th>
                 <th scope="col">Prodajno mesto</th>
                 <th scope="col">Naročilnica</th>
+                <th scope="col">Spremeni naročilo</th>
                 <th scope="col">Označi kot obdelano</th>
             </tr>
         </thead>
@@ -35,6 +36,9 @@
                     <button type="submit" class="btn btn-info" name="prenesi"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
                 </td>
                 <td>
+                    <a href="/narocila/nova_narocila/{{narocilo.id}}/" class="btn btn-info" name="obdelano"><i class="fa fa-eye"></i>  &nbsp;Pregled</a>
+                </td>
+                <td>
 
                     <button type="submit" class="btn btn-primary" name="obdelano">Obdelano</button>
 
@@ -48,6 +52,8 @@
     {% else %}
     <p>Ni novih naročil.</p>
     {% endif %}
+
+
 </div>
 </div>
     {% endblock %}

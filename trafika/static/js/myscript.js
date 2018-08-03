@@ -227,6 +227,41 @@ function checkdate() {
     resize();
   }
 
+
+function checkNumInOrder(el, e){
+    e.preventDefault();
+
+    if ($("#warning-text2").hasClass("show"))
+      $("#warning-text2").removeClass("show");
+    
+    val = el.siblings(":input[name='kolicina']").val()
+    var isnum = /^\d+$/.test(val);
+
+    if (! isnum){
+
+      $("#warning-text").addClass("show");
+    
+      return;
+    }
+
+    if ($("#warning-text").hasClass("show"))
+      $("#warning-text").removeClass("show");
+
+
+    if (el.data("min") > val){
+      $("#warning-text2").text("Minimalna količina za ta izdelek je "+ el.data("min")+".")
+      $("#warning-text2").addClass("show");
+      return;
+    }
+
+    if ($("#warning-text2").hasClass("show"))
+      $("#warning-text2").removeClass("show");
+
+
+    var fname = el.data("form");
+    $('form[name="'+fname+'"]').submit();
+}
+
 $(document).ready(function(){
   resize();
 
@@ -241,6 +276,14 @@ $(document).ready(function(){
 
   $(".spremeni_kolicino").on('click', function(event){
     checkNum($(this), event);
+  }); 
+
+  $(".spremeni_kolicino_admin").on('click', function(event){
+    checkNumInOrder($(this), event);
+  }); 
+
+  $(".dodaj_izdelek_admin").on('click', function(event){
+    checkNumInOrder($(this), event);
   }); 
 
   $( ".date-menu" ).on('input', checkdate );
