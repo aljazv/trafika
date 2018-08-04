@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from trafika.views import *
+from django.contrib.admin import AdminSite
+from django.utils.translation import ugettext_lazy
 
 from . import settings
 
@@ -34,4 +36,7 @@ urlpatterns = [
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+admin.site.site_header = 'Sidarta administration'
+admin.site.site_title = 'Sidarta'
+admin.site.index_title = 'Sidarta administration'
 
