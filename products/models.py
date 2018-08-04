@@ -44,6 +44,8 @@ class Izdelek(models.Model):
 
     def __str__(self):
         return self.ime + " " +  self.ean_koda 
+    class Meta:
+        verbose_name_plural = "Izdelki"
 
 
 class NarociloIzdelka(models.Model):
