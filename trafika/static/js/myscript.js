@@ -233,7 +233,7 @@ function checkNumInOrder(el, e){
 
     if ($("#warning-text2").hasClass("show"))
       $("#warning-text2").removeClass("show");
-    
+
     val = el.siblings(":input[name='kolicina']").val()
     var isnum = /^\d+$/.test(val);
 
@@ -269,6 +269,18 @@ $(document).ready(function(){
 
   $('#perpage-select').on("change", showPerPage);
 
+
+  $('.obdelaj').on("click", function(event){
+      event.preventDefault();
+      var form = "#"+ $(this).data("form");
+
+      $('#mainModal').modal("show");
+      $('#mainModal button.ok').on("click", function(){
+        $(form).submit();
+        
+      });
+    
+  });
 
   $(".dodaj").on('click', function(event){
     addToBasket($(this), event);

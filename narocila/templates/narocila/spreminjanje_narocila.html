@@ -3,7 +3,7 @@
 {% block content %}
 <div id="main" class="main">
     <div class="m-3">
-        <h1>Naročilo #{{narocilo.id}}</h1>
+        <h1>Naročilo #{{narocilo.st_narocila}}</h1>
 
     
     <div id="info-text"  class="alert alert-dismissible alert-success {% if confirmed %} show {% endif %} item-card">
@@ -80,9 +80,9 @@
         <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-add" class="form-inline">
             {% csrf_token %}
             <div class="col-xl-6 col-md-12 input-group">
-            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Ime izdekla" style="padding: 0.5rem;" name="koda-input">
+            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Ime izdekla" style="padding: 0.5rem;" name="koda-input" id="koda-input" value="{{code}}">
 
-            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Količina (min. 1)" type="number" style="padding: 0.5rem;" name="kolicina">
+            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Količina (min. 1)" type="number" style="padding: 0.5rem;" name="kolicina" value="{{amount}}">
             <button type="submit" class="btn btn-primary dodaj_izdelek_admin" name="spremeni_kolicino_admin" data-form="form-add" data-min=1  ><i class="fa fa-plus"></i> &nbsp;Dodaj</button>
             </div>
         </form>

@@ -22,8 +22,8 @@ def nova_narocila(request):
 				return HttpResponseRedirect("/")
 
 		confirmed = False
-		if request.method == 'POST' and 'obdelano' in request.POST:
-				narocilo_id = request.POST['narocilo_id']
+		if request.method == 'POST' and 'narocilo_id2' in request.POST:
+				narocilo_id = request.POST['narocilo_id2']
 				narocilo = Narocilo.objects.get(id = narocilo_id)
 				narocilo.je_obdelan = True
 				narocilo.save()
@@ -64,6 +64,9 @@ def spremeni(request, id):
 
 		error = None
 		narocilo = Narocilo.objects.get(id=id)
+
+		code = ""
+		amount = ""
 
 		if request.method == 'POST' and 'narocilo' in request.POST:
 				kolicina = request.POST['kolicina']
@@ -108,7 +111,9 @@ def spremeni(request, id):
 
 		context = {
 			"narocilo": narocilo,
-			"error": error
+			"error": error,
+			"code": code,
+			"amount": amount
 		}
 		return render(request,'narocila/spreminjanje_narocila.html',context)
 
