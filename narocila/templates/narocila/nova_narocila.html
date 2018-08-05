@@ -19,12 +19,13 @@
                 <th scope="col">Podjetje</th>
                 <th scope="col">Prodajno mesto</th>
                 <th scope="col">Naročilnica</th>
+                <th scope="col">Spremeni naročilo</th>
                 <th scope="col">Označi kot obdelano</th>
             </tr>
         </thead>
         {% for narocilo in narocila_neobdelano  %}
             <tr class="table-light">
-                <form action="/narocila/nova_narocila/" method="post">
+                <form action="/narocila/nova_narocila/" method="post" class="form1">
                  {% csrf_token %}   
                 <td>{{forloop.counter}}.</td>
                 <td>{{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</td>
@@ -35,11 +36,17 @@
                     <button type="submit" class="btn btn-info" name="prenesi"><i class="fa fa-download"></i>  &nbsp;Prenesi</button>
                 </td>
                 <td>
-
-                    <button type="submit" class="btn btn-primary" name="obdelano">Obdelano</button>
-
+                    <a href="/narocila/nova_narocila/{{narocilo.id}}/" class="btn btn-info" name="obdelano"><i class="fa fa-eye"></i>  &nbsp;Pregled</a>
                 </td>
-                </form>
+               </form>
+                <td>
+                    <form action="/narocila/nova_narocila/" method="post" id="form-{{ narocilo.id }}">
+                         {% csrf_token %}
+                    <input type="hidden" name="narocilo_id2" value={{ narocilo.id }}>
+                    <button type="submit" class="btn btn-primary obdelaj" data-form="form-{{ narocilo.id }}" name="obdelano">Obdelano</button>
+                    </form>
+                </td>
+                 
             </tr>
         
         {% endfor %}
@@ -48,6 +55,28 @@
     {% else %}
     <p>Ni novih naročil.</p>
     {% endif %}
+
+
+<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="margin-top: 10rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mainModalLabel">Opozorilo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Ko potrdite naročilo, ga ni več možno spreminjati.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary ok" data-dismiss="modal">Potrdi</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 </div>
     {% endblock %}

@@ -1,0 +1,96 @@
+{% include "base.html" with active_new_orders="active"  %}
+
+{% block content %}
+<div id="main" class="main">
+    <div class="m-3">
+        <h1>Naročilo #{{narocilo.st_narocila}}</h1>
+
+    
+    <div id="info-text"  class="alert alert-dismissible alert-success {% if confirmed %} show {% endif %} item-card">
+      Naročilo uspešno potrjeno.
+    </div>
+
+    <div id="warning-text"  class="alert alert-dismissible alert-warning item-card">
+    Vpišite pravilno količino.
+    </div>
+
+    <div id="warning-text2"  class="alert alert-dismissible alert-warning item-card">
+    Minimalna količina naročila za ta izdelek je .
+    </div>
+
+    <div id="danger-text"  class="alert alert-dismissible alert-danger {% if error %} show {% endif %} item-card">
+      {{error}}
+    </div>
+    
+   {% if not narocilo.je_obdelan %}
+        <div class="mt-3">
+        <p>Oddal: {{narocilo.uporabnik.user.first_name}} {{narocilo.uporabnik.user.last_name}}, {{narocilo.uporabnik.prodajno_mesto.ime}}, {{narocilo.uporabnik.podjetje.ime}}</p>
+        <p>Oddano ob: {{ narocilo.datum|date:'d.m.Y' }}, {{ narocilo.datum|time:"H:i" }}</p>
+        <p>Opomba: {% if narocilo.opomba %} {{ narocilo.opomba}} {% else %} / {% endif %}</p>
+        </div>
+        <table class="table table-responsive mt-3 table-hover ">
+            <thead>
+                <tr class="table-light">
+                    <th scope="col">#</th> 
+                    <th scope="col">Ime izdelka</th>  
+                    <th scope="col">Koda izdelka</th>
+                    <th scope="col">Slika</th> 
+                    <th scope="col">Količina</th> 
+                    <th scope="col">Spremeni količino</th> 
+                    <th scope="col">Odstrani izdelek</th> 
+                </tr>
+            </thead>
+            {% for i in narocilo.narocila_izdelka.all  %}
+            <tr class="table-light">
+                <td>{{forloop.counter}}.</td>
+                <td>{{i.izdelek.ime}}</td>
+                <td>{{i.izdelek.koda}}</td>
+                <td><img style="max-height:80px" src="{{ i.izdelek.image_thumbnail.url }}"></td>
+                <td>{{i.kolicina}}</td>
+                
+                    
+                    <td>
+                        <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-{{i.izdelek.id}}" class="form-inline">
+                            {% csrf_token %}
+                        <div class="input-group">
+                        <input type="hidden" name="narocilo" value={{ i.id }}>
+                         
+                        <input class="form-control costum-input mr-2"  style="padding: 0.5rem; min-width:30%" placeholder="{{i.izdelek.skupina_izdelkov.min_narocilo}}" type="number" name="kolicina" min="0" size="10">
+                
+                        <button  class="btn btn-primary spremeni_kolicino_admin" name="spremeni_kolicino_admin" data-form="form-{{i.izdelek.id}}" data-min={{i.izdelek.skupina_izdelkov.min_narocilo}}  ><i class="fa fa-pencil"></i>    &nbsp;Spremeni</button>
+                        
+                        </div>
+            
+                        </form>
+                    </td>
+
+                    <td>
+                        <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="remove-item" class="form-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="narocilo-izdelka-id" value={{ i.id }}>
+                            <button class="btn btn-danger btn-large-text odstrani_izdelek_admin" name="odstrani_izdelek_admin" type="submit"><i class="fa fa-times"></i>  &nbsp;Odstrani 
+                        </button>
+                        </form>
+                    </td>
+                
+            </tr>
+            {% endfor %}
+            
+        </table>
+        <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-add" class="form-inline">
+            {% csrf_token %}
+            <div class="col-xl-6 col-md-12 input-group">
+            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Ime izdekla" style="padding: 0.5rem;" name="koda-input" id="koda-input" value="{{code}}">
+
+            <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Količina (min. 1)" type="number" style="padding: 0.5rem;" name="kolicina" value="{{amount}}">
+            <button type="submit" class="btn btn-primary dodaj_izdelek_admin" name="spremeni_kolicino_admin" data-form="form-add" data-min=1  ><i class="fa fa-plus"></i> &nbsp;Dodaj</button>
+            </div>
+        </form>
+                            
+
+        {% else %}
+        <p class="text-justify mt-3">Naročila ni več mogoče spreminjati.</p>
+        {% endif %}
+</div>
+</div>
+    {% endblock %}
