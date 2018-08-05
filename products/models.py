@@ -176,8 +176,7 @@ class PodjetjeGlavno(models.Model):
 
     def save(self, *args, **kwargs):
         if PodjetjeGlavno.objects.exists() and not self.pk:
-        # if you'll not check for self.pk 
-        # then error will also raised in update of exists model
+
             raise ValidationError('Obstaja samo eno glavno podjetje, ki se lahko izpiše na dobavnici in naročilnici')
         return super(PodjetjeGlavno, self).save(*args, **kwargs)
 

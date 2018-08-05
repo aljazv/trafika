@@ -32,10 +32,14 @@ function getBootstrapDeviceSize() {
 
     e.preventDefault();
 
+
     val = el.siblings(":input[name='kolicina']").val()
     var isnum = /^\d+$/.test(val);
-
     if (! isnum){
+
+      if ($("#warning-text2").hasClass("show"))
+        $("#warning-text2").removeClass("show");
+
       $("#warning-text").addClass("show");
     
       return;
@@ -111,7 +115,9 @@ function getBootstrapDeviceSize() {
 
   function addToBasket(button, e){
     e.preventDefault();
-
+    
+    if ($("#warning-text2").hasClass("show"))
+      $("#warning-text2").removeClass("show");
 
     if ($("#danger-text").hasClass("show"))
       $("#danger-text").removeClass("show");

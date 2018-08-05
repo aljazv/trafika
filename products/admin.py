@@ -45,7 +45,7 @@ admin.site.register(Kosarica)
 admin.site.register(Potnik,PotnikAdmin)
 admin.site.register(ProdajnoMesto,ProdajnoMestoAdmin)
 admin.site.register(Podjetje,PodjetjeAdmin)
-
+admin.site.register(PodjetjeGlavno)
 
 UserAdmin.add_fieldsets = (
         (None, {

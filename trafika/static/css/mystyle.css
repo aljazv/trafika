@@ -141,9 +141,17 @@ p, .statistics-label{
     vertical-align: middle;
 }
 
+
 .item-card{
   
-  width:85%;
+  width:70%;
+}
+
+@media (max-width: 1199.98px) {
+  .card.item-card{
+  
+      width:90% !important;
+  }
 }
 
 .auto-m{
