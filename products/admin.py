@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 # ENABLES CRUD operations on admin page
 
@@ -45,3 +46,10 @@ admin.site.register(Potnik,PotnikAdmin)
 admin.site.register(ProdajnoMesto,ProdajnoMestoAdmin)
 admin.site.register(Podjetje,PodjetjeAdmin)
 
+
+UserAdmin.add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email')}
+        ),
+    )

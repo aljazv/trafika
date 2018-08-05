@@ -79,8 +79,6 @@ def spremeni(request, id):
 
 				narocilo_izdelka_id = request.POST['narocilo-izdelka-id']
 
-				narocilo = Narocilo.objects.get(id=narocilo.id)
-
 				narocilo_izdelka = NarociloIzdelka.objects.get(id = narocilo_izdelka_id)
 
 				narocilo.narocila_izdelka.remove(narocilo_izdelka)
@@ -92,21 +90,30 @@ def spremeni(request, id):
 				code = request.POST['koda-input']
 				amount = request.POST['kolicina']
 
-				narocilo = Narocilo.objects.get(id=narocilo.id)
-
 				try:
-				    izdelek = Izdelek.objects.get(koda__iexact=code)
+						izdelek = Izdelek.objects.get(koda__iexact=code)
 
-				    if narocilo.narocila_izdelka.filter(izdelek=izdelek).count() > 0:
-				    	error = "Izdelek je že dodan v naročilu."
-				    else:
-					    narociloIzdelka = NarociloIzdelka(izdelek=izdelek, kolicina=amount)
-					    narociloIzdelka.save()
+						if narocilo.narocila_izdelka.filter(izdelek=izdelek).count() > 0:
+							error = "Izdelek je že dodan v naročilu."
+						else:
+							narociloIzdelka = NarociloIzdelka(izdelek=izdelek, kolicina=amount)
+							narociloIzdelka.save()
 
 
-					    narocilo.narocila_izdelka.add(narociloIzdelka)
+							narocilo.narocila_izdelka.add(narociloIzdelka)
 				except Izdelek.DoesNotExist:
-				    error = "Izdelek s kodo " + code + " ne obstaja."
+						error = "Izdelek s kodo " + code + " ne obstaja."
+
+		elif request.method == 'POST' and 'izbrisi-input' in request.POST:
+
+				for ni in narocilo.narocila_izdelka.all():
+						narocilo.narocila_izdelka.remove(ni)
+					
+						ni.delete()
+
+				narocilo.delete()
+
+				return HttpResponseRedirect("/narocila/nova_narocila/")
 
 
 		context = {
@@ -369,15 +376,15 @@ def natisni_dobavnica(request, narocilo):
 		for i, key in enumerate(tabela):
 				iteracija = str(i+1) + "."
 
-        izdelki_za_kodo = Izdelek.objects.filter(skupina_izdelkov = key)
-       
+				izdelki_za_kodo = Izdelek.objects.filter(skupina_izdelkov = key)
+			 
 
-        data1 = [[Paragraph(iteracija, styles["Line_Data"]),
-                Paragraph(izdelki_za_kodo[0].ean_koda, styles["Line_Data"]),
-                Paragraph(key.ime, styles["Line_Data"]),
-                Paragraph(str(tabela[key]), styles["Line_Data"]) 
-                ]]
-            
+				data1 = [[Paragraph(iteracija, styles["Line_Data"]),
+								Paragraph(izdelki_za_kodo[0].ean_koda, styles["Line_Data"]),
+								Paragraph(key.ime, styles["Line_Data"]),
+								Paragraph(str(tabela[key]), styles["Line_Data"]) 
+								]]
+						
 
 				t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
 				t1.setStyle(TableStyle([
