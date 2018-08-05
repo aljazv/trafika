@@ -1,0 +1,1 @@
+web: gunicorn trafika.wsgi --log-file -
