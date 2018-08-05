@@ -122,3 +122,5 @@ db.sqlite3
 \**/migrations/
 **/migrations/
 products/slike/
+
+media/gallery/
