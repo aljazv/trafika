@@ -79,8 +79,6 @@ def spremeni(request, id):
 
 				narocilo_izdelka_id = request.POST['narocilo-izdelka-id']
 
-				narocilo = Narocilo.objects.get(id=narocilo.id)
-
 				narocilo_izdelka = NarociloIzdelka.objects.get(id = narocilo_izdelka_id)
 
 				narocilo.narocila_izdelka.remove(narocilo_izdelka)
@@ -91,8 +89,6 @@ def spremeni(request, id):
 
 				code = request.POST['koda-input']
 				amount = request.POST['kolicina']
-
-				narocilo = Narocilo.objects.get(id=narocilo.id)
 
 				try:
 						izdelek = Izdelek.objects.get(koda__iexact=code)
@@ -107,6 +103,17 @@ def spremeni(request, id):
 							narocilo.narocila_izdelka.add(narociloIzdelka)
 				except Izdelek.DoesNotExist:
 						error = "Izdelek s kodo " + code + " ne obstaja."
+
+		elif request.method == 'POST' and 'izbrisi-input' in request.POST:
+
+				for ni in narocilo.narocila_izdelka.all():
+						narocilo.narocila_izdelka.remove(ni)
+					
+						ni.delete()
+
+				narocilo.delete()
+
+				return HttpResponseRedirect("/narocila/nova_narocila/")
 
 
 		context = {

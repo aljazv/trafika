@@ -63,9 +63,10 @@ function getBootstrapDeviceSize() {
 
 
   function removeActive(){
-
-    $(this).parent().parent()
-    .find(':input[name="options"]').prop('checked', false)
+    var parent = $(this).parent().parent()
+    var id = parent.attr('id')
+    
+    parent.find(':input[name="'+ id +'"]').prop('checked', false)
     .parent().removeClass("active");
 
   }
@@ -281,6 +282,20 @@ $(document).ready(function(){
       });
     
   });
+
+
+  $('.izbrisi_narocilo_admin').on("click", function(event){
+      event.preventDefault();
+      console.log("JKJKJK")
+      $('#mainModal').modal("show");
+      $('#mainModal button.ok').on("click", function(){
+        $("#form-delete").submit();
+        
+      });
+    
+  });
+
+  
 
   $(".dodaj").on('click', function(event){
     addToBasket($(this), event);

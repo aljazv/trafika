@@ -3,8 +3,17 @@
 {% block content %}
 <div id="main" class="main">
     <div class="m-3">
-        <h1>Naročilo #{{narocilo.st_narocila}}</h1>
+        <div class="input-group">
+            <h1>Naročilo #{{narocilo.st_narocila}}</h1>
+            <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-delete" id="form-delete">
+                {% csrf_token %}
+                <div class="ml-4">
 
+                <input class="form-control costum-input mr-2" hidden name="izbrisi-input" id="izbrisi-input">
+                <button type="submit" class="btn btn-danger izbrisi_narocilo_admin" name="izbrisi_kolicino_admin" data-form="form-add" data-min=1  ><i class="fa fa-trash"></i> &nbsp;Izbriši naročilo</button>
+                </div>
+            </form>
+        </div>
     
     <div id="info-text"  class="alert alert-dismissible alert-success {% if confirmed %} show {% endif %} item-card">
       Naročilo uspešno potrjeno.
@@ -77,20 +86,42 @@
             {% endfor %}
             
         </table>
-        <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-add" class="form-inline">
+        <form action="/narocila/nova_narocila/{{narocilo.id}}/" method="post" name="form-add" class="">
             {% csrf_token %}
-            <div class="col-xl-6 col-md-12 input-group">
+            <div class="col-xl-6 col-md-12 input-group pl-0">
             <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Ime izdekla" style="padding: 0.5rem;" name="koda-input" id="koda-input" value="{{code}}">
 
             <input required class="form-control costum-input mr-2" style="max-width:40%" placeholder="Količina (min. 1)" type="number" style="padding: 0.5rem;" name="kolicina" value="{{amount}}">
             <button type="submit" class="btn btn-primary dodaj_izdelek_admin" name="spremeni_kolicino_admin" data-form="form-add" data-min=1  ><i class="fa fa-plus"></i> &nbsp;Dodaj</button>
             </div>
         </form>
+
+
                             
 
         {% else %}
         <p class="text-justify mt-3">Naročila ni več mogoče spreminjati.</p>
         {% endif %}
+
+<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="margin-top: 10rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mainModalLabel">Opozorilo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Naročila ne bo več mogoče obnoviti.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary ok" data-dismiss="modal">Potrdi</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 </div>
     {% endblock %}
