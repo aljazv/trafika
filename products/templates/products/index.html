@@ -73,50 +73,54 @@
               <img src="{{ izdelek.image_thumbnail.url }}" class="centered-img">
             </div>
             <div class="col-md-8 px-3">
-              <div class="card-block px-3">
-                <h3 class="card-title">{{izdelek.ime}}</h3>
-                <p class="card-text">{{izdelek.opis}}</p>
-                
-                <div class="tags mb-4">
-                  Oznake:
+                <div class="card-block px-3">
+                    {% if izdelek.koda != izdelek.ean_koda %}
+                    <h3 class="card-title">{{izdelek.koda}}</h3>
+                    {% else %}
+                    <h3 class="card-title">{{izdelek.ime}}</h3>
+                    {% endif %}
+                    <p class="card-text">{{izdelek.opis}}</p>
 
-                  {% for tag in izdelek.tag.all  %}
-                    <span class="badge badge-info text-sm"><a href="/{{index_skupina}}/{{tag}}" >{{tag}}</a></span>
-                  {% endfor %}
+                    <div class="tags mb-4">
+                        Oznake:
+
+                        {% for tag in izdelek.tag.all  %}
+                        <span class="badge badge-info text-sm"><a href="/{{index_skupina}}/{{tag}}">{{tag}}</a></span>
+                        {% endfor %}
+                    </div>
+
+
+                    <div class="btn-group btn-group-toggle row {%if not izdelek.zaloga %} disabled-buttons {%endif%}" id="group-{{ izdelek.id }}" data-toggle="buttons">
+                        <label class="btn btn-secondary col-xs-1">
+                            <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
+                        </label>
+                        <label class="btn btn-secondary col-xs-1">
+                            <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo|multiply:2 }}">{{ skupina.min_narocilo|multiply:2 }}
+                        </label>
+                        <label class="btn btn-secondary col-xs-1">
+                            <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo|multiply:4 }}">{{ skupina.min_narocilo|multiply:4 }}
+                        </label>
+
+                        <div class="col-md-3">
+                            <input name="kolicina" class="form-control p-lr" required="" id="option5" type="number" min=1 size="8" placeholder="min. {{skupina.min_narocilo}}">
+                        </div>
+
+                        <div class="col-sm-3 col-md-4">
+                            <input hidden id="min-order">
+                            <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">
+                                {%if izdelek.zaloga %}
+                                Dodaj v košarico
+                                {%else%}
+                                Ni na zalogi
+                                {%endif%}
+
+                            </button>
+                        </div>
+                    </div>
+
+
+
                 </div>
-                
-
-                  <div class="btn-group btn-group-toggle row {%if not izdelek.zaloga %} disabled-buttons {%endif%}" id="group-{{ izdelek.id }}" data-toggle="buttons" >
-                  <label class="btn btn-secondary col-xs-1">
-                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo }}">{{ skupina.min_narocilo}}
-                  </label>
-                  <label class="btn btn-secondary col-xs-1">
-                    <input type="radio" name="group-{{ izdelek.id }}" autocomplete="off" value="{{ skupina.min_narocilo|multiply:2 }}">{{ skupina.min_narocilo|multiply:2 }}
-                  </label>
-                  <label class="btn btn-secondary col-xs-1">
-                    <input type="radio" name="group-{{ izdelek.id }}"  autocomplete="off" value="{{ skupina.min_narocilo|multiply:4 }}">{{ skupina.min_narocilo|multiply:4 }}
-                  </label>
-
-                  <div class="col-md-3">
-                    <input name="kolicina" class="form-control p-lr" required="" id="option5"  type="number" min=1 size="8" placeholder="min. {{skupina.min_narocilo}}">
-                  </div>
-
-                  <div class="col-sm-3 col-md-4">
-                    <input hidden id="min-order">
-                    <button class="dodaj btn btn-primary" data-min={{skupina.min_narocilo}} id="{{ izdelek.id }}" type="submit">
-                      {%if izdelek.zaloga %} 
-                      Dodaj v košarico
-                      {%else%}
-                      Ni na zalogi
-                      {%endif%}
-                    
-                    </button>
-                  </div>
-                </div>
-
-                
-                
-              </div>
             </div>
 
           </div>

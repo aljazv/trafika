@@ -168,3 +168,19 @@ class Kosarica(models.Model):
         verbose_name = "Košarica"
 
     
+class PodjetjeGlavno(models.Model):
+    naslov = models.CharField(max_length = 100, verbose_name="Naslov podjetja(primer): Trpinčeva 41c, SI - 1000 Ljubljana")
+    tel_fax = models.CharField(max_length = 100, verbose_name="Telefonska in fax(primer): tel • 01 561 34 73, fax • 0590 72897")
+    email = models.CharField(max_length = 100, verbose_name="Email(primer): office@sidarta.si")
+    spletna_stran = models.CharField(max_length = 100, verbose_name="Spletna stran(primer): www.sidarta.si")
+
+    def save(self, *args, **kwargs):
+        if PodjetjeGlavno.objects.exists() and not self.pk:
+        # if you'll not check for self.pk 
+        # then error will also raised in update of exists model
+            raise ValidationError('Obstaja samo eno glavno podjetje, ki se lahko izpiše na dobavnici in naročilnici')
+        return super(PodjetjeGlavno, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = "Podatki našega podjetja"
+        verbose_name = "Podatki našega podjetja"
