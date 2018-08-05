@@ -95,18 +95,18 @@ def spremeni(request, id):
 				narocilo = Narocilo.objects.get(id=narocilo.id)
 
 				try:
-				    izdelek = Izdelek.objects.get(koda__iexact=code)
+						izdelek = Izdelek.objects.get(koda__iexact=code)
 
-				    if narocilo.narocila_izdelka.filter(izdelek=izdelek).count() > 0:
-				    	error = "Izdelek je že dodan v naročilu."
-				    else:
-					    narociloIzdelka = NarociloIzdelka(izdelek=izdelek, kolicina=amount)
-					    narociloIzdelka.save()
+						if narocilo.narocila_izdelka.filter(izdelek=izdelek).count() > 0:
+							error = "Izdelek je že dodan v naročilu."
+						else:
+							narociloIzdelka = NarociloIzdelka(izdelek=izdelek, kolicina=amount)
+							narociloIzdelka.save()
 
 
-					    narocilo.narocila_izdelka.add(narociloIzdelka)
+							narocilo.narocila_izdelka.add(narociloIzdelka)
 				except Izdelek.DoesNotExist:
-				    error = "Izdelek s kodo " + code + " ne obstaja."
+						error = "Izdelek s kodo " + code + " ne obstaja."
 
 
 		context = {
@@ -369,15 +369,15 @@ def natisni_dobavnica(request, narocilo):
 		for i, key in enumerate(tabela):
 				iteracija = str(i+1) + "."
 
-        izdelki_za_kodo = Izdelek.objects.filter(skupina_izdelkov = key)
-       
+				izdelki_za_kodo = Izdelek.objects.filter(skupina_izdelkov = key)
+			 
 
-        data1 = [[Paragraph(iteracija, styles["Line_Data"]),
-                Paragraph(izdelki_za_kodo[0].ean_koda, styles["Line_Data"]),
-                Paragraph(key.ime, styles["Line_Data"]),
-                Paragraph(str(tabela[key]), styles["Line_Data"]) 
-                ]]
-            
+				data1 = [[Paragraph(iteracija, styles["Line_Data"]),
+								Paragraph(izdelki_za_kodo[0].ean_koda, styles["Line_Data"]),
+								Paragraph(key.ime, styles["Line_Data"]),
+								Paragraph(str(tabela[key]), styles["Line_Data"]) 
+								]]
+						
 
 				t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
 				t1.setStyle(TableStyle([
