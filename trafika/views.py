@@ -28,7 +28,11 @@ def logout(request):
 
 	if is_normal_user(request):
 		kosarica_uporabnika = Kosarica.objects.get(uporabnik__user = request.user)
-		kosarica_uporabnika.narocila_izdelka.clear()
+
+		for ni in kosarica_uporabnika.narocila_izdelka.all():
+			kosarica_uporabnika.narocila_izdelka.remove(ni)
+		
+			ni.delete()
 
 	auth.logout(request)
 	return HttpResponseRedirect('/prijava/')
