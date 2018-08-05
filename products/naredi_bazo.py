@@ -30,11 +30,11 @@ def uvozi_s_siframi(imedatoteke, imeskupine):
             break
         
         sifra = sheet.cell(row,2).value
-        #artikel = sheet.cell(row,3).value
+        artikel = sheet.cell(row,3).value
         ean_koda = sheet.cell(row,5).value
         opis = sheet.cell(row,4).value
         opis_dimenzij = sheet.cell(row,6).value
-        opis = opis + " "+ opis_dimenzij
+        opis = artikel + ", " + opis + ", "+ opis_dimenzij
         tag = sheet.cell(row,7).value
         tag = tag.split(", ")
 
@@ -57,7 +57,7 @@ def uvozi_s_siframi(imedatoteke, imeskupine):
 
         #dodajanje izdelkov
 
-        new_izdelek = Izdelek(ime=sifra,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=sifra, ean_koda=ean_koda)
+        new_izdelek = Izdelek(ime=artikel,opis=opis,skupina_izdelkov=skupina_izdelkov,koda=sifra, ean_koda=ean_koda)
         pot_do_slike = "products/slike/"+sifra+".jpg"
 
         try:
@@ -220,6 +220,8 @@ def naredi_bazo(request):
     uporabnik = Uporabnik(user = user_uporabnik, podjetje = podjetje, prodajno_mesto = prodajno_mesto)
     uporabnik.save()
 
+    podjetje_glavno = PodjetjeGlavno(naslov = "Trpinčeva 41c, SI - 1000 Ljubljana", tel_fax = "tel • 01 561 34 73, fax • 0590 72897", email = "office@sidarta.si", spletna_stran = "www.sidarta.si")
+    podjetje_glavno.save()
     
     uvozi_izdelke()
     
