@@ -369,12 +369,15 @@ def natisni_dobavnica(request, narocilo):
 		for i, key in enumerate(tabela):
 				iteracija = str(i+1) + "."
 
-				data1 = [[Paragraph(iteracija, styles["Line_Data"]),
-								Paragraph(key.koda, styles["Line_Data"]),
-								Paragraph(key.ime, styles["Line_Data"]),
-								Paragraph(str(tabela[key]), styles["Line_Data"]) 
-								]]
-						
+        izdelki_za_kodo = Izdelek.objects.filter(skupina_izdelkov = key)
+       
+
+        data1 = [[Paragraph(iteracija, styles["Line_Data"]),
+                Paragraph(izdelki_za_kodo[0].ean_koda, styles["Line_Data"]),
+                Paragraph(key.ime, styles["Line_Data"]),
+                Paragraph(str(tabela[key]), styles["Line_Data"]) 
+                ]]
+            
 
 				t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
 				t1.setStyle(TableStyle([
