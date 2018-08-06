@@ -126,3 +126,5 @@ products/slike/
 media/gallery/
 
 *.jpg
+
+trafika/secret_key\.txt
