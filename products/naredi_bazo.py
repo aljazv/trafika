@@ -34,7 +34,7 @@ def uvozi_s_siframi(imedatoteke, imeskupine):
         ean_koda = sheet.cell(row,5).value
         opis = sheet.cell(row,4).value
         opis_dimenzij = sheet.cell(row,6).value
-        opis = artikel + ", " + opis + ", "+ opis_dimenzij
+        opis = opis + ", "+ opis_dimenzij
         tag = sheet.cell(row,7).value
         tag = tag.split(", ")
 
@@ -103,7 +103,7 @@ def uvozi_brez_siframi(imedatoteke, imeskupine, sheet_name):
         ean_koda = sheet.cell(row,5).value
         opis = sheet.cell(row,4).value
         opis_dimenzij = sheet.cell(row,6).value
-        opis = opis + " "+ opis_dimenzij
+        opis = opis + ", " + opis_dimenzij
         tag = sheet.cell(row,7).value
         tag = tag.split(", ")
 
@@ -148,8 +148,17 @@ def uvozi_brez_siframi(imedatoteke, imeskupine, sheet_name):
     return
 
 def uvozi_izdelke():
-    uvozi_s_siframi("Seznam_artiklov_Sifrant_razglednice_ok", "Razglednice")
-    uvozi_s_siframi("Seznam_artiklov_Sifrant_magnet_kovinski_ok", "Magneti")
+
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_80x55_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_okrogel_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_oval_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_panorama_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_srce_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_sifrant_magnet_epoksi_okrogel_tagi_ok", "Magneti epoksi")
+    uvozi_s_siframi("Seznam_artiklov_Sifrant_magnet_kovinski_ok", "Magneti kovinski")
+
+    uvozi_s_siframi("Seznam_artiklov_sifrant_razglednice_tagi_ok", "Razglednice")
+    
     uvozi_brez_siframi("Seznam_artiklov_Sifrant_knjige_zemljevidi_sid_ok", "Knjige","knjige")
     uvozi_brez_siframi("Seznam_artiklov_Sifrant_knjige_zemljevidi_sid_ok", "Zemljevidi","zemljevidi")
     
