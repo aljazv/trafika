@@ -35,7 +35,7 @@ from trafika.views import *
 #context: opozorilo je za display informacij
 
 def getAllGroups():
-        return SkupinaIzdelkov.objects.all()
+        return SkupinaIzdelkov.objects.all().order_by('ime')
 
 #index je glavna stran ki si prikaze ko se uporabnik prijavi
 #ce gres na main page te preusmeri na prvo skupino izdelkov
@@ -303,14 +303,21 @@ def natisni_narocilnica(request, narocilo):
         p9 = styles.add(ParagraphStyle(name='Line_Label_Center',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=14, alignment=TA_CENTER))
         styles.add(ParagraphStyle(name='sidarta_label',fontName='GretaSansStd-Bold', font='GretaSansStd-Bold', fontSize=17, leading=14, alignment=TA_LEFT))
         
+        width=6*cm
+        logo_path = "media/gallery/logo.jpg"
+        img = utils.ImageReader(logo_path)
+        iw, ih = img.getSize()
+        aspect = ih / float(iw)
+        logo_slika = Image(logo_path, width=width, height=(width * aspect))
+
         data1 = [[Paragraph('NAROČILNICA', styles["Line_Data_Largest"]),
                         Paragraph('', styles["Line_Label"]),
-                        Paragraph('', styles["Line_Label"])
+                        logo_slika
                         ]]
                 
-        t1 = Table(data1, colWidths=(6.6 * cm,6.6 * cm,6.6 * cm), rowHeights = (0.5*cm))
+        t1 = Table(data1, colWidths=(10* cm,1.81 * cm,8.49 * cm), rowHeights = (0.5*cm))
         t1.setStyle(TableStyle([
-                ('BACKGROUND',(2,0),(2,0),colors.black)
+                ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
         ]))
         story.append(t1)
 
@@ -336,7 +343,7 @@ def natisni_narocilnica(request, narocilo):
         data1 = [#1 vrstica
                          [Paragraph('Prodajno mesto/naslov dostave', styles["Line_Label"]),
                             Paragraph('Številka naročilnice', styles["Line_Label"]),
-                            Paragraph('SIDARTA', styles["sidarta_label"])
+                            Paragraph('', styles["sidarta_label"])
                             ],
                             #2
                          [Paragraph(prodajno_mesto_podatki, styles["Line_Data_Large"]),
@@ -395,7 +402,7 @@ def natisni_narocilnica(request, narocilo):
                             ]
                             ]
 
-        t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+        t1 = Table(data1, colWidths=(6.5 * cm), rowHeights = (0.5*cm, 1.1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
 
         t1.setStyle(TableStyle([
                 ('VALIGN',(0,0),(-1,-1),'TOP'),
@@ -421,7 +428,7 @@ def natisni_narocilnica(request, narocilo):
                 Paragraph('', styles["Line_Label"])
                 ]]
                 
-        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm,4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.7 * cm))
         t1.setStyle(TableStyle([
                 ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
         ]))
@@ -447,7 +454,7 @@ def natisni_narocilnica(request, narocilo):
                                 d
                                 ]]
 
-                t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.8 * cm))
+                t1 = Table(data1, colWidths=(1 * cm, 3.6 * cm, 4.75 * cm, 5 * cm, 3 * cm, 1.6 * cm, 0.6 * cm))
                 t1.setStyle(TableStyle([
                         ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
                         ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)

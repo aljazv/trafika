@@ -265,9 +265,8 @@ def natisni_dobavnica(request, narocilo):
                         logo_slika
                         ]]
                 
-        t1 = Table(data1, colWidths=(10* cm,1.9 * cm,8 * cm), rowHeights = (0.5*cm))
+        t1 = Table(data1, colWidths=(10* cm,1.81 * cm,8.49 * cm), rowHeights = (0.5*cm))
         t1.setStyle(TableStyle([
-                #('BACKGROUND',(2,0),(2,0),colors.black)
                 ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
         ]))
         story.append(t1)
@@ -358,7 +357,7 @@ def natisni_dobavnica(request, narocilo):
                             ]
                             ]
 
-        t1 = Table(data1, colWidths=(6.6 * cm), rowHeights = (0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
+        t1 = Table(data1, colWidths=(6.5 * cm), rowHeights = (0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,0.5*cm, 1*cm,), hAlign='LEFT')
 
         t1.setStyle(TableStyle([
                 ('VALIGN',(0,0),(-1,-1),'TOP'),
@@ -380,7 +379,7 @@ def natisni_dobavnica(request, narocilo):
                         Paragraph('količina', styles["Line_Label"])
                         ]]
                 
-        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm, 5 * cm))
+        t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm, 4.9 * cm))
         t1.setStyle(TableStyle([
                 ('LINEBELOW', (0, 0), (-1, -1), 1.5, colors.black)
         ]))
@@ -402,7 +401,7 @@ def natisni_dobavnica(request, narocilo):
                                 ]]
                         
 
-                t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
+                t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,4.9 * cm))
                 t1.setStyle(TableStyle([
                         ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
                 ]))
@@ -421,7 +420,7 @@ def natisni_dobavnica(request, narocilo):
                                 Paragraph(str(tabela_ean[key]), styles["Line_Data"]) 
                                 ]]
                         
-            t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,5 * cm))
+            t1 = Table(data1, colWidths=(1 * cm, 6 * cm,7.7 * cm,4.9 * cm))
             t1.setStyle(TableStyle([
                     ('LINEBELOW', (0, 0), (-1, -1), 0.25, colors.black)
             ]))
