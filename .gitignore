@@ -130,3 +130,7 @@ media/gallery/
 trafika/secret_key\.txt
 
 secrets\.json
+
+script\.sh
+
+scriptWin\.sh
