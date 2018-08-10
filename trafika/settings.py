@@ -34,7 +34,8 @@ def get_secret(setting, secrets=secrets):
 
 SECRET_KEY = get_secret('SECRET_KEY')
 
-DEBUG = False
+DEBUG = get_secret('DEBUG')
+
 
 ALLOWED_HOSTS = ['sidarta-katalog.si', 'www.sidarta-katalog.si', '142.93.104.65']
 
