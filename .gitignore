@@ -128,3 +128,5 @@ media/gallery/
 *.jpg
 
 trafika/secret_key\.txt
+
+secrets\.json
