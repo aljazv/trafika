@@ -33,7 +33,7 @@
 
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav flex-column">
-      {% if user.is_superuser %} 
+      {% if user.is_staff %} 
 
         
         <a class="nav-item nav-link mt-3 {{active_new_orders}}" href="/narocila/nova_narocila/"><i class="fa fa-file-text-o"></i>  Nova naročila</a>
@@ -43,7 +43,6 @@
 
 
       {% else %}
-      <a class="nav-item nav-link mb-3" href="#"><i class="fa fa-map-signs"></i>  Navodila</a>
 
       <a class="nav-item nav-link empty disabled" ><i class="fa fa-futbol-o"></i> Izdelki</a>
       <span id="item-menu-links">
