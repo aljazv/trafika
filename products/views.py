@@ -101,13 +101,13 @@ def index_skupina(request, index, search_string = None):
 
         #logika za iskanje po tagih
         if search_string != None:
-                vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
+                vsi_izdelki = Izdelek.objects.filter(tag__ime__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('koda')
                 
                 #ce ne najde nobenega izdelka poskusi se z kodo izdelka
                 if not vsi_izdelki.exists():
-                        vsi_izdelki = Izdelek.objects.filter(koda__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('ime')
+                        vsi_izdelki = Izdelek.objects.filter(koda__istartswith=search_string).filter(skupina_izdelkov__id = index).filter(aktiven=True).order_by('koda')
         else:
-                vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('ime')
+                vsi_izdelki = Izdelek.objects.filter(aktiven=True).filter(skupina_izdelkov__id = index).order_by('koda')
         
 
         skupina = SkupinaIzdelkov.objects.get(id=index);
