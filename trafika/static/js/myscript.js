@@ -112,11 +112,6 @@ function getBootstrapDeviceSize() {
       $("#backToAll").submit();
   }
 
-  $("#iskanje").keyup(function(event) {
-      if (event.keyCode === 13) {
-          $("#gumb_za_iskanje").click();
-      }
-  });
 
 
   function addToBasket(button, e){
@@ -333,6 +328,13 @@ $(document).ready(function(){
    showOtherMonths: true,
     selectOtherMonths: true,
     dateFormat: 'dd/mm/yy'
+  });
+
+
+  $("#search").keyup(function(event) {
+      if (event.keyCode === 13) {
+          $("#gumb_za_iskanje").click();
+      }
   });
 
 }); 
