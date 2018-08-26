@@ -112,6 +112,12 @@ function getBootstrapDeviceSize() {
       $("#backToAll").submit();
   }
 
+  $("#iskanje").keyup(function(event) {
+      if (event.keyCode === 13) {
+          $("#gumb_za_iskanje").click();
+      }
+  });
+
 
   function addToBasket(button, e){
     e.preventDefault();
