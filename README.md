@@ -1,8 +1,15 @@
 Navodila za instalacijo
 
-```{r, engine='bash', count_lines}
-pip3 install pillow django-imagekit
+
+V primeru conda env 
+
 ```
+conda create -n trafika python=3.6
+conda activate trafika
+pip install -r requirements.txt
+
+```
+
 koristni linki:
 
 za thumbnail slike
